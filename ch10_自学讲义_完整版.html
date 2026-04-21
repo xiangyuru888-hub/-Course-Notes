@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第十章 函数项级数 · 自学讲义</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  --ink:      #1c1c2e;
+  --ink2:     #3a3a5c;
+  --bg:       #f9f6f0;
+  --warm:     #f2ebe0;
+  --border:   #ddd0b8;
+  --red:      #b5270e;
+  --blue:     #0b5394;
+  --green:    #1a6b35;
+  --orange:   #c96b00;
+  --purple:   #5b2d8e;
+  --gold:     #9a7000;
+  --red-bg:   #fdf0ed;
+  --blue-bg:  #edf4fc;
+  --green-bg: #edf7f0;
+  --orange-bg:#fff8ee;
+  --purple-bg:#f5f0fb;
+  --yellow-bg:#fffde7;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Serif SC', serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 15.5px;
+  line-height: 2;
+}
+
+/* ── HEADER ── */
+.hero {
+  background: linear-gradient(135deg, #1c1c2e 0%, #2d2d55 60%, #1a3a5c 100%);
+  color: #f0e8d0;
+  padding: 3.5rem 3rem 3rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: '第十章';
+  position: absolute;
+  right: -1rem; bottom: -1.5rem;
+  font-size: 9rem;
+  font-weight: 900;
+  color: rgba(255,255,255,0.04);
+  font-family: 'Noto Sans SC', sans-serif;
+  line-height: 1;
+  pointer-events: none;
+}
+.hero-tag {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: #8fafd0;
+  text-transform: uppercase;
+  margin-bottom: 0.8rem;
+}
+.hero h1 {
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.8rem;
+}
+.hero .desc {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 0.93rem;
+  color: #a0b8cc;
+  font-weight: 300;
+  line-height: 1.7;
+  max-width: 560px;
+}
+.hero-chips {
+  margin-top: 1.4rem;
+  display: flex; gap: 0.5rem; flex-wrap: wrap;
+}
+.chip {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #d0e4f0;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 11.5px;
+  padding: 3px 12px;
+  border-radius: 20px;
+}
+
+/* ── TOC ── */
+.toc-wrap {
+  max-width: 900px; margin: 2.2rem auto;
+  background: var(--warm);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.6rem 2rem;
+}
+.toc-wrap h2 {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 1.1rem;
+}
+.toc-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 3rem; }
+.toc-section { margin-bottom: 1rem; }
+.toc-section-head {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink2);
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1.5px solid var(--border);
+}
+.toc-section ol { padding-left: 1.2rem; }
+.toc-section li { margin: 0.22rem 0; }
+.toc-section a {
+  color: var(--blue);
+  text-decoration: none;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 13px;
+}
+.toc-section a:hover { color: var(--red); }
+.toc-sub { padding-left: 0.8rem; font-size: 12px; color: #777; }
+
+/* ── LAYOUT ── */
+.wrap {
+  max-width: 900px; margin: 0 auto;
+  padding: 0 2rem 8rem;
+}
+
+/* ── PART BANNER ── */
+.part-banner {
+  display: flex; align-items: center; gap: 1.2rem;
+  background: var(--ink);
+  color: #f0e8d0;
+  padding: 0.9rem 1.6rem;
+  border-radius: 5px;
+  margin: 4rem 0 0;
+}
+.part-banner .pn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  background: rgba(255,255,255,0.12);
+  padding: 3px 9px; border-radius: 3px;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+.part-banner .pt { font-size: 1.05rem; font-weight: 600; }
+
+/* ── SECTION HEADINGS ── */
+.sec {
+  font-size: 1.35rem; font-weight: 700;
+  color: var(--ink);
+  margin: 3rem 0 1.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2.5px solid var(--ink);
+  display: flex; align-items: baseline; gap: 0.75rem;
+}
+.sec .sn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  background: var(--ink);
+  color: #f0e8d0;
+  padding: 2px 7px; border-radius: 2px;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.subsec {
+  font-size: 1.05rem; font-weight: 700;
+  color: var(--ink2);
+  margin: 2.2rem 0 0.8rem;
+  padding-left: 0.8rem;
+  border-left: 3.5px solid var(--blue);
+}
+.subsec.r { border-left-color: var(--red); }
+.subsec.g { border-left-color: var(--green); }
+.subsec.o { border-left-color: var(--orange); }
+.subsec.p { border-left-color: var(--purple); }
+
+/* ── BOXES ── */
+.box { margin: 1.3rem 0; padding: 1.1rem 1.5rem; border-radius: 4px; }
+.lbl {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 10.5px; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.def  { background: var(--blue-bg);   border-left: 4px solid var(--blue);   }
+.def  .lbl { color: var(--blue);   }
+.thm  { background: var(--red-bg);    border-left: 4px solid var(--red);    }
+.thm  .lbl { color: var(--red);    }
+.eg   { background: var(--green-bg);  border-left: 4px solid var(--green);  }
+.eg   .lbl { color: var(--green);  }
+.pf   { background: #f4f4f2;          border-left: 4px solid #9e9e9e; font-size: 14.5px; }
+.pf   .lbl { color: #666; }
+.warn { background: var(--orange-bg); border-left: 4px solid var(--orange); }
+.warn .lbl { color: var(--orange); }
+.key  { background: var(--yellow-bg); border-left: 4px solid var(--gold); }
+.key  .lbl { color: var(--gold); }
+.memo { background: var(--purple-bg); border-left: 4px solid var(--purple); }
+.memo .lbl { color: var(--purple); }
+
+/* ── THINK BOX ── */
+.think {
+  background: #e8f4fd;
+  border: 1.5px dashed #5b9ec9;
+  border-radius: 5px;
+  padding: 0.9rem 1.3rem;
+  margin: 1rem 0;
+  font-size: 14.5px;
+  color: #1a3a5c;
+}
+.think::before { content: '🤔  先想想：'; font-weight: 700; }
+
+/* ── COMPARE TABLE ── */
+.ctbl {
+  width: 100%; border-collapse: collapse;
+  margin: 1rem 0;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 13.5px;
+}
+.ctbl th {
+  background: var(--ink); color: #f0e8d0;
+  padding: 0.5rem 0.9rem;
+  text-align: center; font-weight: 500; letter-spacing: 0.04em;
+}
+.ctbl td {
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--border);
+  vertical-align: top;
+}
+.ctbl tr:nth-child(even) td { background: #faf6ee; }
+.ctbl .hi td { background: #fff9e0 !important; font-weight: 600; }
+
+/* ── STEP LIST ── */
+.steps { margin: 0.6rem 0; }
+.step { display: flex; gap: 0.85rem; margin: 0.6rem 0; align-items: flex-start; }
+.snum {
+  min-width: 1.6rem; height: 1.6rem;
+  background: var(--blue);
+  color: white; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700;
+  flex-shrink: 0; margin-top: 0.2rem;
+}
+.snum.r { background: var(--red); }
+.snum.g { background: var(--green); }
+
+/* ── FORMULA HIGHLIGHT ── */
+.fml {
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  padding: 0.8rem 1.2rem;
+  margin: 0.8rem 0;
+  text-align: center;
+}
+
+/* ── INLINE ── */
+strong  { color: var(--red); }
+em      { color: var(--blue); font-style: normal; font-weight: 600; }
+.gr     { color: var(--green); font-weight: 600; }
+.or     { color: var(--orange); font-weight: 600; }
+.pu     { color: var(--purple); font-weight: 600; }
+code    { font-family: 'JetBrains Mono', monospace; background: #eee8dc; padding: 1px 5px; border-radius: 3px; font-size: 0.87em; }
+p       { margin: 0.5rem 0; }
+ul, ol  { padding-left: 1.6rem; margin: 0.4rem 0; }
+li      { margin: 0.28rem 0; }
+hr.div  { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+
+/* ── GRID CARDS ── */
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; margin: 1rem 0; }
+.card {
+  background: white; border: 1px solid var(--border);
+  border-radius: 5px; padding: 1rem 1.2rem;
+}
+.card-title {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 12px; font-weight: 700;
+  color: var(--ink2); margin-bottom: 0.5rem;
+}
+.card-sub {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 11px; color: #888; margin-top: 0.3rem;
+}
+
+/* ── DIALOGUE ── */
+.qa { margin: 1.2rem 0; }
+.q, .a {
+  display: flex; gap: 0.7rem; align-items: flex-start;
+  margin: 0.4rem 0;
+}
+.q-badge, .a-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700;
+  padding: 2px 8px; border-radius: 3px;
+  white-space: nowrap; margin-top: 0.3rem;
+  flex-shrink: 0;
+}
+.q-badge { background: var(--blue-bg); color: var(--blue); border: 1px solid #b8d4ee; }
+.a-badge { background: var(--green-bg); color: var(--green); border: 1px solid #b0d8c0; }
+
+/* ── FOOTER ── */
+footer {
+  text-align: center;
+  padding: 2.5rem;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 12px; color: #aaa;
+  border-top: 1px solid var(--border);
+  margin-top: 4rem;
+}
+
+@media (max-width: 680px) {
+  .wrap { padding: 0 1.2rem 6rem; }
+  .hero { padding: 2.5rem 1.5rem; }
+  .hero h1 { font-size: 1.7rem; }
+  .toc-cols { grid-template-columns: 1fr; }
+  .cards { grid-template-columns: 1fr; }
+  .hero::after { display: none; }
+}
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{
+    delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],
+    throwOnError:false
+  });"></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<header class="hero">
+  <div class="hero-tag">复旦大学 · 数学分析 AII · 2026春 · 自学版讲义</div>
+  <h1>第十章 &nbsp;函数项级数</h1>
+  <div class="desc">
+    完全从零讲起，适合没有听课基础的同学自学。<br>
+    每个概念都配有直觉解释、通俗类比和完整例题。
+  </div>
+  <div class="hero-chips">
+    <span class="chip">§1 函数项级数基础</span>
+    <span class="chip">§2 一致收敛：定义与判别</span>
+    <span class="chip">§3 一致收敛的性质</span>
+    <span class="chip">§4 幂级数</span>
+    <span class="chip">§5 函数展开与Euler公式</span>
+  </div>
+</header>
+
+<!-- ═══════════════════════════ TOC ═══════════════════════════ -->
+<nav class="toc-wrap">
+  <h2>目录</h2>
+  <div class="toc-cols">
+    <div>
+      <div class="toc-section">
+        <div class="toc-section-head">Part 1 · 函数项级数基础</div>
+        <ol>
+          <li><a href="#A1">什么是函数项级数？</a></li>
+          <li><a href="#A2">收敛域和和函数</a></li>
+          <li><a href="#A3">核心问题：无穷和的性质</a></li>
+          <li><a href="#A4">反例：点态收敛的局限</a></li>
+        </ol>
+      </div>
+      <div class="toc-section">
+        <div class="toc-section-head">Part 2 · 一致收敛</div>
+        <ol start="5">
+          <li><a href="#B1">直觉理解一致收敛</a></li>
+          <li><a href="#B2">严格定义与量词对比</a></li>
+          <li><a href="#B3">判别法① 必要条件（否定用）</a></li>
+          <li><a href="#B4">判别法② sup距离法</a></li>
+          <li><a href="#B5">判别法③ Weierstrass M判别法</a></li>
+          <li><a href="#B6">判别法④ Abel–Dirichlet判别法</a></li>
+        </ol>
+      </div>
+    </div>
+    <div>
+      <div class="toc-section">
+        <div class="toc-section-head">Part 3 · 一致收敛的性质</div>
+        <ol start="11">
+          <li><a href="#C1">性质一：连续性定理</a></li>
+          <li><a href="#C2">性质二：逐项积分</a></li>
+          <li><a href="#C3">性质三：逐项求导</a></li>
+          <li><a href="#C4">Dini定理</a></li>
+        </ol>
+      </div>
+      <div class="toc-section">
+        <div class="toc-section-head">Part 4 · 幂级数</div>
+        <ol start="15">
+          <li><a href="#D1">幂级数与收敛半径</a></li>
+          <li><a href="#D2">Cauchy–Hadamard 公式</a></li>
+          <li><a href="#D3">比值法 & 缺项处理</a></li>
+          <li><a href="#D4">Abel 第一/第二定理</a></li>
+          <li><a href="#D5">逐项积分与求导</a></li>
+          <li><a href="#D6">求和函数例题</a></li>
+          <li><a href="#D7">Cauchy 乘积</a></li>
+        </ol>
+      </div>
+      <div class="toc-section">
+        <div class="toc-section-head">Part 5 · 函数展开与Euler公式</div>
+        <ol start="22">
+          <li><a href="#E1">Taylor展开与唯一性</a></li>
+          <li><a href="#E2">六大基本展开式</a></li>
+          <li><a href="#E3">间接展开法（四种技巧）</a></li>
+          <li><a href="#E4">Euler公式</a></li>
+          <li><a href="#E5">全章总结与速查表</a></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- ════════════════════ PART 1 ════════════════════ -->
+<div class="part-banner">
+  <span class="pn">PART 01</span>
+  <span class="pt">函数项级数基础：从数项级数到函数项级数</span>
+</div>
+
+<!-- A1 -->
+<h2 class="sec" id="A1"><span class="sn">01</span>什么是函数项级数？</h2>
+
+<p>你在数学分析第九章学过<strong>数项级数</strong>，比如 $\displaystyle\sum_{n=1}^\infty \frac{1}{n^2}$ 或者 $\displaystyle\sum_{n=0}^\infty \frac{1}{2^n}$——这些都是常数相加。</p>
+
+<p>现在我们把每一项变成一个<strong>函数</strong>，比如把 $1/n^2$ 换成 $x^n/n^2$，得到</p>
+$$\sum_{n=0}^\infty \frac{x^n}{n^2}$$
+<p>这里 $x$ 是变量，每取一个 $x$ 的值，上面这个无穷和就变成一个数项级数。这就是<strong>函数项级数</strong>。</p>
+
+<div class="def">
+  <div class="lbl">定义 · 函数项级数</div>
+  <p>设函数列 $\{u_n(x)\}_{n=1}^\infty$ 在公共定义域 $E\subset\mathbb{R}$ 上有定义，则无穷和</p>
+  $$\sum_{n=1}^\infty u_n(x) = u_1(x)+u_2(x)+u_3(x)+\cdots$$
+  <p>称为 $E$ 上的<strong>函数项级数</strong>。</p>
+</div>
+
+<div class="think">
+我们也会同时研究<strong>函数列</strong> $\{f_n(x)\}_{n=1}^\infty$（无穷多个函数组成的序列，不是求和而是看极限），两者本质等价：函数项级数就是其部分和函数列 $S_n(x)=\sum_{k=1}^n u_k(x)$ 的极限。
+</div>
+
+<div class="eg">
+  <div class="lbl">例子</div>
+  <p>下面都是函数项级数：</p>
+  <ul>
+    <li>$\displaystyle\sum_{n=0}^\infty x^n = 1+x+x^2+x^3+\cdots$ &nbsp;（等比数列型）</li>
+    <li>$\displaystyle\sum_{n=1}^\infty \frac{\sin(nx)}{n^2}$ &nbsp;（三角函数型）</li>
+    <li>$\displaystyle\sum_{n=0}^\infty \frac{x^n}{n!} = 1+x+\frac{x^2}{2}+\frac{x^3}{6}+\cdots$ &nbsp;（幂级数型）</li>
+  </ul>
+</div>
+
+<!-- A2 -->
+<h2 class="sec" id="A2"><span class="sn">02</span>收敛域和和函数</h2>
+
+<p>函数项级数的关键在于：<strong>对不同的 $x$，级数可能收敛，也可能发散</strong>。</p>
+
+<div class="def">
+  <div class="lbl">定义 · 收敛点、发散点、收敛域</div>
+  <p>取 $x_0\in E$，把 $x_0$ 代入级数，得到一个数项级数 $\sum_{n=1}^\infty u_n(x_0)$：</p>
+  <ul>
+    <li>若这个数项级数<strong>收敛</strong>，则称 $x_0$ 为该函数项级数的<em>收敛点</em>；</li>
+    <li>若<strong>发散</strong>，则称 $x_0$ 为<em>发散点</em>。</li>
+  </ul>
+  <p>所有收敛点的集合叫<strong>收敛域</strong> $D$；在收敛域上，级数的值是 $x$ 的函数，称为<em>和函数</em> $S(x)=\sum_{n=1}^\infty u_n(x)$。</p>
+</div>
+
+<div class="eg">
+  <div class="lbl">例题 1 · 几何级数 $\sum_{n=0}^\infty x^n$ 的收敛域</div>
+  <p>对任意固定的 $x$，$\sum_{n=0}^\infty x^n$ 是公比为 $x$ 的等比级数。</p>
+  <p>由等比级数收敛条件：$|x|<1$ 时收敛，$|x|\ge 1$ 时发散。</p>
+  <ul>
+    <li><strong>公共定义域</strong>：$\mathbb{R}$（每一项 $x^n$ 在 $\mathbb{R}$ 上有定义）</li>
+    <li><strong>收敛域</strong>：$D=(-1,1)$</li>
+    <li><strong>和函数</strong>：$S(x)=\dfrac{1}{1-x}$，$x\in(-1,1)$</li>
+  </ul>
+</div>
+
+<div class="eg">
+  <div class="lbl">例题 2 · $f_n(x) = x^n$ 的极限函数</div>
+  <p>这是一个函数列（不是级数），看 $x^n$ 当 $n\to\infty$ 时的极限：</p>
+  <ul>
+    <li>$x\in(-1,1)$：$x^n\to 0$；</li>
+    <li>$x=1$：$x^n=1\to 1$；</li>
+    <li>$|x|>1$ 或 $x=-1$：$x^n$ 发散。</li>
+  </ul>
+  <p>所以收敛域为 $(-1,1]$，极限函数为 $f(x)=\begin{cases}0, & x\in(-1,1)\\1, & x=1\end{cases}$。</p>
+  <p><strong>注意</strong>：每个 $f_n(x)=x^n$ 都是连续函数，但极限函数 $f(x)$ 在 $x=1$ 处<strong>间断</strong>！</p>
+</div>
+
+<!-- A3 -->
+<h2 class="sec" id="A3"><span class="sn">03</span>核心问题：我们真正关心什么？</h2>
+
+<p>研究函数项级数，真正的问题是：<strong>和函数 $S(x)$ 继承了每个 $u_n(x)$ 的什么性质？</strong></p>
+
+<p>具体地说，如果每个 $u_n(x)$ 都是连续的/可导的/可积的，那么 $S(x)$ 也连续/可导/可积吗？</p>
+
+<p>这些问题的本质，都是在问<strong>两种极限运算能否交换</strong>：</p>
+
+<table class="ctbl">
+  <thead><tr><th>性质</th><th>等价于……两个运算的交换</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>$S(x)$ 连续</td>
+      <td>$\lim_{x\to x_0}\underbrace{\lim_{n\to\infty} S_n(x)}_{\text{先 }n}\ =\ \lim_{n\to\infty}\underbrace{\lim_{x\to x_0} S_n(x)}_{\text{先 }x}$</td>
+    </tr>
+    <tr>
+      <td>逐项积分</td>
+      <td>$\displaystyle\lim_{n\to\infty}\int_a^b S_n\,dx = \int_a^b\lim_{n\to\infty}S_n\,dx$</td>
+    </tr>
+    <tr>
+      <td>逐项求导</td>
+      <td>$\displaystyle\lim_{n\to\infty}S_n' = \left(\lim_{n\to\infty}S_n\right)'$</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>这章的核心任务：找到<strong>什么条件下这些交换合法</strong>。答案就是——<strong>一致收敛</strong>。</p>
+
+<!-- A4 -->
+<h2 class="sec" id="A4"><span class="sn">04</span>反例：为什么点态收敛不够？</h2>
+
+<p>先看四个反例，说明仅有"逐点收敛"是不够的。</p>
+
+<div class="eg">
+  <div class="lbl">反例 1 · 连续性失效</div>
+  <p>$f_n(x)=x^n$ 在 $(-1,1]$ 上逐点收敛到 $f(x)=\begin{cases}0 & x\in(-1,1)\\1 & x=1\end{cases}$。</p>
+  <p>每个 $f_n$ 都连续，但极限 $f$ 在 $x=1$ 处<strong>跳跃间断</strong>。</p>
+</div>
+
+<div class="eg">
+  <div class="lbl">反例 2 · 求导失效</div>
+  <p>$f_n(x)=\dfrac{\sin(nx)}{\sqrt{n}}$ 在 $\mathbb{R}$ 上逐点收敛到 $f\equiv 0$。</p>
+  <p>但 $f_n'(x)=\sqrt{n}\cos(nx)$，当 $x=0$ 时 $f_n'(0)=\sqrt{n}\to+\infty$，而 $f'(0)=0$。</p>
+  <p>导数极限 $\ne$ 极限的导数。</p>
+</div>
+
+<div class="eg">
+  <div class="lbl">反例 3 · 积分失效</div>
+  <p>$f_n(x)=n^2(1-x)x^n$ 在 $[0,1]$ 上逐点趋向 $f\equiv 0$。但</p>
+  $$\int_0^1 f_n(x)\,dx = n^2\left(\frac{1}{n+1}-\frac{1}{n+2}\right)=\frac{n^2}{(n+1)(n+2)}\to 1\ne 0=\int_0^1 f\,dx$$
+  <p>积分的极限 $\ne$ 极限的积分。</p>
+</div>
+
+<div class="warn">
+  <div class="lbl">总结</div>
+  <p>点态收敛（逐点收敛）太弱，不足以保证和函数的连续性、可导性、可积性。</p>
+  <p>我们需要更强的条件——<strong>一致收敛</strong>。</p>
+</div>
+
+<!-- ════════════════════ PART 2 ════════════════════ -->
+<div class="part-banner">
+  <span class="pn">PART 02</span>
+  <span class="pt">一致收敛：直觉、定义与判别法</span>
+</div>
+
+<!-- B1 -->
+<h2 class="sec" id="B1"><span class="sn">05</span>直觉理解：一致收敛是什么意思？</h2>
+
+<p>先用生活类比理解"一致"和"不一致"的区别。</p>
+
+<div class="qa">
+  <div class="q"><span class="q-badge">问</span><div>点态收敛和一致收敛有什么本质区别？</div></div>
+  <div class="a"><span class="a-badge">答</span><div>点态收敛：对每个 $x$，$S_n(x)$ 最终会接近 $S(x)$，但不同 $x$ 需要等待的时间（$N$）可以任意长。<br>一致收敛：存在一个统一的等待时间 $N$，让<strong>所有 $x$ 同时</strong>达到精度要求。</div></div>
+</div>
+
+<p>用图形语言说：</p>
+<ul>
+  <li><strong>点态收敛</strong>：$S_n(x)$ 在每个点 $x$ 处最终进入 $S(x)$ 的 $\varepsilon$-邻域，但进去的时间因点而异（有些点可以很慢）。</li>
+  <li><strong>一致收敛</strong>：$S_n$ 整条曲线同时落入 $S$ 的"$\varepsilon$-管道"内。</li>
+</ul>
+
+<div class="eg">
+  <div class="lbl">直觉例子：$S_n(x)=x^n$ 在 $[0,1)$ 上</div>
+  <p>极限函数是 $S\equiv 0$。</p>
+  <p>对每个固定的 $x\in[0,1)$，$x^n\to 0$：需要 $n > \dfrac{\ln\varepsilon}{\ln x}$（注意 $\ln x<0$，故这是正数）。</p>
+  <p>当 $x$ 越靠近 $1$，$\ln x$ 越靠近 $0$，所需的 $N = \dfrac{\ln\varepsilon}{\ln x}$ 越来越大，趋向 $+\infty$。</p>
+  <p>→ 不存在统一的 $N$，收敛速度越来越慢，<strong>非一致收敛</strong>。</p>
+  <p>而 $S_n(x)=\dfrac{\sin x}{n}$ 在 $\mathbb{R}$ 上：$\left|\dfrac{\sin x}{n}-0\right|\le\dfrac{1}{n}<\varepsilon$ 只需 $n>\dfrac{1}{\varepsilon}$，与 $x$ 无关，<strong>一致收敛</strong>。</p>
+</div>
+
+<!-- B2 -->
+<h2 class="sec" id="B2"><span class="sn">06</span>严格定义：量词的顺序是关键</h2>
+
+<p>一致收敛和点态收敛的定义几乎相同，唯一差别是<strong>量词 $\forall x$ 和 $\exists N$ 的顺序</strong>。</p>
+
+<div class="def">
+  <div class="lbl">定义 · 点态收敛</div>
+  $$\forall\varepsilon>0,\quad\forall x\in D,\quad\exists N=N(\varepsilon,\mathbf{x})>0,\quad\forall n>N:\quad|S_n(x)-S(x)|<\varepsilon$$
+  <p>$N$ 依赖于 $\varepsilon$ 和 $x$，记为 $S_n(x)\xrightarrow{D}S(x)$（逐点收敛）。</p>
+</div>
+
+<div class="def">
+  <div class="lbl">定义 · 一致收敛</div>
+  $$\forall\varepsilon>0,\quad\exists N=N(\mathbf{\varepsilon})>0,\quad\forall x\in D,\quad\forall n>N:\quad|S_n(x)-S(x)|<\varepsilon$$
+  <p>$N$ <strong>只依赖于 $\varepsilon$</strong>，与 $x$ 无关，记为 $S_n(x)\rightrightarrows S(x)$ 在 $D$ 上。</p>
+</div>
+
+<div class="key">
+  <div class="lbl">一眼看出区别：量词顺序</div>
+  <table class="ctbl" style="margin-top:0.5rem">
+    <thead><tr><th></th><th>量词顺序</th><th>$N$ 依赖于</th></tr></thead>
+    <tbody>
+      <tr><td><strong>点态收敛</strong></td><td>$\forall\varepsilon \to \forall x \to \exists N$</td><td>$\varepsilon$ 和 $x$</td></tr>
+      <tr class="hi"><td><strong>一致收敛</strong></td><td>$\forall\varepsilon \to \exists N \to \forall x$</td><td>只依赖 $\varepsilon$</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:0.6rem;">一致收敛 $\Rightarrow$ 点态收敛（更强的条件），反之不成立。</p>
+</div>
+
+<div class="def">
+  <div class="lbl">定义 · 内闭一致收敛</div>
+  <p>若 $\forall[a,b]\subset D$（任意有界闭区间），$S_n(x)\rightrightarrows S(x)$ 在 $[a,b]$ 上成立，则称 $S_n$ 在 $D$ 上<em>内闭一致收敛</em>。</p>
+  <p>内闭一致收敛比一致收敛弱，但在开区间/无穷区间上很有用——很多函数在整个开区间上非一致但内闭一致（如 $x^n$ 在 $[0,1)$ 上）。</p>
+</div>
+
+<div class="warn">
+  <div class="lbl">⚠ 非一致收敛的否定定义</div>
+  <p>$S_n\rightrightarrows S$ 在 $D$ 上**不成立**，等价于：</p>
+  <p>$\exists\varepsilon_0>0$，$\forall N>0$，$\exists n>N$，$\exists x\in D$，使 $|S_n(x)-S(x)|\ge\varepsilon_0$。</p>
+  <p>实际操作：找到一串 $x_n\in D$，使 $|S_n(x_n)-S(x_n)|\not\to 0$。</p>
+</div>
+
+<!-- B3 -->
+<h2 class="sec" id="B3"><span class="sn">07</span>判别法① · 必要条件法（否定一致收敛）</h2>
+
+<p>这组方法用来<strong>证明级数不是一致收敛</strong>的，是逻辑上的"逆否命题"。</p>
+
+<div class="thm">
+  <div class="lbl">定理 · 一致收敛的必要条件</div>
+  <p>若 $\sum_{n=1}^\infty u_n(x)$ 在 $D$ 上<em>一致</em>收敛到 $S(x)$，则：</p>
+  <p><strong>必要条件1</strong>：通项一致趋零，即 $\displaystyle\lim_{n\to\infty}\sup_{x\in D}|u_n(x)|=0$</p>
+  <p><strong>必要条件2</strong>：后 $n$ 项的和一致趋零，即 $\displaystyle\lim_{n\to\infty}\sup_{x\in D}|u_{n+1}(x)+\cdots+u_{2n}(x)|=0$</p>
+</div>
+
+<p>这两个条件的<strong>逆否命题</strong>才是我们用来<strong>否定</strong>一致收敛的工具：</p>
+
+<div class="key">
+  <div class="lbl">实用口诀</div>
+  <p>若 $\sup_{x\in D}|u_n(x)|\not\to 0$，则 $\sum u_n(x)$ 在 $D$ 上<strong>非一致收敛</strong>。</p>
+  <p>若 $\sup_{x\in D}|u_{n+1}+\cdots+u_{2n}|\not\to 0$，则 $\sum u_n(x)$ 在 $D$ 上<strong>非一致收敛</strong>。</p>
+</div>
+
+<div class="pf">
+  <div class="lbl">证明（必要条件1）</div>
+  <p>$u_n(x)=S_n(x)-S_{n-1}(x)$。若 $S_n\rightrightarrows S$，则 $S_{n-1}\rightrightarrows S$，故</p>
+  $$\sup_x|u_n(x)|=\sup_x|S_n(x)-S_{n-1}(x)|\le\sup_x|S_n-S|+\sup_x|S_{n-1}-S|\to 0+0=0\quad\square$$
+</div>
+
+<div class="eg">
+  <div class="lbl">例 · 用必要条件否定一致收敛</div>
+  <p><strong>问</strong>：$S_n(x)=nx(1-x^2)^n$ 在 $[0,1]$ 上是否一致收敛到 $0$？</p>
+  <p><strong>分析</strong>：先求 $\sup_{x\in[0,1]}|S_n(x)|$。令 $S_n'(x)=0$，最大值点约为 $x_n=1/\sqrt{2n+1}$，代入得</p>
+  $$S_n(x_n)=\frac{n}{\sqrt{2n+1}}\left(1-\frac{1}{2n+1}\right)^n\approx\frac{n}{\sqrt{2n+1}}\cdot e^{-1/2}\to+\infty$$
+  <p>$\sup|S_n|\to+\infty\not\to 0$，由必要条件的逆否，<strong>非一致收敛</strong>。</p>
+</div>
+
+<!-- B4 -->
+<h2 class="sec" id="B4"><span class="sn">08</span>判别法② · sup 距离法（充要条件）</h2>
+
+<p>这是最直接判断一致收敛的方法：<strong>计算误差的上确界，看它是否趋零</strong>。</p>
+
+<div class="thm">
+  <div class="lbl">定理 · sup 距离刻画</div>
+  <p>定义两函数之间的"sup距离"：$d(f,g)=\sup_{x\in D}|f(x)-g(x)|$</p>
+  <p>则：$S_n\rightrightarrows S$ 在 $D$ 上 $\Longleftrightarrow$ $\displaystyle\lim_{n\to\infty}d(S_n,S)=\lim_{n\to\infty}\sup_{x\in D}|S_n(x)-S(x)|=0$</p>
+</div>
+
+<p><strong>操作步骤</strong>：</p>
+<div class="steps">
+  <div class="step"><div class="snum">1</div><div>先求极限函数（固定 $x$，求 $S(x)=\lim_{n\to\infty}S_n(x)$）。</div></div>
+  <div class="step"><div class="snum">2</div><div>写出误差函数 $e_n(x)=|S_n(x)-S(x)|$。</div></div>
+  <div class="step"><div class="snum">3</div><div>求 $\sup_{x\in D}e_n(x)$（通常对 $x$ 求导找最大值点）。</div></div>
+  <div class="step"><div class="snum">4</div><div>判断此 sup 是否趋零。趋零则一致收敛，不趋零则非一致收敛。</div></div>
+</div>
+
+<div class="eg">
+  <div class="lbl">例 · 证明 $S_n(x)=\dfrac{x}{1+n^2x^2}$ 在 $\mathbb{R}$ 上一致收敛到 $0$</div>
+  <div class="pf">
+    <div class="lbl">解</div>
+    <p>极限函数：$\forall x$，$S(x)=\lim_{n\to\infty}\dfrac{x}{1+n^2x^2}=0$。</p>
+    <p>求 sup 距离：利用 AM-GM 不等式 $1+n^2x^2\ge 2n|x|$，得</p>
+    $$|S_n(x)-0|=\frac{|x|}{1+n^2x^2}\le\frac{|x|}{2n|x|}=\frac{1}{2n}\quad(x\ne 0)$$
+    <p>当 $x=0$ 时误差为 $0$。所以 $d(S_n,0)\le\dfrac{1}{2n}\to 0$。故<strong>一致收敛</strong>。</p>
+  </div>
+</div>
+
+<div class="eg">
+  <div class="lbl">例 · 证明 $S_n(x)=x^n$ 在 $(0,1)$ 上非一致收敛到 $0$</div>
+  <div class="pf">
+    <div class="lbl">解（两种方法）</div>
+    <p><strong>方法1（sup距离）</strong>：$d(x^n,0)=\sup_{x\in(0,1)}x^n=1\not\to 0$（在 $x$ 接近 $1$ 时 $x^n$ 接近 $1$）。</p>
+    <p><strong>方法2（取点列）</strong>：取 $x_n=\left(\dfrac{1}{2}\right)^{1/n}\in(0,1)$，则 $x_n^n=\dfrac{1}{2}\not\to 0$。</p>
+  </div>
+</div>
+
+<!-- B5 -->
+<h2 class="sec" id="B5"><span class="sn">09</span>判别法③ · Weierstrass M 判别法（最常用！）</h2>
+
+<p>这是最实用的<strong>充分条件</strong>，思路很简单：用一串常数 $M_n$ 一致地压住每一项 $|u_n(x)|$，只要 $\sum M_n$ 收敛，原级数就一致收敛。</p>
+
+<div class="thm">
+  <div class="lbl">定理 · Weierstrass M 判别法</div>
+  <p>若存在非负常数列 $\{M_n\}$ 使得：</p>
+  <p>$(\text{1})$ $|u_n(x)|\le M_n$ 对 $\forall x\in D$，$\forall n$ 成立；</p>
+  <p>$(\text{2})$ $\displaystyle\sum_{n=1}^\infty M_n$ 收敛。</p>
+  <p>则 $\displaystyle\sum_{n=1}^\infty u_n(x)$ 在 $D$ 上<strong>绝对一致收敛</strong>。</p>
+</div>
+
+<div class="pf">
+  <div class="lbl">证明思路</div>
+  <p>由 Cauchy 一致收敛原理，$\forall\varepsilon>0$，对 $\sum M_n$ 用 Cauchy 收敛准则，$\exists N$ 使 $n>m>N$ 时：</p>
+  $$\left|\sum_{k=m+1}^n u_k(x)\right|\le\sum_{k=m+1}^n|u_k(x)|\le\sum_{k=m+1}^n M_k<\varepsilon\quad(\forall x\in D)$$
+  <p>$N$ 不依赖 $x$，故一致收敛。$\square$</p>
+</div>
+
+<div class="warn">
+  <div class="lbl">⚠ 重要陷阱</div>
+  <p><strong>$\sum M_n$ 发散不能说明级数非一致收敛！</strong></p>
+  <p>M 判别法只是充分条件，不是必要条件。如果找不到合适的 $M_n$，说明这个方法失效，需要换其他方法，不能直接下结论。</p>
+</div>
+
+<p>常用技巧：取 $M_n=\max_{x\in D}|u_n(x)|$，然后判断 $\sum M_n$ 是否收敛。</p>
+
+<div class="eg">
+  <div class="lbl">例 · $\sum_{n=1}^\infty \dfrac{\sin(nx)}{n^2}$ 在 $\mathbb{R}$ 上一致收敛</div>
+  <div class="pf">
+    <div class="lbl">解</div>
+    <p>$M_n=\max_{x\in\mathbb{R}}\left|\dfrac{\sin(nx)}{n^2}\right|=\dfrac{1}{n^2}$。</p>
+    <p>$\displaystyle\sum_{n=1}^\infty\frac{1}{n^2}=\frac{\pi^2}{6}<\infty$，由 M 判别法，原级数在 $\mathbb{R}$ 上<strong>一致收敛</strong>。</p>
+  </div>
+</div>
+
+<div class="eg">
+  <div class="lbl">例 · 讨论 $\sum_{n=1}^\infty x^\alpha e^{-nx}$ 在 $(0,+\infty)$ 上的一致收敛性</div>
+  <div class="pf">
+    <div class="lbl">解</div>
+    <p>求 $u_n(x)=x^\alpha e^{-nx}$ 的最大值：令 $u_n'(x)=0$，解得 $x=\alpha/n$，最大值</p>
+    $$M_n=u_n\!\left(\frac{\alpha}{n}\right)=\left(\frac{\alpha}{n}\right)^\alpha e^{-\alpha}=\frac{\alpha^\alpha e^{-\alpha}}{n^\alpha}=\frac{C}{n^\alpha}$$
+    <p>$\sum M_n=C\sum n^{-\alpha}$，这是 $p$-级数：</p>
+    <ul>
+      <li>$\alpha>1$ 时收敛 $\Rightarrow$ 级数在 $(0,+\infty)$ 上<strong>一致收敛</strong>。</li>
+      <li>$\alpha\le 1$ 时发散，M判别法失效，需进一步分析（结论：非一致，但内闭一致收敛）。</li>
+    </ul>
+  </div>
+</div>
+
+<!-- B6 -->
+<h2 class="sec" id="B6"><span class="sn">10</span>判别法④ · Abel–Dirichlet 判别法</h2>
+
+<p>这个方法处理的是乘积形式的级数 $\sum a_n(x)b_n(x)$，与第九章数项级数的 A-D 判别法一一对应，只是把"有界"升级为"<em>一致</em>有界"，"趋零"升级为"<em>一致</em>趋零"。</p>
+
+<div class="thm">
+  <div class="lbl">定理 · Abel–Dirichlet 判别法</div>
+  <p>以下两个条件，满足其一即可保证 $\sum a_n(x)b_n(x)$ 在 $D$ 上一致收敛：</p>
+  <hr style="margin:0.7rem 0;border-color:#e0d0b8">
+  <p><strong>Abel 条件</strong>：</p>
+  <ul>
+    <li>$\sum b_n(x)$ 在 $D$ 上<em>一致收敛</em>；</li>
+    <li>$a_n(x)$ 关于 $n$ 单调（对每个固定 $x$），且<em>一致有界</em>：$\exists M>0$，$|a_n(x)|\le M$ 对 $\forall x\in D$，$\forall n$。</li>
+  </ul>
+  <hr style="margin:0.7rem 0;border-color:#e0d0b8">
+  <p><strong>Dirichlet 条件</strong>：</p>
+  <ul>
+    <li>$\sum b_n(x)$ 的部分和<em>一致有界</em>：$\exists M>0$，$\left|\sum_{k=1}^n b_k(x)\right|\le M$ 对 $\forall x\in D$，$\forall n$；</li>
+    <li>$a_n(x)$ 关于 $n$ 单调，且<em>一致趋零</em>：$\sup_{x\in D}|a_n(x)|\to 0$。</li>
+  </ul>
+</div>
+
+<div class="key">
+  <div class="lbl">记忆口诀</div>
+  <table class="ctbl">
+    <thead><tr><th></th><th>$b_n$ 满足</th><th>$a_n$ 满足</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Abel</strong></td><td>$\sum b_n$ 一致收敛</td><td>单调 + 一致有界</td></tr>
+      <tr><td><strong>Dirichlet</strong></td><td>部分和一致有界</td><td>单调 + 一致趋零</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:0.5rem;">Abel更强（$b_n$一致收敛比部分和有界强），相应地对 $a_n$ 的要求也弱（只需有界，不需趋零）。</p>
+</div>
+
+<div class="eg">
+  <div class="lbl">例 · Abel 判别法</div>
+  <p>设 $\sum_{n=0}^\infty a_n$ 收敛，证明 $\sum_{n=0}^\infty a_n x^n$ 在 $[0,1]$ 上一致收敛。</p>
+  <div class="pf">
+    <div class="lbl">证</div>
+    <p>令 $b_n(x)\equiv a_n$（常数函数），$\sum b_n=\sum a_n$ 收敛（从而一致收敛，因为与 $x$ 无关）。</p>
+    <p>令 $a_n(x)=x^n$：对 $x\in[0,1]$，$x^n$ 关于 $n$ 单调下降；$|x^n|\le 1$（一致有界）。</p>
+    <p>由 Abel 判别法，$\sum a_n x^n$ 在 $[0,1]$ 上一致收敛。$\square$</p>
+  </div>
+</div>
+
+<div class="eg">
+  <div class="lbl">例 · Dirichlet 判别法：三角函数级数</div>
+  <p>设 $a_n$ 单调趋向 $0$，证明 $\sum_{n=1}^\infty a_n\sin(nx)$ 在 $[\delta, 2\pi-\delta]$（$\delta>0$）上一致收敛。</p>
+  <div class="pf">
+    <div class="lbl">证</div>
+    <p>令 $b_n(x)=\sin(nx)$，$A_n(x)=a_n$。</p>
+    <p>$A_n(x)=a_n$ 关于 $n$ 单调，且 $\sup_x|a_n|=|a_n|\to 0$（一致趋零）。</p>
+    <p>估计 $b_n(x)$ 的部分和（利用积化和差公式）：</p>
+    $$\left|\sum_{k=1}^n\sin(kx)\right|=\left|\frac{\cos\frac{x}{2}-\cos(n+\frac{1}{2})x}{2\sin\frac{x}{2}}\right|\le\frac{1}{|\sin\frac{x}{2}|}\le\frac{1}{\sin\frac{\delta}{2}}$$
+    <p>对 $x\in[\delta,2\pi-\delta]$，$|\sin(x/2)|\ge\sin(\delta/2)>0$，所以部分和一致有界。</p>
+    <p>由 Dirichlet 判别法，级数在 $[\delta,2\pi-\delta]$ 上一致收敛。$\square$</p>
+  </div>
+</div>
+
+<div class="memo">
+  <div class="lbl">判别法汇总表</div>
+  <table class="ctbl" style="margin-top:0.4rem">
+    <thead><tr><th>方法</th><th>类型</th><th>用途</th></tr></thead>
+    <tbody>
+      <tr><td>$\sup|u_n|\not\to 0$</td><td>必要条件（逆否）</td><td>证明非一致</td></tr>
+      <tr><td>$\sup|u_{n+1}+\cdots+u_{2n}|\not\to 0$</td><td>必要条件（逆否）</td><td>证明非一致</td></tr>
+      <tr><td>$\lim d(S_n,S)=0$</td><td>充要</td><td>直接计算 sup 误差</td></tr>
+      <tr class="hi"><td>Weierstrass M判别法</td><td>充分（最常用！）</td><td>$|u_n|\le M_n$，$\sum M_n<\infty$</td></tr>
+      <tr><td>Abel判别法</td><td>充分</td><td>$b_n$一致收敛 + $a_n$单调有界</td></tr>
+      <tr><td>Dirichlet判别法</td><td>充分</td><td>部分和有界 + $a_n$单调趋零</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ════════════════════ PART 3 ════════════════════ -->
+<div class="part-banner">
+  <span class="pn">PART 03</span>
+  <span class="pt">一致收敛的性质：三大定理 + Dini定理</span>
+</div>
+
+<!-- C1 -->
+<h2 class="sec" id="C1"><span class="sn">11</span>性质一 · 连续性定理</h2>
+
+<p>这是第一个"交换极限"的结果：一致收敛保证和函数连续。</p>
+
+<div class="thm">
+  <div class="lbl">定理 · 和函数的连续性</div>
+  <p>设 $\displaystyle\sum_{n=1}^\infty u_n(x)$ 满足：</p>
+  <p>$(\text{1})$ 每个 $u_n(x)$ 在区间 $I$ 上连续；</p>
+  <p>$(\text{2})$ $\displaystyle\sum u_n(x)$ 在 $I$ 上一致收敛（若 $I$ 为开区间或无穷区间，可弱化为内闭一致收敛）。</p>
+  <p>则 $S(x)=\displaystyle\sum_{n=1}^\infty u_n(x)$ 在 $I$ 上<strong>连续</strong>，且可以"逐项取极限"：</p>
+  $$\lim_{x\to x_0}\sum_{n=1}^\infty u_n(x)=\sum_{n=1}^\infty\lim_{x\to x_0}u_n(x)$$
+</div>
+
+<div class="pf">
+  <div class="lbl">证明（ε/3 技巧，要熟悉这个思路）</div>
+  <p>任取 $x_0\in I$，$\forall\varepsilon>0$，目标：找 $\delta>0$ 使 $|x-x_0|<\delta$ 时 $|S(x)-S(x_0)|<\varepsilon$。</p>
+  <p>三角不等式：</p>
+  $$|S(x)-S(x_0)|\le\underbrace{|S(x)-S_N(x)|}_{(I)}+\underbrace{|S_N(x)-S_N(x_0)|}_{(II)}+\underbrace{|S_N(x_0)-S(x_0)|}_{(III)}$$
+  <div class="steps">
+    <div class="step"><div class="snum g">I</div><div>由一致收敛，$\exists N$ 使 $\forall n\ge N$，$\forall x\in I$：$|S_n(x)-S(x)|<\varepsilon/3$。固定此 $N$，$(I)<\varepsilon/3$，$(III)<\varepsilon/3$。</div></div>
+    <div class="step"><div class="snum g">II</div><div>$S_N=u_1+\cdots+u_N$ 是有限个连续函数之和，连续！所以 $\exists\delta>0$，当 $|x-x_0|<\delta$ 时 $(II)<\varepsilon/3$。</div></div>
+    <div class="step"><div class="snum g">合</div><div>三者相加：$|S(x)-S(x_0)|<\varepsilon/3+\varepsilon/3+\varepsilon/3=\varepsilon$。$\square$</div></div>
+  </div>
+</div>
+
+<div class="key">
+  <div class="lbl">重要推论：在收敛端点取极限（边界值公式）</div>
+  <p>若 $\sum u_n(x)=S(x)$ 在 $x\in(-1,1)$ 上成立，且级数在 $[0,1]$ 上一致收敛，则 $S(x)$ 在 $x=1$ 处连续，即</p>
+  $$\sum_{n=1}^\infty u_n(1)=S(1)=\lim_{x\to 1^-}S(x)$$
+  <p>这样就把"开区间上的等式"延拓到了端点。</p>
+  <p><strong>经典例子</strong>：$\sum_{n=0}^\infty \dfrac{(-1)^n}{n+1}=\ln 2$（令 $x=1$ 代入 $\ln(1+x)$ 的展开式）。</p>
+</div>
+
+<!-- C2 -->
+<h2 class="sec" id="C2"><span class="sn">12</span>性质二 · 逐项积分定理</h2>
+
+<div class="thm">
+  <div class="lbl">定理 · 逐项积分</div>
+  <p>设 $\displaystyle\sum_{n=1}^\infty u_n(x)$ 满足：</p>
+  <p>$(\text{1})$ 每个 $u_n(x)$ 在 $[a,b]$ 上可积；</p>
+  <p>$(\text{2})$ $\displaystyle\sum u_n(x)$ 在 $[a,b]$ 上一致收敛到 $S(x)$。</p>
+  <p>则 $S(x)$ 在 $[a,b]$ 上可积，且</p>
+  $$\int_a^b S(x)\,dx=\int_a^b\sum_{n=1}^\infty u_n(x)\,dx=\sum_{n=1}^\infty\int_a^b u_n(x)\,dx$$
+  <p>即<strong>积分与求和可以交换顺序（逐项积分）</strong>。</p>
+</div>
+
+<div class="pf">
+  <div class="lbl">证明要点</div>
+  <p>由一致收敛，$\forall\varepsilon>0$，$\exists N$ 使 $n\ge N$ 时 $\forall x\in[a,b]$：$|S_n(x)-S(x)|<\varepsilon$，故</p>
+  $$\left|\int_a^b S_n(x)\,dx-\int_a^b S(x)\,dx\right|\le\int_a^b|S_n(x)-S(x)|\,dx<\varepsilon(b-a)\to 0\quad\square$$
+</div>
+
+<div class="eg">
+  <div class="lbl">应用例：推导 $\ln(1+x)$ 的级数展开</div>
+  <p>已知 $\dfrac{1}{1+t}=\sum_{n=0}^\infty(-1)^n t^n$，对 $t\in[0,x]$（$0<x<1$）一致收敛（Weierstrass M 判别法）。</p>
+  <p>逐项积分从 $0$ 到 $x$：</p>
+  $$\ln(1+x)=\int_0^x\frac{1}{1+t}\,dt=\sum_{n=0}^\infty(-1)^n\int_0^x t^n\,dt=\sum_{n=0}^\infty\frac{(-1)^n x^{n+1}}{n+1}$$
+  <p>此等式在 $x\in(-1,1)$ 成立；又由 Dirichlet 判别法，级数在 $[0,1]$ 上一致收敛，令 $x=1$：</p>
+  $$\ln 2=1-\frac{1}{2}+\frac{1}{3}-\frac{1}{4}+\cdots$$
+</div>
+
+<!-- C3 -->
+<h2 class="sec" id="C3"><span class="sn">13</span>性质三 · 逐项求导定理</h2>
+
+<p>这个定理的条件比前两个稍微复杂，最重要的一点：<strong>一致收敛的条件是加在导数级数上的，不是原级数</strong>。</p>
+
+<div class="thm">
+  <div class="lbl">定理 · 逐项求导</div>
+  <p>设 $\displaystyle\sum_{n=1}^\infty u_n(x)$ 满足：</p>
+  <p>$(\text{1})$ 每个 $u_n(x)$ 在区间 $I$ 上<em>连续可微</em>（有连续的导函数）；</p>
+  <p>$(\text{2})$ $\displaystyle\sum u_n(x)$ 在 $I$ 上某一点收敛；</p>
+  <p>$(\text{3})$ $\displaystyle\sum u_n'(x)$（<strong>导数级数</strong>！）在 $I$ 上一致收敛（开/无穷区间可弱化为内闭一致收敛）。</p>
+  <p>则 $S(x)=\displaystyle\sum u_n(x)$ 在 $I$ 上连续可微，且</p>
+  $$S'(x)=\sum_{n=1}^\infty u_n'(x)$$
+</div>
+
+<div class="warn">
+  <div class="lbl">⚠ 最容易混淆的地方</div>
+  <p>逐项求导定理的关键条件是：$\sum u_n'(x)$（<strong>导数的级数</strong>）一致收敛，而非 $\sum u_n(x)$ 一致收敛。</p>
+  <p>对比：逐项积分定理要求 $\sum u_n$ 本身一致收敛；逐项求导要求 $\sum u_n'$ 一致收敛。</p>
+</div>
+
+<div class="pf">
+  <div class="lbl">证明思路</div>
+  <p>记 $\tilde{S}(x)=\sum u_n'(x)$，由条件 (1)(3) 和连续性定理，$\tilde{S}(x)$ 连续。</p>
+  <p>对任意 $[a,b]\subset I$，由逐项积分定理：</p>
+  $$\int_a^b\tilde{S}(x)\,dx=\sum_{n=1}^\infty\int_a^b u_n'(x)\,dx=\sum_{n=1}^\infty[u_n(b)-u_n(a)]=S(b)-S(a)$$
+  <p>由微积分基本定理（连续函数是其积分的导数），$S'(x)=\tilde{S}(x)$。$\square$</p>
+</div>
+
+<div class="eg">
+  <div class="lbl">应用例：求 $\sum_{n=1}^\infty nx^n$ 的和函数</div>
+  <p>考察 $S(x)=\displaystyle\sum_{n=0}^\infty x^n=\dfrac{1}{1-x}$，$x\in(-1,1)$。</p>
+  <p>导数级数：$\displaystyle\sum_{n=1}^\infty nx^{n-1}$。任取 $|x|<r<1$：$|nx^{n-1}|\le nr^{n-1}$，而 $\sum nr^{n-1}$ 收敛（比值法），由 Weierstrass M 判别法，导数级数在 $[-r,r]$ 上一致收敛（从而内闭一致收敛于 $(-1,1)$）。</p>
+  <p>由逐项求导定理：</p>
+  $$\sum_{n=1}^\infty nx^{n-1}=S'(x)=\frac{1}{(1-x)^2},\quad\text{两边乘 }x:\quad\sum_{n=1}^\infty nx^n=\frac{x}{(1-x)^2}$$
+</div>
+
+<!-- C4 -->
+<h2 class="sec" id="C4"><span class="sn">14</span>Dini 定理</h2>
+
+<p>Dini 定理给出了一个从<strong>点态收敛推出一致收敛</strong>的充分条件，条件比较特殊但很实用。</p>
+
+<div class="thm">
+  <div class="lbl">定理 · Dini</div>
+  <p>设 $\displaystyle\sum_{n=1}^\infty u_n(x)$ 在有界闭区间 $[a,b]$ 上满足：</p>
+  <p>$(\text{1})$ 每个 $u_n(x)$ 在 $[a,b]$ 上连续；</p>
+  <p>$(\text{2})$ 对每个固定的 $x$，$u_n(x)\ge 0$（或 $\le 0$，即保号）；</p>
+  <p>$(\text{3})$ 和函数 $S(x)=\displaystyle\sum u_n(x)$ 在 $[a,b]$ 上连续。</p>
+  <p>则 $\displaystyle\sum u_n(x)$ 在 $[a,b]$ 上<strong>一致收敛</strong>。</p>
+</div>
+
+<div class="key">
+  <div class="lbl">四个条件缺一不可——各自的反例</div>
+  <table class="ctbl">
+    <thead><tr><th>去掉哪个条件</th><th>反例</th><th>结果</th></tr></thead>
+    <tbody>
+      <tr><td>有界闭区间</td><td>$x^n\to 0$ 在 $[0,1)$ 上（开区间）</td><td>非一致收敛</td></tr>
+      <tr><td>各项连续性</td><td>可构造分段函数反例</td><td>非一致收敛</td></tr>
+      <tr><td>保号性</td><td>项可正可负时相消，掩盖慢收敛</td><td>非一致收敛</td></tr>
+      <tr><td>极限函数连续</td><td>$f_n(x)=x^n$ 极限在 $(-1,1]$ 不连续</td><td>非一致收敛</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="pf">
+  <div class="lbl">证明思路（有界闭区间上的紧性论证）</div>
+  <p>记余项 $R_n(x)=S(x)-S_n(x)=\sum_{k=n+1}^\infty u_k(x)$，由保号性 $R_n(x)\ge 0$ 且关于 $n$ 单调减。</p>
+  <p>由连续性定理，$R_n(x)$ 连续。$R_n(x)\to 0$ 逐点（点态收敛），且 $R_n$ 关于 $n$ 单调减。</p>
+  <p>反证：若非一致收敛，则 $\exists\varepsilon_0>0$，$\exists x_{n_k}\in[a,b]$：$R_{n_k}(x_{n_k})\ge\varepsilon_0$。</p>
+  <p>由 Bolzano–Weierstrass，$\{x_{n_k}\}$ 有收敛子列 $x_{n_{k_j}}\to x_0\in[a,b]$。</p>
+  <p>由单调性：$\forall m$，当 $j$ 充分大时 $n_{k_j}\ge m$，故 $R_m(x_{n_{k_j}})\ge R_{n_{k_j}}(x_{n_{k_j}})\ge\varepsilon_0$。</p>
+  <p>令 $j\to\infty$：$R_m(x_0)\ge\varepsilon_0$（$R_m$ 连续）。这对所有 $m$ 成立，与 $R_m(x_0)\to 0$ 矛盾。$\square$</p>
+</div>
+
+<!-- ════════════════════ PART 4 ════════════════════ -->
+<div class="part-banner">
+  <span class="pn">PART 04</span>
+  <span class="pt">幂级数：最重要的函数项级数</span>
+</div>
+
+<!-- D1 -->
+<h2 class="sec" id="D1"><span class="sn">15</span>什么是幂级数？收敛域是什么形状？</h2>
+
+<div class="def">
+  <div class="lbl">定义 · 幂级数</div>
+  <p>形如 $\displaystyle\sum_{n=0}^\infty a_n x^n=a_0+a_1 x+a_2 x^2+\cdots$ 的函数项级数，其中 $\{a_n\}$ 是实数序列（称为<em>系数</em>）。</p>
+  <p>更一般地，$\displaystyle\sum_{n=0}^\infty a_n(x-x_0)^n$ 是以 $x_0$ 为展开中心的幂级数，令 $y=x-x_0$ 可平移到原点。</p>
+</div>
+
+<p>幂级数的收敛域有一个优美的结构——一定是一个关于展开中心<strong>对称的区间</strong>。</p>
+
+<div class="thm">
+  <div class="lbl">Abel 第一定理（收敛域必为区间）</div>
+  <p>对幂级数 $\sum a_n x^n$：</p>
+  <p>$(\text{1})$ 若在 $x=x_1\ne 0$ 处收敛，则 $\forall|x|<|x_1|$，级数<strong>绝对收敛</strong>；</p>
+  <p>$(\text{2})$ 若在 $x=x_2$ 处发散，则 $\forall|x|>|x_2|$，级数<strong>发散</strong>。</p>
+</div>
+
+<div class="pf">
+  <div class="lbl">证明 (1)（初等方法，会考）</div>
+  <p>$\sum a_n x_1^n$ 收敛 $\Rightarrow$ $a_n x_1^n\to 0$ $\Rightarrow$ $\{a_n x_1^n\}$ 有界，即 $\exists M>0$：$|a_n x_1^n|\le M$。</p>
+  <p>设 $|x|<|x_1|$，令 $q=|x/x_1|<1$，则</p>
+  $$|a_n x^n|=\left|a_n x_1^n\cdot\frac{x^n}{x_1^n}\right|\le M q^n$$
+  <p>$\sum M q^n=\dfrac{M}{1-q}<\infty$（几何级数），由比较判别法，$\sum|a_n x^n|$ 收敛。$\square$</p>
+</div>
+
+<p>由 Abel 第一定理，存在唯一的 $R\in[0,+\infty]$ 使得：</p>
+
+<div class="key">
+  <div class="lbl">收敛域的四种形式（$R$ 为收敛半径）</div>
+  <table class="ctbl">
+    <thead><tr><th>形式</th><th>端点情况</th><th>$R$ 特殊值</th></tr></thead>
+    <tbody>
+      <tr><td>$(-R,\,R)$</td><td>两端点发散</td><td rowspan="4" style="vertical-align:middle">$R=0$：仅 $\{0\}$<br>$R=+\infty$：$\mathbb{R}$</td></tr>
+      <tr><td>$[-R,\,R]$</td><td>两端点收敛</td></tr>
+      <tr><td>$[-R,\,R)$</td><td>左收敛右发散</td></tr>
+      <tr><td>$(-R,\,R]$</td><td>左发散右收敛</td></tr>
+    </tbody>
+  </table>
+  <p style="margin-top:0.5rem;"><strong>端点必须单独代入判断！</strong>收敛半径公式只给出开区间部分。</p>
+</div>
+
+<!-- D2 -->
+<h2 class="sec" id="D2"><span class="sn">16</span>Cauchy–Hadamard 公式（根值法求 $R$）</h2>
+
+<div class="thm">
+  <div class="lbl">定理 · Cauchy–Hadamard 公式</div>
+  <p>令 $A=\displaystyle\limsup_{n\to\infty}\sqrt[n]{|a_n|}$，则收敛半径</p>
+  $$R=\begin{cases}1/A & 0<A<+\infty\\ +\infty & A=0\\ 0 & A=+\infty\end{cases}$$
+  <p><strong>推导</strong>：对 $|a_n x^n|$ 用 Cauchy 根值判别法，$\limsup\sqrt[n]{|a_n x^n|}=A|x|$，$<1 \Leftrightarrow |x|<1/A=R$。</p>
+</div>
+
+<div class="eg">
+  <div class="lbl">例题 1</div>
+  <p>求 $\sum n x^n$ 的收敛半径。</p>
+  <p>$a_n=n$，$A=\lim\sqrt[n]{n}=1$（因为 $n^{1/n}\to 1$），所以 $R=1/1=1$。</p>
+  <p>端点 $x=\pm 1$：$\sum n(\pm 1)^n$ 均发散（通项不趋零）。收敛域：$(-1,1)$。</p>
+</div>
+
+<div class="eg">
+  <div class="lbl">例题 2</div>
+  <p>求 $\sum_{n=1}^\infty \dfrac{(2+(-1)^n)^n}{n}\left(x-\dfrac{1}{2}\right)^n$ 的收敛半径和收敛域。</p>
+  <div class="pf">
+    <div class="lbl">解</div>
+    <p>令 $y=x-1/2$，求 $\sum \dfrac{(2+(-1)^n)^n}{n}y^n$ 的收敛半径。</p>
+    <p>$a_n=\dfrac{(2+(-1)^n)^n}{n}$，$\sqrt[n]{|a_n|}=\dfrac{2+(-1)^n}{\sqrt[n]{n}}$。</p>
+    <p>$2+(-1)^n$ 在 $1$（$n$奇）和 $3$（$n$偶）之间交替；$\sqrt[n]{n}\to 1$。</p>
+    <p>故 $A=\limsup\sqrt[n]{|a_n|}=3$，$R=1/3$。</p>
+    <p><strong>端点讨论</strong>（$y=\pm 1/3$）：</p>
+    <ul>
+      <li>$n$ 偶时：$a_n(1/3)^n=\dfrac{3^n}{n}\cdot\dfrac{1}{3^n}=\dfrac{1}{n}$，这是调和级数，<strong>发散</strong>。</li>
+    </ul>
+    <p>两个端点均因偶数项出现 $1/n$ 而发散。</p>
+    <p>收敛域：$|y|<1/3$，即 $\left|x-\dfrac{1}{2}\right|<\dfrac{1}{3}$，即 $x\in\left(\dfrac{1}{6},\,\dfrac{5}{6}\right)$。</p>
+  </div>
+</div>
+
+<!-- D3 -->
+<h2 class="sec" id="D3"><span class="sn">17</span>比值法 & 缺项幂级数</h2>
+
+<div class="thm">
+  <div class="lbl">定理 · 比值法求收敛半径</div>
+  <p>若 $\displaystyle\lim_{n\to\infty}\frac{|a_n|}{|a_{n+1}|}$ 存在（或为 $+\infty$），则 $R=\displaystyle\lim_{n\to\infty}\frac{|a_n|}{|a_{n+1}|}$。</p>
+</div>
+
+<div class="warn">
+  <div class="lbl">⚠ 极易出错：分子分母顺序</div>
+  <p>数项比值判别法（第九章）：$\lim\dfrac{u_{n+1}}{u_n}<1$ 收敛（"后除以前"）。</p>
+  <p>求收敛半径：$R=\lim\dfrac{|a_n|}{|a_{n+1}|}$（"前除以后"，顺序反过来！）。</p>
+  <p>本质：$\lim\dfrac{|a_{n+1}x^{n+1}|}{|a_n x^n|}=|x|\cdot\dfrac{|a_{n+1}|}{|a_n|}<1\Leftrightarrow|x|<\dfrac{|a_n|}{|a_{n+1}|}=R$。</p>
+</div>
+
+<div class="eg">
+  <div class="lbl">例 · $\sum\dfrac{n^n}{n!}x^n$ 的收敛半径（含 Raabe 判端点）</div>
+  <div class="pf">
+    <div class="lbl">解</div>
+    <p>$a_n=n^n/n!$，比值法：</p>
+    $$R=\lim\frac{a_n}{a_{n+1}}=\lim\frac{n^n/n!}{(n+1)^{n+1}/(n+1)!}=\lim\frac{n^n\cdot(n+1)}{(n+1)^{n+1}}=\lim\frac{n^n}{(n+1)^n}=\lim\frac{1}{(1+1/n)^n}=\frac{1}{e}$$
+    <p><strong>端点 $x=-1/e$</strong>：项为 $\dfrac{n^n}{n!}(-1/e)^n=(-1)^n\dfrac{n^n}{n!e^n}$，相邻项绝对值比 $\dfrac{(n+1)^{n+1}/[(n+1)!e^{n+1}]}{n^n/(n!e^n)}=\dfrac{(1+1/n)^n}{e}<1$，满足 Leibniz 判别法（交错递减趋零），<strong>收敛</strong>。</p>
+    <p><strong>端点 $x=+1/e$</strong>：令 $b_n=\dfrac{n^n}{n!e^n}$，用 Raabe 判别法：</p>
+    $$n\!\left(\frac{b_n}{b_{n+1}}-1\right)=n\!\left(\frac{e}{(1+1/n)^n}-1\right)$$
+    <p>展开：$(1+1/n)^n=e^{n\ln(1+1/n)}=e^{1-\frac{1}{2n}+O(n^{-2})}$，故 $\dfrac{e}{(1+1/n)^n}=e^{\frac{1}{2n}+O(n^{-2})}\approx 1+\dfrac{1}{2n}$，</p>
+    $$n\!\left(\frac{e}{(1+1/n)^n}-1\right)\to\frac{1}{2}<1\Rightarrow\text{发散}$$
+    <p>收敛域：$[-1/e,\,1/e)$。</p>
+  </div>
+</div>
+
+<div class="subsec g">缺项幂级数的处理</div>
+
+<p>如果幂级数缺少某些次方的项（比如只有偶次项 $\sum a_n x^{2n}$，或只有奇次项），<strong>不能直接套比值/根值公式</strong>，因为公式中默认每个次方都有系数。</p>
+
+<div class="key">
+  <div class="lbl">两种方法</div>
+  <p><strong>方法1：换元</strong>（推荐）。令 $t=x^2$（或 $t=x^k$），化为关于 $t$ 的不缺项幂级数，求 $t$ 的收敛域后换回 $x$。</p>
+  <p><strong>方法2：直接用 Cauchy–Hadamard</strong>。视 $u_n(x)=a_n x^{2n}$ 为通项，$\limsup\sqrt[n]{|a_n x^{2n}|}=\limsup\sqrt[n]{|a_n|}\cdot|x|^2=A|x|^2$，令 $<1$ 得 $|x|^2<1/A$，即 $R=1/\sqrt{A}$。</p>
+</div>
+
+<div class="eg">
+  <div class="lbl">例 · $\sum_{n=0}^\infty\dfrac{x^{2n+1}}{4^n(n+1)^2}$ 的收敛域</div>
+  <div class="pf">
+    <div class="lbl">解（换元法）</div>
+    <p>提出 $x$，令 $t=x^2$：$\displaystyle\sum\frac{x^{2n+1}}{4^n(n+1)^2}=x\sum_{n=0}^\infty\frac{t^n}{4^n(n+1)^2}$。</p>
+    <p>对 $\sum\dfrac{t^n}{4^n(n+1)^2}$ 用比值法：$R_t=\lim\dfrac{1/[4^n(n+1)^2]}{1/[4^{n+1}(n+2)^2]}=\lim\dfrac{4(n+2)^2}{(n+1)^2}=4$。</p>
+    <p>端点 $t=4$：$\sum\dfrac{4^n}{4^n(n+1)^2}=\sum\dfrac{1}{(n+1)^2}$ 收敛；端点 $t=-4$ 时 $x^2=-4$ 无实数解，不考虑。</p>
+    <p>故 $t=x^2\in(-4,4]$，即 $x^2\le 4$，即 $x\in[-2,2]$（含 $x=\pm 2$，此时 $t=4$）。收敛域：$[-2,2]$。</p>
+  </div>
+</div>
+
+<div class="key">
+  <div class="lbl">求收敛域的标准流程（考试必须掌握）</div>
+  <div class="steps">
+    <div class="step"><div class="snum">1</div><div>判断是否缺项。缺项先换元或直接用 C-H。</div></div>
+    <div class="step"><div class="snum">2</div><div>用 Cauchy–Hadamard 或比值法求收敛半径 $R$。</div></div>
+    <div class="step"><div class="snum">3</div><div>写出开收敛区间 $|x-x_0|<R$（不含端点）。</div></div>
+    <div class="step"><div class="snum">4</div><div>将 $x=x_0\pm R$ 代入，化为数项级数，用已知方法（Leibniz、$p$-级数、比较等）判断是否收敛。</div></div>
+    <div class="step"><div class="snum">5</div><div>综合写出收敛域（四种区间形式之一）。</div></div>
+  </div>
+</div>
+
+<!-- D4 -->
+<h2 class="sec" id="D4"><span class="sn">18</span>Abel 第二定理与边界值公式</h2>
+
+<div class="thm">
+  <div class="lbl">定理 · Abel 第二定理</div>
+  <p>若 $\sum a_n x^n$ 在 $x=\xi\ne 0$ 处收敛，则它在 $[0,\xi]$（$\xi>0$）或 $[\xi,0]$（$\xi<0$）上<strong>一致收敛</strong>。</p>
+</div>
+
+<div class="pf">
+  <div class="lbl">证明</div>
+  <p>写 $\sum a_n x^n=\sum(a_n\xi^n)\cdot(x/\xi)^n$，令 $b_n=a_n\xi^n$，$\varphi_n(x)=(x/\xi)^n$。</p>
+  <p>$\sum b_n=\sum a_n\xi^n$ 收敛（一致收敛，因与 $x$ 无关）；$\varphi_n(x)=(x/\xi)^n$ 在 $[0,\xi]$ 上单调（关于 $n$）且 $|\varphi_n|\le 1$（一致有界）。</p>
+  <p>由 Abel 判别法，$\sum b_n\varphi_n(x)=\sum a_n x^n$ 在 $[0,\xi]$ 上一致收敛。$\square$</p>
+</div>
+
+<div class="thm">
+  <div class="lbl">推论 · 内闭一致收敛与连续性</div>
+  <p>设 $S(x)=\sum a_n x^n$ 的收敛域为 $I$，则：级数在 $I$ 上<strong>内闭一致收敛</strong>，$S(x)$ 在 $I$ 上<strong>连续</strong>。</p>
+</div>
+
+<div class="key">
+  <div class="lbl">核心应用：边界值公式</div>
+  <p>若 $\sum a_n x^n=f(x)$ 在 $(-R,R)$ 上成立，且级数在 $x=R$ 处收敛，则</p>
+  $$\sum_{n=0}^\infty a_n R^n = \lim_{x\to R^-}f(x)$$
+  <p>实际操作：先在收敛区间内（不含端点）建立等式，然后在端点取极限，利用连续性（Abel 第二定理保证）得到端点的级数值。</p>
+</div>
+
+<!-- D5 -->
+<h2 class="sec" id="D5"><span class="sn">19</span>幂级数的逐项积分与逐项求导</h2>
+
+<p>幂级数是函数项级数的"明星"：它可以在收敛区间内<strong>任意次</strong>逐项求导，也可以逐项积分，而且收敛半径不变。</p>
+
+<div class="thm">
+  <div class="lbl">定理 · 逐项积分</div>
+  <p>$S(x)=\sum_{n=0}^\infty a_n x^n$ 收敛域为 $I$，则 $\forall x\in I$：</p>
+  $$\int_0^x S(t)\,dt=\sum_{n=0}^\infty\frac{a_n}{n+1}x^{n+1}$$
+  <p>积分后：收敛半径<strong>不变</strong>，收敛域<strong>不缩小</strong>（端点可能从发散变为收敛）。</p>
+</div>
+
+<div class="thm">
+  <div class="lbl">定理 · 逐项求导</div>
+  <p>$S(x)=\sum_{n=0}^\infty a_n x^n$ 收敛半径为 $R$，则 $\forall x\in(-R,R)$：</p>
+  $$S'(x)=\sum_{n=1}^\infty na_n x^{n-1}$$
+  <p>求导后：收敛半径<strong>不变</strong>，收敛域<strong>不扩大</strong>（端点可能从收敛变为发散）。</p>
+  <p>$S(x)$ 在 $(-R,R)$ 上<strong>无穷次可微</strong>，系数 $a_n=\dfrac{S^{(n)}(0)}{n!}$。</p>
+</div>
+
+<div class="pf">
+  <div class="lbl">收敛半径不变的原因</div>
+  <p>积分后系数 $a_n/(n+1)$：$\limsup\sqrt[n+1]{|a_n|/(n+1)}=\limsup\sqrt[n]{|a_n|}\cdot\underbrace{(n+1)^{-1/(n+1)}}_{\to 1}=A$，故 $R$ 不变。</p>
+  <p>求导后系数 $na_n$：$\limsup\sqrt[n-1]{n|a_n|}=\limsup\sqrt[n]{|a_n|}\cdot n^{1/(n-1)}\to A$，故 $R$ 不变。$\square$</p>
+</div>
+
+<table class="ctbl">
+  <thead><tr><th>操作</th><th>收敛半径</th><th>端点</th><th>收敛域</th></tr></thead>
+  <tbody>
+    <tr><td>逐项积分</td><td class="gr">不变</td><td>不变坏（可改善）</td><td class="gr">不缩小</td></tr>
+    <tr><td>逐项求导</td><td class="gr">不变</td><td>不改善（可变坏）</td><td style="color:var(--orange);font-weight:600">不扩大</td></tr>
+  </tbody>
+</table>
+
+<!-- D6 -->
+<h2 class="sec" id="D6"><span class="sn">20</span>求和函数的方法与例题</h2>
+
+<p>核心策略：从 $\displaystyle\sum_{n=0}^\infty x^n=\dfrac{1}{1-x}$ 出发，通过逐项积分/求导和变量代换，建立各种函数的级数表达。</p>
+
+<div class="subsec g">策略1：数项级数求和（借道幂级数）</div>
+
+<div class="eg">
+  <div class="lbl">例 · 求 $\displaystyle\sum_{n=1}^\infty\frac{2n+1}{3^n}$</div>
+  <div class="pf">
+    <div class="lbl">解（完整过程）</div>
+    <p><strong>Step 1</strong>：拆开，$\displaystyle\sum_{n=1}^\infty\frac{2n+1}{3^n}=2\sum_{n=1}^\infty\frac{n}{3^n}+\sum_{n=1}^\infty\frac{1}{3^n}$。</p>
+    <p><strong>Step 2</strong>：用已知结果。</p>
+    <p>从 $\sum_{n=0}^\infty x^n=\dfrac{1}{1-x}$ 逐项求导：$\sum_{n=1}^\infty nx^{n-1}=\dfrac{1}{(1-x)^2}$，两边乘 $x$：$\sum_{n=1}^\infty nx^n=\dfrac{x}{(1-x)^2}$，$|x|<1$。</p>
+    <p><strong>Step 3</strong>：取 $x=1/3$：</p>
+    $$\sum_{n=1}^\infty\frac{n}{3^n}=\frac{1/3}{(2/3)^2}=\frac{1/3}{4/9}=\frac{3}{4}$$
+    <p>$\sum_{n=1}^\infty\dfrac{1}{3^n}=\dfrac{1/3}{1-1/3}=\dfrac{1}{2}$。</p>
+    <p><strong>结果</strong>：$2\cdot\dfrac{3}{4}+\dfrac{1}{2}=\dfrac{3}{2}+\dfrac{1}{2}=\boxed{2}$。</p>
+  </div>
+</div>
+
+<div class="subsec g">策略2：ODE 法（建立微分方程）</div>
+
+<div class="eg">
+  <div class="lbl">例 · 求 $S(x)=\displaystyle\sum_{n=0}^\infty\dfrac{x^n}{n!}$ 的和函数</div>
+  <div class="pf">
+    <div class="lbl">解（经典推导 $e^x$）</div>
+    <p><strong>Step 1</strong>：求收敛域。比值法 $R=\lim\dfrac{1/n!}{1/(n+1)!}=n+1\to+\infty$，故 $R=+\infty$，收敛域 $\mathbb{R}$。</p>
+    <p><strong>Step 2</strong>：对 $S(x)$ 逐项求导：</p>
+    $$S'(x)=\sum_{n=1}^\infty\frac{x^{n-1}}{(n-1)!}=\sum_{m=0}^\infty\frac{x^m}{m!}=S(x)$$
+    <p><strong>Step 3</strong>：解微分方程 $S'=S$，通解 $S(x)=Ce^x$。</p>
+    <p><strong>Step 4</strong>：代入初值 $S(0)=\dfrac{0^0}{0!}=1$，故 $C=1$。</p>
+    $$\boxed{e^x=\sum_{n=0}^\infty\frac{x^n}{n!}=1+x+\frac{x^2}{2!}+\frac{x^3}{3!}+\cdots,\quad x\in\mathbb{R}}$$
+  </div>
+</div>
+
+<div class="subsec g">策略3：拆项降阶法（$n^k/n!$ 型系数）</div>
+
+<div class="eg">
+  <div class="lbl">例 · 求 $\displaystyle\sum_{n=0}^\infty\dfrac{n^2+1}{2^n\cdot n!}x^n$ 的和函数</div>
+  <div class="pf">
+    <div class="lbl">解</div>
+    <p>令 $t=x/2$，原式 $=\displaystyle\sum_{n=0}^\infty\dfrac{n^2+1}{n!}t^n$。</p>
+    <p>拆系数：$n^2+1=n(n-1)+n+1$：</p>
+    $$\sum\frac{n(n-1)}{n!}t^n+\sum\frac{n}{n!}t^n+\sum\frac{1}{n!}t^n=t^2\sum\frac{t^{n-2}}{(n-2)!}+t\sum\frac{t^{n-1}}{(n-1)!}+e^t=t^2 e^t+te^t+e^t$$
+    $$S(x)=(t^2+t+1)e^t\Big|_{t=x/2}=\left(\frac{x^2}{4}+\frac{x}{2}+1\right)e^{x/2},\quad x\in\mathbb{R}$$
+  </div>
+</div>
+
+<div class="memo">
+  <div class="lbl">拆项降阶公式</div>
+  <p>$n=n$ &nbsp;&nbsp; $n^2=n(n-1)+n$ &nbsp;&nbsp; $n^3=n(n-1)(n-2)+3n(n-1)+n$</p>
+  <p>目标：让分子出现形如 $n(n-1)\cdots(n-k+1)$ 的因子，与 $n!$ 约分得到 $(n-k)!$，换下标后归结为 $\sum t^m/m!=e^t$。</p>
+</div>
+
+<!-- D7 -->
+<h2 class="sec" id="D7"><span class="sn">21</span>Cauchy 乘积定理</h2>
+
+<div class="def">
+  <div class="lbl">Cauchy 乘积</div>
+  <p>两个级数 $\sum a_n$ 和 $\sum b_n$ 的 <strong>Cauchy 乘积</strong>是级数 $\sum c_n$，其中 $c_n=\displaystyle\sum_{k=0}^n a_k b_{n-k}$（"卷积"）。</p>
+  <p>直觉：就像多项式乘法——$(\sum a_n x^n)(\sum b_n x^n)=\sum c_n x^n$，把 $x=1$ 代入。</p>
+</div>
+
+<div class="thm">
+  <div class="lbl">定理 · Cauchy 乘积（Mertens 推广版）</div>
+  <p>若 $\displaystyle\sum_{n=0}^\infty a_n$、$\displaystyle\sum_{n=0}^\infty b_n$ 以及它们的 Cauchy 乘积 $\displaystyle\sum_{n=0}^\infty c_n$ <strong>三个级数都收敛</strong>，则</p>
+  $$\sum_{n=0}^\infty c_n=\left(\sum_{n=0}^\infty a_n\right)\cdot\left(\sum_{n=0}^\infty b_n\right)$$
+</div>
+
+<div class="pf">
+  <div class="lbl">证明（优雅的利用幂级数连续性）</div>
+  <p>设 $A(x)=\sum a_n x^n$，$B(x)=\sum b_n x^n$，$C(x)=\sum c_n x^n$。三个级数在 $x=1$ 收敛，故在 $[0,1)$ 上绝对收敛。</p>
+  <p>绝对收敛时可任意重排，所以 $C(x)=A(x)B(x)$ 在 $x\in[0,1)$ 上成立。</p>
+  <p>由 Abel 第二定理，$A$、$B$、$C$ 的和函数在 $[0,1]$ 上连续，令 $x\to 1^-$：</p>
+  $$\sum c_n=C(1)=\lim_{x\to 1^-}A(x)B(x)=A(1)B(1)=\sum a_n\cdot\sum b_n\quad\square$$
+</div>
+
+<!-- ════════════════════ PART 5 ════════════════════ -->
+<div class="part-banner">
+  <span class="pn">PART 05</span>
+  <span class="pt">函数的幂级数展开与 Euler 公式</span>
+</div>
+
+<!-- E1 -->
+<h2 class="sec" id="E1"><span class="sn">22</span>Taylor 展开：把函数"变"成幂级数</h2>
+
+<p>幂级数有极好的性质（无穷次可微、逐项积分/求导）。反过来，给定一个函数，能否把它表示成幂级数的形式？这就是<strong>Taylor 展开</strong>。</p>
+
+<div class="def">
+  <div class="lbl">定义 · Taylor 级数 & Maclaurin 级数</div>
+  <p>若 $f(x)$ 在 $x_0$ 的邻域内任意次可微，则称</p>
+  $$T(x)=\sum_{n=0}^\infty\frac{f^{(n)}(x_0)}{n!}(x-x_0)^n$$
+  <p>为 $f$ 在 $x_0$ 处的 <strong>Taylor 级数</strong>。$x_0=0$ 时特称 <strong>Maclaurin 级数</strong>（麦克劳林级数）。</p>
+</div>
+
+<div class="warn">
+  <div class="lbl">⚠ 重要！Taylor 级数 ≠ 函数本身</div>
+  <p>存在函数，Taylor 级数处处为零，但函数本身不是零函数（如 $f(x)=e^{-1/x^2}$，$x\ne 0$）。</p>
+  <p>$f(x)=T(x)$ 成立的充要条件是：Lagrange 余项 $R_n(x)\to 0$，其中</p>
+  $$R_n(x)=\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-x_0)^{n+1}\quad(\xi\text{ 在 }x_0\text{ 和 }x\text{ 之间})$$
+</div>
+
+<div class="thm">
+  <div class="lbl">定理 · 展开式的唯一性（间接法的理论基础！）</div>
+  <p>若 $f(x)=\displaystyle\sum_{n=0}^\infty a_n(x-x_0)^n$ 在某邻域内成立，则必有 $a_n=\dfrac{f^{(n)}(x_0)}{n!}$，展开式<strong>唯一</strong>。</p>
+  <p><strong>重要推论</strong>：不管用什么方法（代换/积分/求导）得到的幂级数，只要在某邻域内等于 $f(x)$，它就是 $f$ 的 Taylor 展开式。所以我们可以用"间接法"绕过直接计算高阶导数。</p>
+</div>
+
+<!-- E2 -->
+<h2 class="sec" id="E2"><span class="sn">23</span>六大基本展开式（必须背熟！）</h2>
+
+<p>这六个公式是一切展开的出发点，必须熟记，包括<strong>收敛域</strong>。</p>
+
+<div class="cards">
+  <div class="card">
+    <div class="card-title">① 指数函数</div>
+    $$e^x=\sum_{n=0}^\infty\frac{x^n}{n!}=1+x+\frac{x^2}{2!}+\frac{x^3}{3!}+\cdots$$
+    <div class="card-sub">收敛域：$\mathbb{R}$（余项 $|R_n|\le\frac{e^{|x|}|x|^{n+1}}{(n+1)!}\to 0$）</div>
+  </div>
+  <div class="card">
+    <div class="card-title">② 正弦函数</div>
+    $$\sin x=\sum_{n=0}^\infty\frac{(-1)^n x^{2n+1}}{(2n+1)!}=x-\frac{x^3}{6}+\frac{x^5}{120}-\cdots$$
+    <div class="card-sub">收敛域：$\mathbb{R}$（$|f^{(n+1)}|\le 1$，余项趋零）</div>
+  </div>
+  <div class="card">
+    <div class="card-title">③ 余弦函数</div>
+    $$\cos x=\sum_{n=0}^\infty\frac{(-1)^n x^{2n}}{(2n)!}=1-\frac{x^2}{2}+\frac{x^4}{24}-\cdots$$
+    <div class="card-sub">收敛域：$\mathbb{R}$（$\sin x$ 对 $x$ 求导即得）</div>
+  </div>
+  <div class="card">
+    <div class="card-title">④ 自然对数</div>
+    $$\ln(1+x)=\sum_{n=0}^\infty\frac{(-1)^n x^{n+1}}{n+1}=x-\frac{x^2}{2}+\frac{x^3}{3}-\cdots$$
+    <div class="card-sub">收敛域：$(-1,1]$（$x=1$ 时为 $\ln 2$）</div>
+  </div>
+  <div class="card">
+    <div class="card-title">⑤ 反正切函数</div>
+    $$\arctan x=\sum_{n=0}^\infty\frac{(-1)^n x^{2n+1}}{2n+1}=x-\frac{x^3}{3}+\frac{x^5}{5}-\cdots$$
+    <div class="card-sub">收敛域：$[-1,1]$（$x=1$ 时为 $\pi/4$）</div>
+  </div>
+  <div class="card">
+    <div class="card-title">⑥ 几何级数（最基础！）</div>
+    $$\frac{1}{1-x}=\sum_{n=0}^\infty x^n=1+x+x^2+x^3+\cdots$$
+    <div class="card-sub">收敛域：$(-1,1)$，这是一切的出发点</div>
+  </div>
+</div>
+
+<div class="memo">
+  <div class="lbl">附：二项式展开（广义）</div>
+  $$(1+x)^\alpha=\sum_{n=0}^\infty\binom{\alpha}{n}x^n,\quad\binom{\alpha}{n}=\frac{\alpha(\alpha-1)\cdots(\alpha-n+1)}{n!},\quad|x|<1$$
+  <p>特别地：$\alpha=-1$ 得 $\dfrac{1}{1+x}=\sum(-1)^n x^n$；$\alpha=1/2$ 得 $\sqrt{1+x}$ 的展开。</p>
+</div>
+
+<!-- E3 -->
+<h2 class="sec" id="E3"><span class="sn">24</span>间接展开法（四种技巧）</h2>
+
+<p>间接法核心思路：<strong>把要展开的函数通过代换/求导/积分/分拆，变形成基本展开式的形式</strong>。由唯一性定理，结果就是所求的 Taylor 展开。</p>
+
+<div class="subsec g">技巧1：变量代换</div>
+
+<div class="eg">
+  <div class="lbl">例 · 展开 $e^{-x^2}$，$\dfrac{1}{1+x^2}$，$\cos^2 x$</div>
+  <p>$e^{-x^2}$：在 $e^x$ 的展开中令 $x\to-x^2$：</p>
+  $$e^{-x^2}=\sum_{n=0}^\infty\frac{(-x^2)^n}{n!}=\sum_{n=0}^\infty\frac{(-1)^n x^{2n}}{n!},\quad x\in\mathbb{R}$$
+  <p>$\dfrac{1}{1+x^2}$：在 $\dfrac{1}{1-x}=\sum x^n$ 中令 $x\to-x^2$：</p>
+  $$\frac{1}{1+x^2}=\sum_{n=0}^\infty(-1)^n x^{2n},\quad|x|<1$$
+  <p>$\cos^2 x$：用半角公式 $\cos^2 x=\dfrac{1+\cos 2x}{2}$，再展开 $\cos 2x$：</p>
+  $$\cos^2 x=\frac{1}{2}+\frac{1}{2}\sum_{n=0}^\infty\frac{(-1)^n(2x)^{2n}}{(2n)!}=1+\sum_{n=1}^\infty\frac{(-1)^n 2^{2n-1}x^{2n}}{(2n)!}$$
+</div>
+
+<div class="subsec g">技巧2：逐项积分</div>
+
+<div class="eg">
+  <div class="lbl">例 · 推导 $\arctan x$ 的展开（来自课件的重点例题）</div>
+  <div class="pf">
+    <div class="lbl">解（完整过程）</div>
+    <p><strong>Step 1</strong>：注意到 $(\arctan x)'=\dfrac{1}{1+x^2}$，而 $\dfrac{1}{1+x^2}$ 的展开已知（代换）。</p>
+    <p><strong>Step 2</strong>：$\dfrac{1}{1+t^2}=\sum_{n=0}^\infty(-1)^n t^{2n}$，在任意 $[-\delta,\delta]$（$\delta<1$）上一致收敛（$M_n=\delta^{2n}$，$\sum\delta^{2n}<\infty$）。</p>
+    <p><strong>Step 3</strong>：逐项积分从 $0$ 到 $x$（$|x|<1$）：</p>
+    $$\arctan x=\int_0^x\frac{1}{1+t^2}\,dt=\sum_{n=0}^\infty(-1)^n\int_0^x t^{2n}\,dt=\sum_{n=0}^\infty\frac{(-1)^n x^{2n+1}}{2n+1}$$
+    <p><strong>Step 4</strong>：延拓到端点。收敛域为 $[-1,1]$（Leibniz）。由 Dirichlet 判别法，级数在 $[0,1]$ 上一致收敛。由连续性定理，令 $x=1$：</p>
+    $$\frac{\pi}{4}=\arctan 1=\sum_{n=0}^\infty\frac{(-1)^n}{2n+1}=1-\frac{1}{3}+\frac{1}{5}-\frac{1}{7}+\cdots$$
+  </div>
+</div>
+
+<div class="subsec g">技巧3：逐项求导</div>
+
+<div class="eg">
+  <div class="lbl">例 · $\dfrac{1}{(1-x)^2}$ 的展开</div>
+  <p>对 $\dfrac{1}{1-x}=\sum_{n=0}^\infty x^n$ 两边关于 $x$ 求导：</p>
+  $$\frac{1}{(1-x)^2}=\sum_{n=1}^\infty nx^{n-1}=\sum_{n=0}^\infty(n+1)x^n,\quad|x|<1$$
+</div>
+
+<div class="subsec g">技巧4：四则运算与拼凑</div>
+
+<div class="eg">
+  <div class="lbl">例 · $\sin^2 x$ 的展开</div>
+  <p>$\sin^2 x=\dfrac{1-\cos 2x}{2}$，展开 $\cos 2x=\sum\dfrac{(-1)^n(2x)^{2n}}{(2n)!}$，代入化简即可。</p>
+</div>
+
+<div class="key">
+  <div class="lbl">间接展开法的解题流程</div>
+  <div class="steps">
+    <div class="step"><div class="snum">1</div><div>看目标函数和哪个基本公式相关（代换/求导/积分关系）。</div></div>
+    <div class="step"><div class="snum">2</div><div>对基本公式实施相应变换，得到目标函数的级数。</div></div>
+    <div class="step"><div class="snum">3</div><div>确定收敛域（记住：积分后不缩小，求导后不扩大）。</div></div>
+    <div class="step"><div class="snum">4</div><div>若需要端点值，在收敛端点取极限（验证该端点级数确实收敛，再引用连续性定理）。</div></div>
+  </div>
+</div>
+
+<!-- E4 -->
+<h2 class="sec" id="E4"><span class="sn">25</span>Euler 公式</h2>
+
+<p>Euler 公式是复数分析的核心，也是联系指数函数和三角函数的桥梁。</p>
+
+<div class="def">
+  <div class="lbl">Euler 公式（最美的数学公式）</div>
+  <div class="fml">$$e^{i\theta}=\cos\theta+i\sin\theta$$</div>
+  <p>特别地（令 $\theta=\pi$）：</p>
+  <div class="fml">$$e^{i\pi}+1=0$$</div>
+  <p>这个式子把自然常数 $e$、虚数单位 $i$、圆周率 $\pi$、$1$ 和 $0$ 联系在一起。</p>
+</div>
+
+<div class="pf">
+  <div class="lbl">推导（从 $e^x$ 的展开出发）</div>
+  <p>把 $e^x=\sum x^n/n!$ 中的 $x$ 换成复数 $i\theta$（形式地）：</p>
+  $$e^{i\theta}=\sum_{n=0}^\infty\frac{(i\theta)^n}{n!}=1+i\theta+\frac{(i\theta)^2}{2!}+\frac{(i\theta)^3}{3!}+\frac{(i\theta)^4}{4!}+\cdots$$
+  <p>利用 $i^2=-1$，$i^3=-i$，$i^4=1$（周期4）：</p>
+  $$=\underbrace{\left(1-\frac{\theta^2}{2!}+\frac{\theta^4}{4!}-\cdots\right)}_{\cos\theta}+i\underbrace{\left(\theta-\frac{\theta^3}{3!}+\frac{\theta^5}{5!}-\cdots\right)}_{\sin\theta}=\cos\theta+i\sin\theta\quad\square$$
+</div>
+
+<div class="key">
+  <div class="lbl">Euler 公式的三个重要推论</div>
+  <p><strong>推论1</strong>（$\cos$，$\sin$ 的复数表示）：</p>
+  <p>$e^{i\theta}=\cos\theta+i\sin\theta$ 和 $e^{-i\theta}=\cos\theta-i\sin\theta$ 相加/相减得：</p>
+  $$\cos\theta=\frac{e^{i\theta}+e^{-i\theta}}{2},\qquad\sin\theta=\frac{e^{i\theta}-e^{-i\theta}}{2i}$$
+  <p><strong>推论2</strong>（De Moivre 公式）：</p>
+  $$(\cos\theta+i\sin\theta)^n=(e^{i\theta})^n=e^{in\theta}=\cos(n\theta)+i\sin(n\theta)$$
+  <p><strong>推论3</strong>（三角级数求和）：对含 $\sum r^n\cos(n\theta)$ 或 $\sum r^n\sin(n\theta)$ 的级数，令 $z=re^{i\theta}$，用几何级数 $\sum z^n=z/(1-z)$（$|r|<1$），分离实虚部同时得到两个级数的和。</p>
+</div>
+
+<div class="eg">
+  <div class="lbl">例 · 用 Euler 公式求三角级数</div>
+  <p>求 $\displaystyle\sum_{n=1}^\infty r^n\cos(n\theta)$ 和 $\displaystyle\sum_{n=1}^\infty r^n\sin(n\theta)$，$|r|<1$。</p>
+  <div class="pf">
+    <div class="lbl">解</div>
+    <p>令 $z=re^{i\theta}$，$|z|=r<1$：</p>
+    $$\sum_{n=1}^\infty z^n=\frac{z}{1-z}=\frac{re^{i\theta}}{1-re^{i\theta}}$$
+    <p>有理化（乘以共轭 $\overline{1-re^{i\theta}}=1-re^{-i\theta}$）：</p>
+    $$=\frac{re^{i\theta}(1-re^{-i\theta})}{|1-re^{i\theta}|^2}=\frac{r(\cos\theta+i\sin\theta)-r^2}{1-2r\cos\theta+r^2}$$
+    <p>分离实部和虚部：</p>
+    $$\sum_{n=1}^\infty r^n\cos(n\theta)=\frac{r\cos\theta-r^2}{1-2r\cos\theta+r^2}$$
+    $$\sum_{n=1}^\infty r^n\sin(n\theta)=\frac{r\sin\theta}{1-2r\cos\theta+r^2}$$
+  </div>
+</div>
+
+<!-- E5 -->
+<h2 class="sec" id="E5"><span class="sn">26</span>全章总结与速查表</h2>
+
+<div class="subsec r">全章逻辑脉络</div>
+
+<div class="key">
+  <div class="lbl">知识点之间的关系</div>
+  <p>① <strong>函数项级数</strong>（一般概念）→ 收敛域、和函数</p>
+  <p>② <strong>点态收敛的缺陷</strong>：不能保证连续/可积/可导性（四个反例）</p>
+  <p>③ <strong>一致收敛</strong>（更强条件）：填补上述缺陷</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;↳ 判别方法：必要条件、sup距离、M判别法、A-D判别法</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;↳ 三大性质：连续性、逐项积分、逐项求导</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;↳ Dini定理：特殊条件下点态→一致</p>
+  <p>④ <strong>幂级数</strong>（最特殊的函数项级数）：自动满足一致收敛（内闭），任意次可微</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;↳ 收敛半径：C-H公式、比值法、缺项处理</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;↳ Abel 第一/二定理：结构定理 + 边界值公式</p>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;↳ 逐项积分/求导：主要计算工具</p>
+  <p>⑤ <strong>函数的展开</strong>：六大基本公式 + 间接展开法（代换/积分/求导/运算）</p>
+  <p>⑥ <strong>Euler 公式</strong>：$e^{i\theta}=\cos\theta+i\sin\theta$，联系指数与三角</p>
+</div>
+
+<div class="subsec r">必背六大展开式（含收敛域）</div>
+
+<div class="memo">
+  <div class="lbl">速查：六大 Maclaurin 展开式</div>
+  $$e^x=\sum_{n=0}^\infty\frac{x^n}{n!}\quad(\mathbb{R})\qquad\quad \sin x=\sum_{n=0}^\infty\frac{(-1)^n x^{2n+1}}{(2n+1)!}\quad(\mathbb{R})\qquad\quad \cos x=\sum_{n=0}^\infty\frac{(-1)^n x^{2n}}{(2n)!}\quad(\mathbb{R})$$
+  $$\frac{1}{1-x}=\sum_{n=0}^\infty x^n\quad(|x|<1)\qquad\quad\ln(1+x)=\sum_{n=0}^\infty\frac{(-1)^n x^{n+1}}{n+1}\quad(-1,1]\qquad\quad\arctan x=\sum_{n=0}^\infty\frac{(-1)^n x^{2n+1}}{2n+1}\quad[-1,1]$$
+  <p style="margin-top:0.7rem;">导出公式：$\dfrac{1}{(1-x)^2}=\sum_{n=1}^\infty nx^{n-1}$，$\dfrac{x}{(1-x)^2}=\sum_{n=1}^\infty nx^n$（均在 $|x|<1$）</p>
+</div>
+
+<div class="subsec r">重难点评级</div>
+
+<table class="ctbl">
+  <thead><tr><th>知识点</th><th>重要性</th><th>难度</th><th>备注</th></tr></thead>
+  <tbody>
+    <tr><td>一致收敛定义（量词顺序）</td><td>★★★★★</td><td>★★</td><td>概念理解是一切的基础</td></tr>
+    <tr><td>Weierstrass M判别法</td><td>★★★★★</td><td>★★</td><td>最常用，必须熟练</td></tr>
+    <tr><td>三大性质定理（含证明思路）</td><td>★★★★★</td><td>★★★</td><td>$\varepsilon/3$ 技巧必掌握</td></tr>
+    <tr><td>Abel–Dirichlet 判别法</td><td>★★★★</td><td>★★★</td><td>三角函数级数专用</td></tr>
+    <tr><td>Dini 定理</td><td>★★★</td><td>★★★</td><td>四个条件都要理解</td></tr>
+    <tr><td>Cauchy–Hadamard + 比值法</td><td>★★★★★</td><td>★★</td><td>每次都要讨论端点</td></tr>
+    <tr><td>Abel 第一/二定理</td><td>★★★★</td><td>★★★</td><td>边界值公式是重点</td></tr>
+    <tr><td>逐项积/导（端点变化）</td><td>★★★★★</td><td>★★</td><td>积分不缩小，求导不扩大</td></tr>
+    <tr class="hi"><td>六大展开式（背诵+收敛域）</td><td>★★★★★</td><td>★</td><td>必须背熟，无条件</td></tr>
+    <tr class="hi"><td>间接展开法</td><td>★★★★★</td><td>★★★</td><td>大题主力，反复练习</td></tr>
+    <tr><td>Euler 公式及三角级数求和</td><td>★★★★</td><td>★★★</td><td>分离实虚部技巧</td></tr>
+    <tr><td>Cauchy 乘积</td><td>★★★</td><td>★★★</td><td>证明思路优雅，了解即可</td></tr>
+  </tbody>
+</table>
+
+</div><!-- /wrap -->
+
+<footer>
+  数学分析 AII · 第十章 函数项级数 · 复旦大学 2026春 · 自学版讲义<br>
+  根据课件完整整理，配有直觉解释与详细例题，适合无课堂基础独立学习
+</footer>
+
+</body>
+</html>

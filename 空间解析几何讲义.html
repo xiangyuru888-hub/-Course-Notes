@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>空间解析几何 · 复习讲义</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<style>
+:root {
+  --bg: #0f0f14;
+  --surface: #16161f;
+  --surface2: #1e1e2a;
+  --border: #2a2a3a;
+  --accent: #7c9ef0;
+  --accent2: #e07c88;
+  --accent3: #7ce0b5;
+  --accent4: #e0c47c;
+  --text: #e8e8f0;
+  --text-muted: #888899;
+  --text-dim: #555566;
+  --key-bg: #1c1c2e;
+  --warn: #f0a070;
+  --formula-bg: #111120;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 15px;
+  line-height: 1.8;
+  min-height: 100vh;
+}
+
+/* Sidebar Nav */
+#sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 260px;
+  height: 100vh;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  z-index: 100;
+  padding: 24px 0 40px;
+}
+
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.sidebar-header {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.sidebar-header h2 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 13px;
+  color: var(--accent);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.sidebar-header p {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.nav-section {
+  margin-bottom: 8px;
+}
+
+.nav-section-title {
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 8px 20px 4px;
+}
+
+.nav-item {
+  display: block;
+  padding: 6px 20px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 13px;
+  transition: all 0.15s;
+  border-left: 2px solid transparent;
+}
+
+.nav-item:hover {
+  color: var(--text);
+  background: var(--surface2);
+  border-left-color: var(--accent);
+}
+
+.nav-item.sub {
+  padding-left: 32px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.nav-item.sub:hover {
+  color: var(--text-muted);
+  border-left-color: var(--accent2);
+}
+
+/* Main content */
+#main {
+  margin-left: 260px;
+  padding: 0;
+}
+
+/* Hero */
+.hero {
+  background: linear-gradient(135deg, #0d0d1a 0%, #141428 50%, #0f1520 100%);
+  padding: 80px 60px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(124,158,240,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-label {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.hero h1 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 42px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+
+.hero h1 span { color: var(--accent); }
+
+.hero-sub {
+  color: var(--text-muted);
+  font-size: 14px;
+  max-width: 500px;
+  margin-bottom: 32px;
+}
+
+.hero-tags {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.hero-tag {
+  background: rgba(124,158,240,0.1);
+  border: 1px solid rgba(124,158,240,0.25);
+  color: var(--accent);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* Content area */
+.content {
+  padding: 50px 60px;
+  max-width: 900px;
+}
+
+/* Section */
+.section {
+  margin-bottom: 60px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  background: rgba(124,158,240,0.1);
+  border: 1px solid rgba(124,158,240,0.2);
+  padding: 3px 10px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.section-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 24px;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Subsection */
+.subsection {
+  margin-bottom: 36px;
+}
+
+.subsection-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 17px;
+  color: var(--accent);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.subsection-title::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 18px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* Key box */
+.key-box {
+  background: var(--key-bg);
+  border: 1px solid rgba(124,158,240,0.2);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 18px 22px;
+  margin: 14px 0;
+}
+
+.key-box.warn {
+  border-left-color: var(--warn);
+  border-color: rgba(240,160,112,0.2);
+}
+
+.key-box.green {
+  border-left-color: var(--accent3);
+  border-color: rgba(124,224,181,0.2);
+}
+
+.key-box.red {
+  border-left-color: var(--accent2);
+  border-color: rgba(224,124,136,0.2);
+}
+
+.key-box.yellow {
+  border-left-color: var(--accent4);
+  border-color: rgba(224,196,124,0.2);
+}
+
+.box-label {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.key-box .box-label { color: var(--accent); }
+.key-box.warn .box-label { color: var(--warn); }
+.key-box.green .box-label { color: var(--accent3); }
+.key-box.red .box-label { color: var(--accent2); }
+.key-box.yellow .box-label { color: var(--accent4); }
+
+/* Formula block */
+.formula {
+  background: var(--formula-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin: 14px 0;
+  overflow-x: auto;
+  font-size: 15px;
+}
+
+.formula.center { text-align: center; }
+
+/* Example */
+.example {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin: 14px 0;
+}
+
+.example-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent4);
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.example-title {
+  color: #ccc;
+  font-size: 14px;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.solution-label {
+  font-size: 12px;
+  color: var(--accent3);
+  font-weight: 600;
+  margin: 10px 0 6px;
+}
+
+/* Properties list */
+.prop-list {
+  list-style: none;
+  margin: 10px 0;
+}
+
+.prop-list li {
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.prop-list li:last-child { border-bottom: none; }
+
+.prop-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  min-width: 28px;
+  margin-top: 3px;
+}
+
+.prop-label {
+  color: var(--accent3);
+  font-weight: 600;
+  font-size: 13px;
+  min-width: 80px;
+}
+
+/* Table */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  font-size: 14px;
+}
+
+.data-table th {
+  background: rgba(124,158,240,0.1);
+  color: var(--accent);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  vertical-align: top;
+}
+
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* Tag */
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.tag.blue { background: rgba(124,158,240,0.15); color: var(--accent); }
+.tag.red { background: rgba(224,124,136,0.15); color: var(--accent2); }
+.tag.green { background: rgba(124,224,181,0.15); color: var(--accent3); }
+.tag.yellow { background: rgba(224,196,124,0.15); color: var(--accent4); }
+
+/* Info row */
+.info-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 14px 0;
+}
+
+.info-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.info-card-title {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+/* Summary box */
+.summary {
+  background: linear-gradient(135deg, rgba(124,158,240,0.08), rgba(124,224,181,0.05));
+  border: 1px solid rgba(124,158,240,0.2);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin: 20px 0;
+}
+
+.summary-title {
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+/* Divider */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 32px 0;
+}
+
+p { margin-bottom: 10px; }
+
+strong { color: #ddd; }
+
+.highlight { color: var(--accent4); font-weight: 600; }
+.hl-blue { color: var(--accent); }
+.hl-red { color: var(--accent2); }
+.hl-green { color: var(--accent3); }
+
+/* Surfaces grid */
+.surfaces-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 14px 0;
+}
+
+.surface-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  transition: border-color 0.2s;
+}
+
+.surface-card:hover { border-color: rgba(124,158,240,0.3); }
+
+.surface-card-name {
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-family: 'Noto Serif SC', serif;
+}
+
+.surface-card-eq {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.surface-card-note {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* Scroll top btn */
+#scrolltop {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 40px;
+  height: 40px;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+#scrolltop.visible { opacity: 1; }
+
+@media (max-width: 900px) {
+  #sidebar { display: none; }
+  #main { margin-left: 0; }
+  .content { padding: 30px 20px; }
+  .hero { padding: 40px 20px; }
+  .info-row { grid-template-columns: 1fr; }
+  .surfaces-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <h2>数分 AII · 2026</h2>
+    <p>第十五章 · 空间解析几何</p>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">§1–§3 向量基础</div>
+    <a class="nav-item" href="#s1">§1 空间直角坐标系</a>
+    <a class="nav-item" href="#s2">§2 向量及其运算</a>
+    <a class="nav-item sub" href="#inner">内积（点积）</a>
+    <a class="nav-item sub" href="#cross">外积（叉积）</a>
+    <a class="nav-item sub" href="#mixed">混合积</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">§4 平面与直线</div>
+    <a class="nav-item" href="#s4-plane">平面方程</a>
+    <a class="nav-item sub" href="#plane-forms">三种方程形式</a>
+    <a class="nav-item" href="#s4-line">直线方程</a>
+    <a class="nav-item sub" href="#line-forms">四种方程形式</a>
+    <a class="nav-item" href="#s4-planebeam">平面束</a>
+    <a class="nav-item" href="#s4-dist">距离公式</a>
+    <a class="nav-item" href="#s4-angle">夹角公式</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">§5 曲面与曲线</div>
+    <a class="nav-item" href="#s5-surface">曲面方程</a>
+    <a class="nav-item sub" href="#rotation">旋转曲面</a>
+    <a class="nav-item sub" href="#cylinder">柱面</a>
+    <a class="nav-item" href="#s5-curve">曲线方程</a>
+    <a class="nav-item" href="#s5-quadric">二次曲面标准型</a>
+    <a class="nav-item sub" href="#ellipsoid">椭球面</a>
+    <a class="nav-item sub" href="#hyperboloid">双曲面</a>
+    <a class="nav-item sub" href="#cone">锥面</a>
+    <a class="nav-item sub" href="#paraboloid">抛物面</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">快速参考</div>
+    <a class="nav-item" href="#summary-formulas">核心公式汇总</a>
+  </div>
+</nav>
+
+<!-- Main -->
+<div id="main">
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-label">数学分析 AII · 第十五章</div>
+  <h1>空间<span>解析几何</span><br>复习讲义</h1>
+  <p class="hero-sub">覆盖课件全部内容 · 重点公式精讲 · 典型例题剖析 · 适合期末复习</p>
+  <div class="hero-tags">
+    <span class="hero-tag">§1 坐标系</span>
+    <span class="hero-tag">§2–3 向量运算</span>
+    <span class="hero-tag">§4 平面与直线</span>
+    <span class="hero-tag">§5 曲面与二次曲面</span>
+  </div>
+</div>
+
+<!-- Content -->
+<div class="content">
+
+<!-- ==================== §1 ==================== -->
+<div class="section" id="s1">
+  <div class="section-header">
+    <span class="section-num">§ 1</span>
+    <h2 class="section-title">空间直角坐标系</h2>
+  </div>
+
+  <p>在空间取定一点 \(O\)，过 \(O\) 作三条相互垂直的数轴 \(x, y, z\)，以相同长度单位，正方向满足<strong>右手定则</strong>：右手握住 \(z\) 轴，四指从 \(x\) 正向以 \(\frac{\pi}{2}\) 转向 \(y\) 正向，拇指指 \(z\) 正向。</p>
+
+  <div class="key-box">
+    <div class="box-label">核心概念</div>
+    <ul class="prop-list">
+      <li>
+        <span class="prop-num">01</span>
+        <div><strong>八个卦限</strong>：三个坐标轴将空间分为 I–VIII 共八个卦限</div>
+      </li>
+      <li>
+        <span class="prop-num">02</span>
+        <div><strong>空间点的坐标</strong>：\(M(x, y, z)\)，\(x, y, z\) 为三个坐标</div>
+      </li>
+      <li>
+        <span class="prop-num">03</span>
+        <div><strong>两点距离</strong>：\(d(M_1, M_2) = \sqrt{(x_2-x_1)^2+(y_2-y_1)^2+(z_2-z_1)^2}\)</div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- ==================== §2 向量 ==================== -->
+<div class="section" id="s2">
+  <div class="section-header">
+    <span class="section-num">§ 2–3</span>
+    <h2 class="section-title">向量及其三种积</h2>
+  </div>
+
+  <div class="subsection">
+    <h3 class="subsection-title">向量的基本概念</h3>
+
+    <p><strong>几何向量</strong>：有向线段 \(\overrightarrow{M_1M_2}\)，平移不改变向量。</p>
+    <p><strong>代数向量</strong>：将向量平移使始点与原点重合，以终点坐标表示。若 \(M_1(x_1,y_1,z_1),\,M_2(x_2,y_2,z_2)\)，则：</p>
+
+    <div class="formula center">
+      \[\overrightarrow{M_1M_2} = (x_2-x_1,\; y_2-y_1,\; z_2-z_1)\]
+    </div>
+
+    <div class="key-box">
+      <div class="box-label">线性运算定义</div>
+      <p>设 \(\vec{a}=(a_1,a_2,a_3)\)，\(\vec{b}=(b_1,b_2,b_3)\)，\(k\in\mathbb{R}\)：</p>
+      <ul class="prop-list">
+        <li><span class="prop-num">加法</span><div>\(\vec{a}+\vec{b}=(a_1+b_1,\,a_2+b_2,\,a_3+b_3)\)</div></li>
+        <li><span class="prop-num">数乘</span><div>\(k\vec{a}=(ka_1,ka_2,ka_3)\)</div></li>
+        <li><span class="prop-num">模/范数</span><div>\(\|\vec{a}\|=\sqrt{a_1^2+a_2^2+a_3^2}\)</div></li>
+        <li><span class="prop-num">平行</span><div>\(\vec{a}\parallel\vec{b}\;\Leftrightarrow\;\vec{a}=\vec{0}\;\text{或}\;\exists k\in\mathbb{R},\;\vec{b}=k\vec{a}\)</div></li>
+      </ul>
+    </div>
+
+    <div class="key-box green">
+      <div class="box-label">单位化向量</div>
+      <p>若 \(\|\vec{a}\|\neq 0\)，则 \(\vec{a}\) 的单位化向量为：</p>
+      \[\vec{a}_0 = \frac{1}{\|\vec{a}\|}\vec{a} = \left(\frac{a_1}{\|\vec{a}\|},\frac{a_2}{\|\vec{a}\|},\frac{a_3}{\|\vec{a}\|}\right)\]
+      <p style="margin-top:8px">记忆：\(\vec{a} = \|\vec{a}\|\cdot\vec{a}_0\)（模乘方向）</p>
+    </div>
+
+    <div class="key-box yellow">
+      <div class="box-label">方向余弦</div>
+      <p>设非零向量 \(\vec{x}=(x_1,x_2,x_3)\) 与三个自然基向量 \(\vec{i},\vec{j},\vec{k}\) 的夹角分别为 \(\alpha,\beta,\gamma\)，则：</p>
+      \[(\cos\alpha, \cos\beta, \cos\gamma) = \frac{1}{\|\vec{x}\|}\vec{x}\]
+      <p style="margin-top:8px">方向余弦 = \(\vec{x}\) 的单位化向量！且有 \(\cos^2\alpha+\cos^2\beta+\cos^2\gamma=1\)</p>
+    </div>
+  </div>
+
+  <!-- 内积 -->
+  <div class="subsection" id="inner">
+    <h3 class="subsection-title">内积（点积、数量积）</h3>
+
+    <div class="key-box">
+      <div class="box-label">定义</div>
+      \[\vec{a}\cdot\vec{b} = a_1b_1+a_2b_2+a_3b_3\]
+    </div>
+
+    <p><strong>内积公理（三条核心性质）</strong>：</p>
+    <ul class="prop-list">
+      <li><span class="prop-label">正定性</span><div>\((\vec{a},\vec{a})\geq 0\)，等号成立 \(\Leftrightarrow \vec{a}=\vec{0}\)</div></li>
+      <li><span class="prop-label">对称性</span><div>\((\vec{a},\vec{b})=(\vec{b},\vec{a})\)</div></li>
+      <li><span class="prop-label">双线性</span><div>\((k\vec{a}+l\vec{c},\vec{b})=k(\vec{a},\vec{b})+l(\vec{c},\vec{b})\)</div></li>
+    </ul>
+
+    <div class="key-box green">
+      <div class="box-label">⭐ 夹角公式（核心）</div>
+      \[\cos\theta = \frac{\vec{a}\cdot\vec{b}}{\|\vec{a}\|\|\vec{b}\|}\]
+      <p style="margin-top:8px"><strong>推论</strong>：\(\vec{a}\perp\vec{b}\;\Leftrightarrow\;\vec{a}\cdot\vec{b}=0\)</p>
+    </div>
+  </div>
+
+  <!-- 外积 -->
+  <div class="subsection" id="cross">
+    <h3 class="subsection-title">外积（叉积、向量积）</h3>
+
+    <div class="key-box">
+      <div class="box-label">定义（行列式记法）</div>
+      \[\vec{x}\times\vec{y} = \begin{vmatrix}\vec{i}&\vec{j}&\vec{k}\\x_1&x_2&x_3\\y_1&y_2&y_3\end{vmatrix} = \left(\begin{vmatrix}x_2&x_3\\y_2&y_3\end{vmatrix},\;-\begin{vmatrix}x_1&x_3\\y_1&y_3\end{vmatrix},\;\begin{vmatrix}x_1&x_2\\y_1&y_2\end{vmatrix}\right)\]
+      <p style="margin-top:10px">展开式：\(\vec{x}\times\vec{y}=(x_2y_3-x_3y_2,\;x_3y_1-x_1y_3,\;x_1y_2-x_2y_1)\)</p>
+    </div>
+
+    <div class="key-box red">
+      <div class="box-label">⭐ 四条重要性质</div>
+      <ul class="prop-list">
+        <li><span class="prop-num">01</span><div><strong>反对称性</strong>：\(\vec{x}\times\vec{y}=-\vec{y}\times\vec{x}\)（注意：<span class="hl-red">不可交换</span>！）</div></li>
+        <li><span class="prop-num">02</span><div><strong>双线性</strong>：\((k\vec{x}+l\vec{z})\times\vec{y}=k\vec{x}\times\vec{y}+l\vec{z}\times\vec{y}\)</div></li>
+        <li><span class="prop-num">03</span><div><strong>模的几何意义</strong>：\(\|\vec{x}\times\vec{y}\|=\|\vec{x}\|\|\vec{y}\|\sin\theta\) = <span class="hl-green">以 \(\vec{x},\vec{y}\) 为邻边的平行四边形面积</span><br>推论：\(\vec{x}\parallel\vec{y}\;\Leftrightarrow\;\vec{x}\times\vec{y}=\vec{0}\)</div></li>
+        <li><span class="prop-num">04</span><div><strong>方向</strong>：\(\vec{x}\times\vec{y}\perp\vec{x}\)，\(\vec{x}\times\vec{y}\perp\vec{y}\)，且 \(\vec{x},\vec{y},\vec{x}\times\vec{y}\) 成右手系</div></li>
+      </ul>
+    </div>
+
+    <div class="key-box yellow">
+      <div class="box-label">自然基向量的叉积（记忆口诀：ijk轮换）</div>
+      \[\vec{i}\times\vec{j}=\vec{k},\quad \vec{j}\times\vec{k}=\vec{i},\quad \vec{k}\times\vec{i}=\vec{j}\]
+    </div>
+
+    <div class="example">
+      <div class="example-label">典型例题</div>
+      <div class="example-title">求单位向量 \(\vec{c}\) 使其与 \(\vec{a}=(2,1,-1)\)，\(\vec{b}=(1,0,2)\) 都正交</div>
+      <div class="solution-label">解：</div>
+      <p>取 \(\vec{a}\times\vec{b}\) 的单位化向量：</p>
+      \[\vec{a}\times\vec{b}=\begin{vmatrix}\vec{i}&\vec{j}&\vec{k}\\2&1&-1\\1&0&2\end{vmatrix}=2\vec{i}-5\vec{j}-\vec{k}=(2,-5,-1)\]
+      \[\vec{c}=\frac{1}{\sqrt{30}}(2,-5,-1)=\left(\frac{2}{\sqrt{30}},\frac{-5}{\sqrt{30}},\frac{-1}{\sqrt{30}}\right)\]
+    </div>
+  </div>
+
+  <!-- 混合积 -->
+  <div class="subsection" id="mixed">
+    <h3 class="subsection-title">混合积</h3>
+
+    <div class="key-box">
+      <div class="box-label">定义（行列式记法）</div>
+      \[(\vec{x}\times\vec{y})\cdot\vec{z}=\begin{vmatrix}x_1&x_2&x_3\\y_1&y_2&y_3\\z_1&z_2&z_3\end{vmatrix}\]
+    </div>
+
+    <div class="key-box green">
+      <div class="box-label">⭐ 三条性质</div>
+      <ul class="prop-list">
+        <li><span class="prop-num">01</span><div><strong>轮换不变性</strong>：\((\vec{x}\times\vec{y})\cdot\vec{z}=(\vec{y}\times\vec{z})\cdot\vec{x}=(\vec{z}\times\vec{x})\cdot\vec{y}\)</div></li>
+        <li><span class="prop-num">02</span><div><strong>反对换性</strong>：\((\vec{x}\times\vec{y})\cdot\vec{z}=-(\vec{x}\times\vec{z})\cdot\vec{y}\)</div></li>
+        <li><span class="prop-num">03</span><div><strong>几何意义</strong>：\(|(\vec{x}\times\vec{y})\cdot\vec{z}|\) = <span class="hl-green">以 \(\vec{x},\vec{y},\vec{z}\) 为邻边的平行六面体体积</span></div></li>
+      </ul>
+    </div>
+
+    <div class="key-box red">
+      <div class="box-label">⭐ 两个重要推论（常考！）</div>
+      <p><strong>推论1</strong>：\(\mathbb{R}^3\) 中三向量 \(\vec{x},\vec{y},\vec{z}\) 共面的充要条件：</p>
+      \[(\vec{x}\times\vec{y})\cdot\vec{z}=0\]
+      <p style="margin-top:12px"><strong>推论2</strong>：四点 \(A,B,C,D\) 构成的四面体体积：</p>
+      \[V = \pm\frac{1}{6}\begin{vmatrix}b_1-a_1&b_2-a_2&b_3-a_3\\c_1-a_1&c_2-a_2&c_3-a_3\\d_1-a_1&d_2-a_2&d_3-a_3\end{vmatrix}\]
+      <p style="margin-top:8px">四点共面条件：上述行列式 \(=0\)</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== §4 平面与直线 ==================== -->
+<div class="section" id="s4-plane">
+  <div class="section-header">
+    <span class="section-num">§ 4</span>
+    <h2 class="section-title">平面与直线</h2>
+  </div>
+
+  <div class="subsection" id="plane-forms">
+    <h3 class="subsection-title">平面的三种方程形式</h3>
+
+    <div class="key-box">
+      <div class="box-label">⭐ 方程形式一：点法式（最基础）</div>
+      <p><strong>已知</strong>：平面上一点 \(P_0(x_0,y_0,z_0)\)，法向量 \(\vec{n}=(A,B,C)\)</p>
+      <p><strong>原理</strong>：平面上任意点 \(P\) 满足 \(\vec{n}\perp\overrightarrow{P_0P}\)</p>
+      \[A(x-x_0)+B(y-y_0)+C(z-z_0)=0\]
+    </div>
+
+    <div class="key-box">
+      <div class="box-label">方程形式二：一般式</div>
+      <p>展开点法式得（令 \(D=-Ax_0-By_0-Cz_0\)）：</p>
+      \[Ax+By+Cz+D=0\]
+      <p style="margin-top:8px">其中 \(\vec{n}=(A,B,C)\) 是法向量</p>
+    </div>
+
+    <div class="key-box">
+      <div class="box-label">⭐ 方程形式三：三点式（用混合积）</div>
+      <p><strong>已知</strong>：平面上不共线三点 \(P_0,P_1,P_2\)，法向量取 \(\vec{n}=\overrightarrow{P_0P_1}\times\overrightarrow{P_0P_2}\)</p>
+      \[\begin{vmatrix}x-x_0&y-y_0&z-z_0\\x_1-x_0&y_1-y_0&z_1-z_0\\x_2-x_0&y_2-y_0&z_2-z_0\end{vmatrix}=0\]
+    </div>
+
+    <div class="key-box">
+      <div class="box-label">截距式</div>
+      <p><strong>已知</strong>：平面与三坐标轴截距分别为 \(a,b,c\)（\(abc\neq 0\)）：</p>
+      \[\frac{x}{a}+\frac{y}{b}+\frac{z}{c}=1\]
+    </div>
+
+    <div class="example">
+      <div class="example-label">例题</div>
+      <div class="example-title">求过点 \((3,1,-1)\)，法向量 \(\vec{n}=(1,2,-2)\) 的平面方程</div>
+      <div class="solution-label">解：</div>
+      <p>代入点法式：\((x-3)+2(y-1)-2(z+1)=0\)，即 \(x+2y-2z-7=0\)</p>
+    </div>
+
+    <div class="example">
+      <div class="example-label">例题</div>
+      <div class="example-title">求过点 \((3,2,1)\)，\((0,1,0)\)，\((-1,0,2)\) 的平面方程</div>
+      <div class="solution-label">解：</div>
+      <p>代入三点式：</p>
+      \[\begin{vmatrix}x-3&y-2&z-1\\-3&-1&-1\\-4&-2&1\end{vmatrix}=0 \implies 3x-7y-2z+7=0\]
+    </div>
+  </div>
+
+  <!-- 直线方程 -->
+  <div class="subsection" id="s4-line">
+    <h3 class="subsection-title" id="line-forms">直线的四种方程形式</h3>
+
+    <div class="key-box yellow">
+      <div class="box-label">⭐ 自由度理解（重要！）</div>
+      <p>空间 \(\mathbb{R}^3\) 自由度为 3，平面自由度为 2（1个方程削减1个），直线自由度为 1（需要 2 个方程）。</p>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>形式</th>
+          <th>已知条件</th>
+          <th>方程</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag blue">点向式</span><br><small>（对称式）</small></td>
+          <td>直线上一点 \(P_0(x_0,y_0,z_0)\)，方向向量 \(\vec{l}=(\ell,m,n)\)</td>
+          <td>\(\dfrac{x-x_0}{\ell}=\dfrac{y-y_0}{m}=\dfrac{z-z_0}{n}\)</td>
+        </tr>
+        <tr>
+          <td><span class="tag blue">两点式</span></td>
+          <td>直线上两点 \(P_0,P_1\)，方向向量取 \(\overrightarrow{P_0P_1}\)</td>
+          <td>\(\dfrac{x-x_0}{x_1-x_0}=\dfrac{y-y_0}{y_1-y_0}=\dfrac{z-z_0}{z_1-z_0}\)</td>
+        </tr>
+        <tr>
+          <td><span class="tag green">参数式</span></td>
+          <td>由点向式令比值 \(=t\)</td>
+          <td>\(x=x_0+\ell t,\;y=y_0+mt,\;z=z_0+nt\)</td>
+        </tr>
+        <tr>
+          <td><span class="tag red">一般式</span><br><small>（平面交线）</small></td>
+          <td>两个不平行平面 \(\pi_1,\pi_2\)</td>
+          <td>\(\begin{cases}A_1x+B_1y+C_1z+D_1=0\\A_2x+B_2y+C_2z+D_2=0\end{cases}\)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="key-box red">
+      <div class="box-label">⭐ 参数式是解题利器！</div>
+      <p>碰到<strong>直线与其它几何对象求交点</strong>，一律用参数式表示交点坐标，代入另一对象方程求参数 \(t\)。</p>
+    </div>
+
+    <div class="key-box">
+      <div class="box-label">一般式 → 点向式的方法</div>
+      <p><strong>第一步</strong>：取方向向量 \(\vec{l}=\vec{n}_1\times\vec{n}_2=(A_1,B_1,C_1)\times(A_2,B_2,C_2)\)</p>
+      <p><strong>第二步</strong>：令某一坐标为特殊值（如 \(x=0\)），求方程组的特解得直线上一点</p>
+      <p><strong>第三步</strong>：代入点向式写出结果</p>
+    </div>
+
+    <div class="example">
+      <div class="example-label">例题</div>
+      <div class="example-title">将 \(\begin{cases}2x+y-z+1=0\\x+2z+4=0\end{cases}\) 化成点向式</div>
+      <div class="solution-label">解：</div>
+      <p>方向向量：\(\vec{l}=\begin{vmatrix}\vec{i}&\vec{j}&\vec{k}\\2&1&-1\\1&0&2\end{vmatrix}=(2,-5,-1)\)</p>
+      <p>令 \(x=0\)，代入得 \(y=-3,z=-2\)，所以直线上一点为 \((0,-3,-2)\)</p>
+      <p>点向式：\(\dfrac{x}{2}=\dfrac{y+3}{-5}=\dfrac{z+2}{-1}\)</p>
+    </div>
+
+    <div class="example">
+      <div class="example-label">典型综合题</div>
+      <div class="example-title">求过点 \(M_0(0,0,-2)\)，与直线 \(L_1:\dfrac{x-1}{4}=\dfrac{y-3}{-2}=z\) 相交，且平行于平面 \(\pi:3x-y+2z-1=0\) 的直线</div>
+      <div class="solution-label">解：</div>
+      <p>设 \(L_1\) 上的交点为 \(M_2(1+4t,\,3-2t,\,t)\)（参数式）</p>
+      <p>所求直线平行于 \(\pi\)，即 \(\overrightarrow{M_0M_2}\perp\vec{n}=(3,-1,2)\)：</p>
+      \[3(1+4t)-(3-2t)+2(t+2)=0 \implies t=-\frac{1}{4}\]
+      <p>故 \(\overrightarrow{M_0M_2}=\left(0,\frac{7}{2},\frac{7}{4}\right)=\frac{7}{4}(0,2,1)\)，方向向量取 \((0,2,1)\)</p>
+      <p>所求直线：\(\dfrac{x}{0}=\dfrac{y}{2}=\dfrac{z+2}{1}\)，即 \(\begin{cases}x=0\\y=2(z+2)\end{cases}\)</p>
+    </div>
+  </div>
+
+  <!-- 平面束 -->
+  <div class="subsection" id="s4-planebeam">
+    <h3 class="subsection-title">平面束</h3>
+
+    <div class="key-box green">
+      <div class="box-label">⭐ 平面束方程（过直线求平面的核心工具）</div>
+      <p>直线 \(L\) 由两平面 \(\pi_1: A_1x+B_1y+C_1z+D_1=0\) 和 \(\pi_2: A_2x+B_2y+C_2z+D_2=0\) 确定，过 \(L\) 的所有平面（除 \(\pi_1\) 外）构成<strong>平面束</strong>：</p>
+      \[\lambda(A_1x+B_1y+C_1z+D_1)+(A_2x+B_2y+C_2z+D_2)=0,\quad \lambda\in\mathbb{R}\]
+      <div class="key-box warn" style="margin-top:12px">
+        <div class="box-label">注意！</div>
+        <p>此平面束<strong>少了 \(\pi_1\)</strong> 这张平面。解题时若代入点后方程无解（如 \(8=0\)），则说明所求平面就是 \(\pi_1\)。</p>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="example-label">例题</div>
+      <div class="example-title">求过点 \((1,1,1)\) 和直线 \(L:\begin{cases}3x-y+2z+2=0\\x-2y+3z-5=0\end{cases}\) 的平面</div>
+      <div class="solution-label">解：</div>
+      <p>过 \(L\) 的平面束：\(3x-y+2z+2+\lambda(x-2y+3z-5)=0\)</p>
+      <p>代入 \((1,1,1)\)：\(6-3\lambda=0\)，得 \(\lambda=2\)</p>
+      <p>所求平面：\(5x-5y+8z-8=0\)</p>
+    </div>
+
+    <div class="example">
+      <div class="example-label">例题（注意陷阱）</div>
+      <div class="example-title">求过点 \((1,1,2)\) 和直线 \(L\) 的平面（同上 \(L\)）</div>
+      <div class="solution-label">解：</div>
+      <p>代入 \((1,1,2)\)：\(8=0\)，方程无解 → 所求平面恰好是 \(\pi_1\)，即 \(x-2y+3z-5=0\)</p>
+    </div>
+  </div>
+
+  <!-- 距离公式 -->
+  <div class="subsection" id="s4-dist">
+    <h3 class="subsection-title">距离公式</h3>
+
+    <div class="info-row">
+      <div class="info-card">
+        <div class="info-card-title">⭐ 点到平面的距离</div>
+        <p>平面 \(\pi: Ax+By+Cz+D=0\)，点 \(P^*(x^*,y^*,z^*)\)：</p>
+        \[d = \frac{|Ax^*+By^*+Cz^*+D|}{\sqrt{A^2+B^2+C^2}}\]
+        <p style="margin-top:8px;font-size:12px;color:var(--text-muted)">几何：\(\overrightarrow{P_0P^*}\) 在法向量 \(\vec{n}\) 方向的投影长度</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-title">⭐ 点到直线的距离</div>
+        <p>直线 \(L\) 过 \(P_0\)，方向向量 \(\vec{l}=(\ell,m,n)\)，点 \(P^*\)：</p>
+        \[d = \frac{\|\overrightarrow{P_0P^*}\times\vec{l}\|}{\|\vec{l}\|}\]
+        <p style="margin-top:8px;font-size:12px;color:var(--text-muted)">几何：叉积模 = 平行四边形面积，除以底边长</p>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="example-label">例题</div>
+      <div class="example-title">求点 \((2,1,-1)\) 到平面 \(2x-3y-6z+1=0\) 的距离</div>
+      <div class="solution-label">解：</div>
+      \[d=\frac{|2(2)-3(1)-6(-1)+1|}{\sqrt{4+9+36}}=\frac{|4-3+6+1|}{7}=\frac{8}{7}\]
+    </div>
+
+    <div class="example">
+      <div class="example-label">例题</div>
+      <div class="example-title">求点 \((5,-2,3)\) 到直线 \(x-1=\dfrac{y+1}{2}=\dfrac{z}{3}\) 的距离</div>
+      <div class="solution-label">解：</div>
+      <p>直线上取点 \((1,-1,0)\)，则 \(\overrightarrow{P_0P^*}=(4,-1,3)\)，\(\vec{l}=(1,2,3)\)</p>
+      \[(4,-1,3)\times(1,2,3)=\begin{vmatrix}\vec{i}&\vec{j}&\vec{k}\\4&-1&3\\1&2&3\end{vmatrix}=(-9,-9,9)\]
+      \[d=\frac{\|(-9,-9,9)\|}{\sqrt{1+4+9}}=\frac{9\sqrt{3}}{\sqrt{14}}\]
+    </div>
+  </div>
+
+  <!-- 夹角公式 -->
+  <div class="subsection" id="s4-angle">
+    <h3 class="subsection-title">夹角公式汇总</h3>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>情形</th>
+          <th>公式</th>
+          <th>关键点</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>两平面夹角</strong></td>
+          <td>\(\cos\theta = \dfrac{|\vec{n}_1\cdot\vec{n}_2|}{\|\vec{n}_1\|\|\vec{n}_2\|}\)</td>
+          <td>取绝对值（夹角 \(\in[0,\frac{\pi}{2}]\)）</td>
+        </tr>
+        <tr>
+          <td><strong>两直线夹角</strong></td>
+          <td>\(\cos\theta = \dfrac{|\vec{l}_1\cdot\vec{l}_2|}{\|\vec{l}_1\|\|\vec{l}_2\|}\)</td>
+          <td>取绝对值（夹角 \(\in[0,\frac{\pi}{2}]\)）</td>
+        </tr>
+        <tr>
+          <td><strong>直线与平面夹角</strong></td>
+          <td>\(\sin\theta = \dfrac{|\vec{l}\cdot\vec{n}|}{\|\vec{l}\|\|\vec{n}\|}\)</td>
+          <td>注意是 \(\sin\theta\)！（夹角是补角的余角）</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="key-box warn">
+      <div class="box-label">易错点</div>
+      <p>直线与平面的夹角 \(\theta\) 与法向量和方向向量的夹角 \(\varphi\) 满足 \(\theta+\varphi=\frac{\pi}{2}\)，所以 \(\sin\theta=\cos\varphi=\dfrac{|\vec{l}\cdot\vec{n}|}{\|\vec{l}\|\|\vec{n}\|}\)，而非用 \(\cos\theta\)！</p>
+    </div>
+
+    <div class="example">
+      <div class="example-label">例题</div>
+      <div class="example-title">判断平面 \(x+y+z-3=0\) 和直线 \(\dfrac{x-2}{3}=y+2=\dfrac{z-3}{-4}\) 的位置关系</div>
+      <div class="solution-label">解：</div>
+      \[\sin\theta=\frac{|(1,1,1)\cdot(3,1,-4)|}{\sqrt{3}\cdot\sqrt{26}}=\frac{|3+1-4|}{\sqrt{78}}=0\]
+      <p>夹角为 \(0\)，二者平行（检验：点 \((2,-2,3)\) 代入平面方程：\(2-2+3-3=0\) ✓，直线在平面上）</p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== §5 曲面与曲线 ==================== -->
+<div class="section" id="s5-surface">
+  <div class="section-header">
+    <span class="section-num">§ 5</span>
+    <h2 class="section-title">曲面、曲线与二次曲面</h2>
+  </div>
+
+  <div class="subsection">
+    <h3 class="subsection-title">曲面方程基础</h3>
+
+    <div class="key-box">
+      <div class="box-label">自由度理解</div>
+      <p>\(\mathbb{R}^3\) 自由度为 3，一个方程削减一个自由度：曲面自由度为 2（1个方程），曲线自由度为 1（2个方程）。</p>
+    </div>
+
+    <div class="example">
+      <div class="example-label">例题：球面方程</div>
+      <div class="example-title">以 \(P_0(x_0,y_0,z_0)\) 为圆心，半径为 \(r\) 的球面</div>
+      \[(x-x_0)^2+(y-y_0)^2+(z-z_0)^2=r^2\]
+      <p style="margin-top:8px">一般式 \(x^2+y^2+z^2+2x-4y+6z-2=0\) → 配方 → \((x+1)^2+(y-2)^2+(z+3)^2=4^2\)，球心 \((-1,2,-3)\)，半径 \(4\)</p>
+    </div>
+  </div>
+
+  <!-- 旋转曲面 -->
+  <div class="subsection" id="rotation">
+    <h3 class="subsection-title">旋转曲面</h3>
+
+    <div class="key-box green">
+      <div class="box-label">⭐ 旋转曲面方程的求法</div>
+      <p>在 \(O-yz\) 平面上有曲线 \(f(y,z)=0\)，绕 \(z\) 轴旋转一周：</p>
+      <ul style="margin-top:8px;margin-left:16px">
+        <li>点 \(P(x,y,z)\) 绕 \(z\) 轴旋转，\(z\) 不变，\(y\) 变为 \(\pm\sqrt{x^2+y^2}\)</li>
+        <li>旋转曲面方程：\(f(\pm\sqrt{x^2+y^2},\,z)=0\)</li>
+      </ul>
+      <div class="formula" style="margin-top:12px">
+        <strong>规律</strong>：绕哪个轴转，哪个变量不变；另一个变量 \(y\) 换为 \(\pm\sqrt{x^2+y^2}\)（绕 \(z\) 轴）
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="example-label">旋转面例题</div>
+      <div class="example-title">\(O-yz\) 面上椭圆 \(\dfrac{y^2}{a^2}+\dfrac{z^2}{b^2}=1\) 绕 \(z\) 轴旋转</div>
+      <div class="solution-label">解：</div>
+      <p>\(z\) 不动，\(y \to \pm\sqrt{x^2+y^2}\)：</p>
+      \[\frac{x^2+y^2}{a^2}+\frac{z^2}{b^2}=1 \quad\text{（旋转椭球面）}\]
+    </div>
+  </div>
+
+  <!-- 柱面 -->
+  <div class="subsection" id="cylinder">
+    <h3 class="subsection-title">柱面</h3>
+
+    <div class="key-box yellow">
+      <div class="box-label">⭐ 柱面的判断规律</div>
+      <p>在空间 \(\mathbb{R}^3\) 中，<strong>方程中缺少某个变量</strong>，则该变量对应的轴是母线方向（即柱面的母线平行于该轴）。</p>
+      <ul style="margin-top:8px;margin-left:16px">
+        <li>\(y=x^2\)（缺 \(z\)）→ 抛物柱面，母线平行于 \(z\) 轴</li>
+        <li>\(x^2+z^2=4z\)（缺 \(y\)）→ 圆柱面，母线平行于 \(y\) 轴</li>
+      </ul>
+    </div>
+
+    <div class="key-box warn">
+      <div class="box-label">注意区别</div>
+      <p>在平面 \(\mathbb{R}^2\) 里，\(y=x^2\) 表示抛物线；在空间 \(\mathbb{R}^3\) 里，\(y=x^2\) 表示抛物<strong>柱面</strong>。</p>
+      <p>三维空间中的抛物线需要两个方程：\(\begin{cases}y=x^2\\z=0\end{cases}\)</p>
+    </div>
+  </div>
+
+  <!-- 曲线 -->
+  <div class="subsection" id="s5-curve">
+    <h3 class="subsection-title">曲线方程</h3>
+
+    <div class="key-box">
+      <div class="box-label">空间曲线的两种表示</div>
+      <p><strong>交线式（隐式）</strong>：两曲面的交线 \(\begin{cases}F(x,y,z)=0\\G(x,y,z)=0\end{cases}\)</p>
+      <p style="margin-top:8px"><strong>参数式</strong>：\((x(t),y(t),z(t))\)，一个参数对应自由度为 1（曲线）</p>
+    </div>
+
+    <div class="example">
+      <div class="example-label">例题：螺旋线</div>
+      <div class="example-title">\(\begin{cases}x=a\cos t\\y=a\sin t\\z=ct\end{cases}\)，\(a,c>0\)</div>
+      <div class="solution-label">理解：</div>
+      <p>在 \(O-xy\) 面看：\(x^2+y^2=a^2\) 做匀速圆周运动；在 \(z\) 方向：\(z=ct\) 匀速上升 → 螺旋线</p>
+    </div>
+
+    <div class="key-box yellow">
+      <div class="box-label">截痕法（了解）</div>
+      <p>用一系列平行平面截曲面，研究截线（截痕）来了解曲面形状。如医学 CT 成像技术的数学原理。</p>
+    </div>
+  </div>
+
+  <!-- 二次曲面标准型 -->
+  <div class="subsection" id="s5-quadric">
+    <h3 class="subsection-title">二次曲面标准型（重点！）</h3>
+
+    <p>所有二次曲面均可由旋转椭球面推广得到，记忆时注意符号规律。</p>
+
+    <!-- 椭球面 -->
+    <div class="subsection" style="margin-top:20px" id="ellipsoid">
+      <h4 style="color:var(--accent3);margin-bottom:12px;font-size:15px">一、椭球面</h4>
+      <div class="key-box green">
+        <div class="box-label">标准方程</div>
+        \[\frac{x^2}{a^2}+\frac{y^2}{b^2}+\frac{z^2}{c^2}=1,\quad a,b,c>0\]
+        <p style="margin-top:8px">\(a,b,c\) 为三个半轴长。当 \(a=b\) 时为旋转椭球面：\(\dfrac{x^2+y^2}{a^2}+\dfrac{z^2}{c^2}=1\)</p>
+        <p style="margin-top:6px">来源：\(O-yz\) 面椭圆绕 \(z\) 轴旋转</p>
+      </div>
+    </div>
+
+    <!-- 双曲面 -->
+    <div class="subsection" style="margin-top:20px" id="hyperboloid">
+      <h4 style="color:var(--accent2);margin-bottom:12px;font-size:15px">二、双曲面（两种）</h4>
+
+      <div class="info-row">
+        <div class="info-card">
+          <div class="info-card-title" style="color:var(--accent2)">单叶双曲面</div>
+          \[\frac{x^2}{a^2}+\frac{y^2}{b^2}-\frac{z^2}{c^2}=1\]
+          <p style="font-size:12px;color:var(--text-muted);margin-top:8px">两个正号，一个负号；腰部最细，上下无限延伸；来自双曲线 \(\dfrac{y^2}{a^2}-\dfrac{z^2}{b^2}=1\) 绕 \(z\) 轴转</p>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title" style="color:var(--accent2)">双叶双曲面</div>
+          \[\frac{x^2}{a^2}+\frac{y^2}{b^2}-\frac{z^2}{c^2}=-1\]
+          <p style="font-size:12px;color:var(--text-muted);margin-top:8px">等价写法：\(-\dfrac{x^2}{a^2}-\dfrac{y^2}{b^2}+\dfrac{z^2}{c^2}=1\)；两叶分别在 \(z>0\) 和 \(z<0\) 侧；来自双曲线 \(-\dfrac{y^2}{a^2}+\dfrac{z^2}{b^2}=1\) 绕 \(z\) 轴转</p>
+        </div>
+      </div>
+
+      <div class="key-box warn">
+        <div class="box-label">⭐ 单叶 vs 双叶区别</div>
+        <p>右侧常数项 \(=+1\) → 单叶；右侧常数项 \(=-1\)（或等价地将方程移项到右边为 \(+1\)，则某项带负号）→ 双叶。</p>
+        <p style="margin-top:6px">记忆技巧：单叶是"连通的一张"，双叶是"分开的两张"。</p>
+      </div>
+    </div>
+
+    <!-- 锥面 -->
+    <div class="subsection" style="margin-top:20px" id="cone">
+      <h4 style="color:var(--accent4);margin-bottom:12px;font-size:15px">三、锥面</h4>
+      <div class="key-box yellow">
+        <div class="box-label">标准方程</div>
+        \[\frac{x^2}{a^2}+\frac{y^2}{b^2}-\frac{z^2}{c^2}=0\]
+        <p style="margin-top:8px">可理解为单叶双曲面与双叶双曲面的"分界面"（常数项 \(=0\)）；来自双曲线渐近线 \(\dfrac{y^2}{a^2}-\dfrac{z^2}{b^2}=0\) 绕 \(z\) 轴转</p>
+        <p style="margin-top:6px">上半锥面（函数曲面）：\(z=c\sqrt{\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}}\)</p>
+      </div>
+    </div>
+
+    <!-- 抛物面 -->
+    <div class="subsection" style="margin-top:20px" id="paraboloid">
+      <h4 style="color:var(--accent);margin-bottom:12px;font-size:15px">四、抛物面（两种）</h4>
+
+      <div class="info-row">
+        <div class="info-card">
+          <div class="info-card-title">椭圆抛物面</div>
+          \[z=\frac{x^2}{a^2}+\frac{y^2}{b^2},\quad a,b>0\]
+          <p style="font-size:12px;color:var(--text-muted);margin-top:8px">开口朝上（\(z>0\)），截面为椭圆；来自抛物线 \(z=\dfrac{y^2}{a^2}\) 绕 \(z\) 轴转（旋转抛物面 \(a=b\)）</p>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title" style="color:var(--accent2)">双曲抛物面（马鞍面）</div>
+          \[z=\frac{x^2}{a^2}-\frac{y^2}{b^2},\quad a,b>0\]
+          <p style="font-size:12px;color:var(--text-muted);margin-top:8px">形似马鞍，不能由旋转得到；在 \(x=x_0\) 截面为抛物线，在 \(y=y_0\) 截面为反向抛物线</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 汇总表 -->
+    <div class="summary" style="margin-top:28px">
+      <div class="summary-title">⭐ 六种二次曲面一览表（必记）</div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>名称</th>
+            <th>标准方程</th>
+            <th>特征</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>椭球面</td>
+            <td>\(\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}+\dfrac{z^2}{c^2}=1\)</td>
+            <td>三个正号，常数 \(=1\)</td>
+          </tr>
+          <tr>
+            <td>单叶双曲面</td>
+            <td>\(\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}-\dfrac{z^2}{c^2}=1\)</td>
+            <td>两正一负，常数 \(=1\)，连通</td>
+          </tr>
+          <tr>
+            <td>双叶双曲面</td>
+            <td>\(\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}-\dfrac{z^2}{c^2}=-1\)</td>
+            <td>两正一负，常数 \(=-1\)，两片</td>
+          </tr>
+          <tr>
+            <td>锥面</td>
+            <td>\(\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}-\dfrac{z^2}{c^2}=0\)</td>
+            <td>两正一负，常数 \(=0\)</td>
+          </tr>
+          <tr>
+            <td>椭圆抛物面</td>
+            <td>\(z=\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}\)</td>
+            <td>一次 \(z\)，右侧两正</td>
+          </tr>
+          <tr>
+            <td>双曲抛物面</td>
+            <td>\(z=\dfrac{x^2}{a^2}-\dfrac{y^2}{b^2}\)</td>
+            <td>一次 \(z\)，右侧一正一负，马鞍形</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 核心公式汇总 ==================== -->
+<div class="section" id="summary-formulas">
+  <div class="section-header">
+    <span class="section-num">总结</span>
+    <h2 class="section-title">核心公式速查</h2>
+  </div>
+
+  <div class="key-box red">
+    <div class="box-label">⭐ 必背公式清单</div>
+    <ul class="prop-list">
+      <li>
+        <span class="prop-num">01</span>
+        <div><strong>内积</strong>：\(\vec{a}\cdot\vec{b}=a_1b_1+a_2b_2+a_3b_3=\|\vec{a}\|\|\vec{b}\|\cos\theta\)；正交 \(\Leftrightarrow\) 内积 \(=0\)</div>
+      </li>
+      <li>
+        <span class="prop-num">02</span>
+        <div><strong>叉积</strong>：行列式展开；\(\|\vec{a}\times\vec{b}\|=\|\vec{a}\|\|\vec{b}\|\sin\theta\)（平行四边形面积）；平行 \(\Leftrightarrow\) 叉积 \(=\vec{0}\)</div>
+      </li>
+      <li>
+        <span class="prop-num">03</span>
+        <div><strong>混合积</strong>：3阶行列式；几何意义是平行六面体体积；共面 \(\Leftrightarrow\) 混合积 \(=0\)</div>
+      </li>
+      <li>
+        <span class="prop-num">04</span>
+        <div><strong>平面点法式</strong>：\(A(x-x_0)+B(y-y_0)+C(z-z_0)=0\)，法向量 \(\vec{n}=(A,B,C)\)</div>
+      </li>
+      <li>
+        <span class="prop-num">05</span>
+        <div><strong>直线点向式</strong>：\(\dfrac{x-x_0}{\ell}=\dfrac{y-y_0}{m}=\dfrac{z-z_0}{n}\)，参数式 \((x_0+\ell t,y_0+mt,z_0+nt)\)</div>
+      </li>
+      <li>
+        <span class="prop-num">06</span>
+        <div><strong>点到平面距离</strong>：\(d=\dfrac{|Ax^*+By^*+Cz^*+D|}{\sqrt{A^2+B^2+C^2}}\)</div>
+      </li>
+      <li>
+        <span class="prop-num">07</span>
+        <div><strong>点到直线距离</strong>：\(d=\dfrac{\|\overrightarrow{P_0P^*}\times\vec{l}\|}{\|\vec{l}\|}\)</div>
+      </li>
+      <li>
+        <span class="prop-num">08</span>
+        <div><strong>直线与平面夹角</strong>：\(\sin\theta=\dfrac{|\vec{l}\cdot\vec{n}|}{\|\vec{l}\|\|\vec{n}\|}\)（注意用 sin！）</div>
+      </li>
+      <li>
+        <span class="prop-num">09</span>
+        <div><strong>旋转曲面</strong>：绕 \(z\) 轴，\(f(y,z)=0\) 变为 \(f(\pm\sqrt{x^2+y^2},z)=0\)</div>
+      </li>
+      <li>
+        <span class="prop-num">10</span>
+        <div><strong>平面束</strong>：过直线 \(L(\pi_1\cap\pi_2)\) 的平面族：\(\lambda\pi_1+\pi_2=0\)（少了 \(\pi_1\) 本身）</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="key-box green" style="margin-top:20px">
+    <div class="box-label">解题策略总结</div>
+    <ul class="prop-list">
+      <li><span class="prop-num">★</span><div>求<strong>正交向量</strong>：用叉积</div></li>
+      <li><span class="prop-num">★</span><div>求<strong>直线与曲面交点</strong>：将直线参数化代入曲面方程</div></li>
+      <li><span class="prop-num">★</span><div>过直线求<strong>满足条件的平面</strong>：用平面束，代入条件定 \(\lambda\)</div></li>
+      <li><span class="prop-num">★</span><div>一般式直线 → 点向式：先算叉积得方向向量，再令某坐标为 \(0\) 求特解点</div></li>
+      <li><span class="prop-num">★</span><div>识别二次曲面：看各项符号 → 参照汇总表</div></li>
+    </ul>
+  </div>
+</div>
+
+</div><!-- /content -->
+</div><!-- /main -->
+
+<button id="scrolltop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+window.addEventListener('scroll', function() {
+  document.getElementById('scrolltop').classList.toggle('visible', window.scrollY > 400);
+});
+
+// Highlight active nav item
+const sections = document.querySelectorAll('[id]');
+const navItems = document.querySelectorAll('.nav-item');
+window.addEventListener('scroll', function() {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 80) current = s.id;
+  });
+  navItems.forEach(n => {
+    n.style.borderLeftColor = n.getAttribute('href') === '#'+current ? 'var(--accent)' : 'transparent';
+    n.style.color = n.getAttribute('href') === '#'+current ? 'var(--text)' : '';
+  });
+});
+</script>
+
+</body>
+</html>

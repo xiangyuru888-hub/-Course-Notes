@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>常微分方程（ODE）完全讲义</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&family=DM+Mono:ital@0;1&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf9f6;
+  --surface: #f2f0eb;
+  --surface2: #e8e5de;
+  --ink: #1a1916;
+  --ink2: #4a4840;
+  --ink3: #7a776e;
+  --accent: #c8401a;
+  --accent2: #e8956a;
+  --blue: #1d4e89;
+  --blue-bg: #e8f0f8;
+  --green: #2d6a4f;
+  --green-bg: #e8f4ee;
+  --warn: #7a4500;
+  --warn-bg: #fdf0e0;
+  --red: #8b1a1a;
+  --red-bg: #fdeaea;
+  --border: #d5d1c8;
+  --serif: 'Noto Serif SC', serif;
+  --sans: 'Noto Sans SC', sans-serif;
+  --mono: 'DM Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.75;
+  min-height: 100vh;
+}
+
+/* ── Layout ── */
+.wrapper {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  max-width: 1100px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 2rem 0;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.sidebar-logo {
+  padding: 0 1.5rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1rem;
+}
+
+.sidebar-logo .course-tag {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  font-family: var(--mono);
+  margin-bottom: 6px;
+}
+
+.sidebar-logo h2 {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.nav-section { margin-bottom: 0.25rem; }
+
+.nav-chapter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.45rem 1.5rem;
+  font-size: 13px;
+  color: var(--ink2);
+  text-decoration: none;
+  transition: all 0.15s;
+  border-left: 2px solid transparent;
+}
+
+.nav-chapter:hover {
+  color: var(--ink);
+  background: var(--surface2);
+}
+
+.nav-chapter.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--surface2);
+  font-weight: 500;
+}
+
+.nav-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink3);
+  min-width: 18px;
+}
+
+.nav-sub {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.3rem 1.5rem 0.3rem 3rem;
+  font-size: 12px;
+  color: var(--ink3);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.nav-sub:hover { color: var(--ink); }
+
+/* ── Main Content ── */
+.main {
+  padding: 3rem 3.5rem;
+  max-width: 820px;
+}
+
+/* ── Cover ── */
+.cover {
+  padding: 3rem 0 4rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4rem;
+}
+
+.cover-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+.cover h1 {
+  font-family: var(--serif);
+  font-size: 38px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.25;
+  margin-bottom: 1rem;
+}
+
+.cover-sub {
+  font-size: 15px;
+  color: var(--ink2);
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.cover-meta {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.meta-label {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  font-family: var(--mono);
+}
+
+.meta-value {
+  font-size: 14px;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* ── Chapter ── */
+.chapter {
+  margin-bottom: 5rem;
+}
+
+.chapter-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.chapter-num {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+.chapter h2 {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ── Typography ── */
+h3 {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 2rem 0 0.75rem;
+}
+
+h4 {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink2);
+  margin: 1.5rem 0 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: var(--mono);
+}
+
+p {
+  margin-bottom: 0.8rem;
+  color: var(--ink2);
+}
+
+strong { color: var(--ink); font-weight: 500; }
+
+em { font-style: italic; color: var(--ink2); }
+
+code {
+  font-family: var(--mono);
+  font-size: 13px;
+  background: var(--surface2);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--ink);
+}
+
+math-inline {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+}
+
+/* ── Callout Cards ── */
+.callout {
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  margin: 1.25rem 0;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.callout-label {
+  font-size: 10px;
+  font-family: var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 400;
+  margin-bottom: 6px;
+}
+
+.callout.key {
+  background: var(--blue-bg);
+  border-left: 3px solid var(--blue);
+}
+.callout.key .callout-label { color: var(--blue); }
+
+.callout.tip {
+  background: var(--green-bg);
+  border-left: 3px solid var(--green);
+}
+.callout.tip .callout-label { color: var(--green); }
+
+.callout.warn {
+  background: var(--warn-bg);
+  border-left: 3px solid var(--warn);
+}
+.callout.warn .callout-label { color: var(--warn); }
+
+.callout.danger {
+  background: var(--red-bg);
+  border-left: 3px solid var(--red);
+}
+.callout.danger .callout-label { color: var(--red); }
+
+.callout.neutral {
+  background: var(--surface);
+  border-left: 3px solid var(--border);
+}
+.callout.neutral .callout-label { color: var(--ink3); }
+
+/* ── Formula ── */
+.formula {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-style: italic;
+  text-align: center;
+  padding: 1rem 1.5rem;
+  background: var(--surface);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  margin: 1rem 0;
+  color: var(--ink);
+}
+
+.formula.highlight {
+  background: var(--blue-bg);
+  border-color: #bcd0e8;
+  color: var(--blue);
+}
+
+.formula.red {
+  background: var(--red-bg);
+  border-color: #f0c0c0;
+  color: var(--red);
+}
+
+/* ── Steps ── */
+.steps {
+  list-style: none;
+  counter-reset: step;
+  margin: 0.75rem 0;
+}
+
+.steps li {
+  counter-increment: step;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0.6rem 0;
+  font-size: 14px;
+  color: var(--ink2);
+  line-height: 1.7;
+}
+
+.steps li::before {
+  content: counter(step);
+  min-width: 28px;
+  width: 28px;
+  height: 28px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-family: var(--mono);
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.steps li > span, .steps li > p, .steps li > strong {
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.steps li > em {
+  flex: 1;
+  min-width: 0;
+}
+
+.steps li::before {
+  content: counter(step);
+  width: 28px;
+  height: 28px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-family: var(--mono);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ── Example Box ── */
+.example {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin: 1.25rem 0;
+  overflow: hidden;
+}
+
+.example-head {
+  background: var(--surface);
+  padding: 0.6rem 1rem;
+  font-size: 12px;
+  font-family: var(--mono);
+  color: var(--ink3);
+  border-bottom: 1px solid var(--border);
+  letter-spacing: 0.04em;
+}
+
+.example-body {
+  padding: 1rem 1.25rem;
+  font-size: 14px;
+  color: var(--ink2);
+  line-height: 1.7;
+}
+
+.example-body p { margin-bottom: 0.5rem; color: var(--ink2); }
+
+.example-answer {
+  background: var(--green-bg);
+  border-top: 1px solid var(--border);
+  padding: 0.7rem 1.25rem;
+  font-size: 14px;
+  color: var(--green);
+  font-family: var(--serif);
+  font-style: italic;
+}
+
+/* ── Grid ── */
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+/* ── Compare Table ── */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 13px;
+  margin: 1rem 0;
+}
+
+.compare-cell {
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--ink2);
+}
+
+.compare-cell:last-child, .compare-cell:nth-last-child(2) { border-bottom: none; }
+
+.compare-head {
+  background: var(--surface);
+  font-weight: 500;
+  color: var(--ink);
+  font-size: 12px;
+}
+
+/* ── Summary Table ── */
+table.data {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 1rem 0;
+}
+
+table.data th {
+  background: var(--surface);
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--ink2);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+  letter-spacing: 0.04em;
+}
+
+table.data td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--surface2);
+  color: var(--ink2);
+  vertical-align: top;
+  line-height: 1.55;
+}
+
+table.data tr:last-child td { border-bottom: none; }
+table.data tr:hover td { background: var(--surface); }
+
+table.data .math-cell {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--ink);
+}
+
+/* ── Flow Map ── */
+.flowmap {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+
+.fbox {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.85rem;
+  font-size: 13px;
+  text-align: center;
+  flex: 1;
+  min-width: 100px;
+  color: var(--ink2);
+}
+
+.fbox.hl {
+  background: var(--blue-bg);
+  border-color: #bcd0e8;
+  color: var(--blue);
+  font-weight: 500;
+}
+
+.farr {
+  font-size: 16px;
+  color: var(--ink3);
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-family: var(--mono);
+}
+
+.badge.blue { background: var(--blue-bg); color: var(--blue); }
+.badge.green { background: var(--green-bg); color: var(--green); }
+.badge.red { background: var(--red-bg); color: var(--red); }
+.badge.warn { background: var(--warn-bg); color: var(--warn); }
+.badge.gray { background: var(--surface2); color: var(--ink3); }
+
+/* ── Divider ── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 2rem 0;
+}
+
+/* ── Method Tabs (interactive) ── */
+.tabs {
+  margin: 1rem 0;
+}
+
+.tab-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+
+.tab-btn {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-family: var(--mono);
+  border: 1px solid var(--border);
+  border-radius: 5px 5px 0 0;
+  border-bottom: none;
+  background: var(--surface);
+  color: var(--ink3);
+  cursor: pointer;
+  transition: all 0.12s;
+  letter-spacing: 0.02em;
+}
+
+.tab-btn:hover { color: var(--ink); background: var(--surface2); }
+.tab-btn.active { background: var(--bg); color: var(--accent); border-color: var(--border); }
+
+.tab-panel {
+  display: none;
+  border: 1px solid var(--border);
+  border-radius: 0 6px 6px 6px;
+  padding: 1.25rem;
+  background: var(--bg);
+}
+
+.tab-panel.active { display: block; }
+
+/* ── Print ── */
+@media print {
+  .sidebar { display: none; }
+  .wrapper { grid-template-columns: 1fr; }
+  .main { padding: 2cm; max-width: 100%; }
+  .chapter { page-break-before: always; }
+  .cover { page-break-before: avoid; }
+}
+
+/* ── Scrollbar ── */
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* ── Print button ── */
+.print-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-family: var(--mono);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--ink3);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: all 0.12s;
+  margin-top: 1rem;
+}
+.print-btn:hover { background: var(--surface2); color: var(--ink); }
+
+/* ── Annotation strip ── */
+.strip {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+
+.strip-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--ink3);
+  font-family: var(--mono);
+}
+
+.strip-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+
+<!-- ═══ SIDEBAR ═══ -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="course-tag">数学分析 AII · 2026</div>
+    <h2>常微分方程<br>完全讲义</h2>
+  </div>
+
+  <div class="nav-section">
+    <a href="#cover" class="nav-chapter active">
+      <span class="nav-num">00</span>封面与说明
+    </a>
+    <a href="#ch1" class="nav-chapter">
+      <span class="nav-num">01</span>基本概念
+    </a>
+    <a href="#ch2" class="nav-chapter">
+      <span class="nav-num">02</span>变量可分离方程
+    </a>
+    <a href="#ch3" class="nav-chapter">
+      <span class="nav-num">03</span>一阶线性方程
+    </a>
+    <a href="#ch4" class="nav-chapter">
+      <span class="nav-num">04</span>变量代换
+    </a>
+    <a href="#ch5" class="nav-chapter">
+      <span class="nav-num">05</span>可降阶高阶方程
+    </a>
+    <a href="#ch6" class="nav-chapter">
+      <span class="nav-num">06</span>应用与建模
+    </a>
+    <a href="#ch7" class="nav-chapter">
+      <span class="nav-num">07</span>速查总表
+    </a>
+  </div>
+</nav>
+
+<!-- ═══ MAIN ═══ -->
+<main class="main">
+
+<!-- Cover -->
+<section class="cover" id="cover">
+  <div class="cover-eyebrow">LECTURE NOTES · ORDINARY DIFFERENTIAL EQUATIONS</div>
+  <h1>常微分方程（ODE）<br>完全讲义</h1>
+  <p class="cover-sub">涵盖全部七章：基本概念、三大一阶方程解法、可降阶高阶方程、应用建模，以及考前速查总表。含所有易错点、做题习惯与例题详解。</p>
+  <div class="cover-meta">
+    <div class="meta-item">
+      <span class="meta-label">课程</span>
+      <span class="meta-value">数学分析 AII</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">章节</span>
+      <span class="meta-value">常微分方程</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">内容</span>
+      <span class="meta-value">七章完整版</span>
+    </div>
+  </div>
+  <button class="print-btn" onclick="window.print()">⎙ 打印 / 导出 PDF</button>
+</section>
+
+<!-- ══════════════════════════════════════════
+     CHAPTER 1: 基本概念
+═══════════════════════════════════════════ -->
+<section class="chapter" id="ch1">
+  <div class="chapter-header">
+    <span class="chapter-num">CHAPTER 01</span>
+    <h2>基本概念与术语</h2>
+  </div>
+
+  <h3>什么是微分方程</h3>
+  <p>含有<strong>未知函数</strong> <em>y = y(x)</em> 及其<strong>导数</strong>的方程称为微分方程。本章只讨论<strong>常微分方程（ODE）</strong>——未知函数只含一个自变量。</p>
+
+  <div class="grid2">
+    <div class="callout key">
+      <div class="callout-label">ODE — 本章考点</div>
+      <p>未知函数只有<strong>一个</strong>自变量，如 <em>y = y(x)</em> 或 <em>P = P(t)</em></p>
+      <p>例：<em>y'' + y = sin x</em></p>
+    </div>
+    <div class="callout neutral">
+      <div class="callout-label">PDE — 本章不考</div>
+      <p>未知函数有<strong>多个</strong>自变量，导数为偏导数。</p>
+      <p>例：<em>z<sub>x</sub> + z<sub>y</sub> = 0</em></p>
+    </div>
+  </div>
+
+  <h3>属性面板：读懂一道题的标签</h3>
+
+  <h4>阶数（Order）</h4>
+  <p>方程中出现的<strong>最高阶导数</strong>的阶数。</p>
+  <div class="grid2">
+    <div class="example">
+      <div class="example-head">一阶</div>
+      <div class="example-body"><em>y' − 2x + 1 = 0</em></div>
+    </div>
+    <div class="example">
+      <div class="example-head">二阶（高阶）</div>
+      <div class="example-body"><em>y'' + y = x</em></div>
+    </div>
+  </div>
+
+  <h4>线性 vs 非线性</h4>
+  <p><em>y</em> 及各阶导数都是<strong>一次方</strong>，且不相互相乘 → 线性。否则 → 非线性。</p>
+  <div class="compare">
+    <div class="compare-cell compare-head">✓ 线性</div>
+    <div class="compare-cell compare-head">✗ 非线性</div>
+    <div class="compare-cell"><em>y' + p(x)y = f(x)</em></div>
+    <div class="compare-cell">出现 <em>y²</em>、<em>yy'</em>、<em>sin y</em></div>
+  </div>
+
+  <h4>齐次 vs 非齐次（仅对线性方程）</h4>
+  <div class="compare">
+    <div class="compare-cell compare-head">齐次（f(x) = 0）</div>
+    <div class="compare-cell compare-head">非齐次（f(x) ≠ 0）</div>
+    <div class="compare-cell">无外力驱动的系统</div>
+    <div class="compare-cell">有外力驱动的系统</div>
+  </div>
+
+  <h3>解的分类</h3>
+
+  <div class="callout key">
+    <div class="callout-label">通解 — General Solution</div>
+    <p>含有<strong>独立任意常数</strong>的解。<strong>几阶方程的通解，就必须含几个独立的常数。</strong></p>
+    <div class="callout danger" style="margin-top:0.75rem">
+      <div class="callout-label">⚠ 常数必须独立</div>
+      <p><span class="badge red">错</span> &nbsp;<em>y = C₁ + C₂</em>（本质只是一个常数）</p>
+      <p><span class="badge green">对</span> &nbsp;<em>y = C₁x + C₂</em>（两者真正独立）</p>
+    </div>
+  </div>
+
+  <div class="callout neutral">
+    <div class="callout-label">特解 — Particular Solution</div>
+    <p>利用附加条件确定了所有常数，不含任意常数。</p>
+    <p><strong>初值条件：</strong>条件在<strong>同一点</strong>给出，如 <em>y(0)=0, y'(0)=1</em></p>
+    <p><strong>边界条件：</strong>条件在<strong>不同点</strong>给出，如 <em>y(0)=0, y(1)=1</em></p>
+  </div>
+
+  <h3>全章最重要的做题习惯</h3>
+
+  <div class="callout danger">
+    <div class="callout-label">🔴 铁律：每次积分，立刻加 +C</div>
+    <p>不能等到最后再补。因为 C 后续可能参与指数运算（如 <em>e<sup>C</sup></em>），晚加一步全盘皆输。</p>
+    <div class="compare" style="margin-top:0.75rem">
+      <div class="compare-cell compare-head" style="color:var(--red)">❌ 错误习惯（不定积分时）</div>
+      <div class="compare-cell compare-head" style="color:var(--green)">✅ 正确习惯（解 ODE 时）</div>
+      <div class="compare-cell"><em>y = ∫(2x−1)dx = x²−x</em><br><small>最后再加 C</small></div>
+      <div class="compare-cell"><em>y = ∫(2x−1)dx + C = x²−x+C</em><br><small>积分号消失那一刻就加</small></div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════
+     CHAPTER 2: 变量可分离
+═══════════════════════════════════════════ -->
+<section class="chapter" id="ch2">
+  <div class="chapter-header">
+    <span class="chapter-num">CHAPTER 02</span>
+    <h2>变量可分离方程</h2>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-label">识别特征</div>
+    <p>方程能化为 <em>y' = f(x)·g(y)</em> 的形式，即 <em>x</em> 的函数与 <em>y</em> 的函数可以<strong>"各找各妈"</strong>，完全分开到等号两侧。</p>
+  </div>
+
+  <div class="flowmap">
+    <div class="fbox">识别 <em>y'=f(x)g(y)</em></div><div class="farr">→</div>
+    <div class="fbox">令 g(y)=0 查特殊解</div><div class="farr">→</div>
+    <div class="fbox">分离 <em>dy/g(y)=f(x)dx</em></div><div class="farr">→</div>
+    <div class="fbox hl">两边积分（立刻+C）</div>
+  </div>
+
+  <h3>完整解题步骤</h3>
+
+  <ol class="steps">
+    <li><div style="flex:1;min-width:0;word-break:break-word"><strong>防遗漏检查：</strong>令 <em>g(y) = 0</em>，解出常数解 <em>y = c</em>，验证是否满足原方程。这类解有时无法被通解包含，必须单独列出。</div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word"><strong>假设 g(y) ≠ 0，分离变量：</strong>将 <em>y'</em> 写成 <em>dy/dx</em>，移项得 <em>dy/g(y) = f(x)dx</em></div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word"><strong>两边同时积分：</strong><em>∫ dy/g(y) = ∫ f(x)dx + C</em>（<strong>立刻加 C！</strong>）</div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word"><strong>化简：</strong>若积分出现 <em>ln|y|</em>，直接写成 <em>y = Ce<sup>…</sup></em>，把正负号吸收进 C，无需讨论绝对值。</div></li>
+  </ol>
+
+  <div class="divider"></div>
+
+  <h3>例题精讲</h3>
+
+  <div class="example">
+    <div class="example-head">例 1 — 基础型 &nbsp;|&nbsp; y' + xy² = 0</div>
+    <div class="example-body">
+      <p><strong>整理：</strong><em>dy/dx = −xy²</em>，右边 = <em>(−x)·(y²)</em>，可分离。</p>
+      <p><strong>Step 1 防遗漏：</strong><em>y² = 0 → y = 0</em>，代入 <em>0 + x·0 = 0</em> ✓，<em>y=0</em> 是解，记在旁边。</p>
+      <p><strong>Step 2 分离（y≠0）：</strong><em>dy/y² = −x dx</em></p>
+      <p><strong>Step 3 积分：</strong><em>−1/y = −x²/2 + C₁</em>（立刻加 C₁）</p>
+      <p><strong>Step 4 整理：</strong><em>y = 2/(x² + C)</em>（C = −2C₁，重命名常数）</p>
+    </div>
+    <div class="example-answer">通解：y = 2/(x²+C) &nbsp;及&nbsp; y = 0（y=0 不被通解包含，需单独列）</div>
+  </div>
+
+  <div class="example">
+    <div class="example-head">例 2 — 含对数型 &nbsp;|&nbsp; y' + 3y = 0</div>
+    <div class="example-body">
+      <p><em>dy/y = −3 dx</em></p>
+      <p><em>ln|y| = −3x + C₁</em></p>
+      <p><em>y = e<sup>C₁</sup>·e<sup>−3x</sup></em></p>
+      <p>把 <em>±e<sup>C₁</sup></em> 合并为新常数 <em>C</em>（C 可正可负可为任意实数）。</p>
+    </div>
+    <div class="example-answer">y = Ce<sup>−3x</sup></div>
+  </div>
+
+  <div class="example">
+    <div class="example-head">例 3 — 带初值 &nbsp;|&nbsp; xy dx + (x²+1)dy = 0, &nbsp;y(0)=1</div>
+    <div class="example-body">
+      <p><strong>整理：</strong><em>dy/y = −x dx/(x²+1)</em></p>
+      <p><strong>积分：</strong>左边 <em>ln|y|</em>，右边 <em>−½ln(x²+1)</em></p>
+      <div class="formula"><em>ln y = −½ln(x²+1) + ln C &nbsp;→&nbsp; y = C/√(x²+1)</em></div>
+      <p><strong>代初值：</strong><em>y(0) = C/1 = 1 → C = 1</em></p>
+    </div>
+    <div class="example-answer">特解：y = 1/√(x²+1)</div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-label">积分技巧</div>
+    <p>把积分常数写成 <em>ln C</em> 形式（而非直接写 <em>C</em>），可以方便和左边的 <em>ln</em> 合并，省去大量化简步骤。</p>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════
+     CHAPTER 3: 一阶线性方程
+═══════════════════════════════════════════ -->
+<section class="chapter" id="ch3">
+  <div class="chapter-header">
+    <span class="chapter-num">CHAPTER 03</span>
+    <h2>一阶线性微分方程</h2>
+  </div>
+
+  <div class="callout key">
+    <div class="callout-label">标准形式（识别特征）</div>
+    <div class="formula highlight"><em>y' + p(x)y = f(x)</em></div>
+    <ul style="font-size:14px;color:var(--ink2);padding-left:1.2rem;margin-top:0.5rem">
+      <li><div style="flex:1;min-width:0;word-break:break-word"><em>y'</em> 的系数必须为 1（不是则先除过去）</div></li>
+      <li><div style="flex:1;min-width:0;word-break:break-word">等号右边只有 <em>x</em> 的函数，没有 <em>y</em></div></li>
+      <li><div style="flex:1;min-width:0;word-break:break-word"><em>y</em> 和 <em>y'</em> 都只出现一次方</div></li>
+    </ul>
+  </div>
+
+  <h3>三种方法对比</h3>
+
+  <div class="tabs">
+    <div class="tab-buttons">
+      <button class="tab-btn" onclick="showTab('m',0)">方法1：常数变易法</button>
+      <button class="tab-btn" onclick="showTab('m',1)">方法2：公式法</button>
+      <button class="tab-btn active" onclick="showTab('m',2)">方法3：积分因子法 ⭐</button>
+    </div>
+    <div class="tab-panel" id="m0">
+      <h4 style="margin-top:0">原理型方法（理解原理用）</h4>
+      <ol class="steps">
+        <li><div style="flex:1;min-width:0;word-break:break-word">解齐次方程 <em>y' + p(x)y = 0</em>，得通解 <em>Y = Ce<sup>−∫p(x)dx</sup></em></div></li>
+        <li><div style="flex:1;min-width:0;word-break:break-word">把常数 <em>C</em> 换成未知函数 <em>u(x)</em>，设 <em>y = u(x)·e<sup>−∫p(x)dx</sup></em></div></li>
+        <li><div style="flex:1;min-width:0;word-break:break-word">代入原方程，经一顿抵消，得 <em>u'(x) = f(x)·e<sup>∫p(x)dx</sup></em></div></li>
+        <li><div style="flex:1;min-width:0;word-break:break-word">积分求 <em>u(x)</em>，代回得 <em>y</em></div></li>
+      </ol>
+      <div class="callout warn" style="margin-top:1rem">
+        <div class="callout-label">缺点</div>
+        <p>繁琐，每次都要从头推，不推荐在考试中使用。</p>
+      </div>
+    </div>
+    <div class="tab-panel" id="m1">
+      <h4 style="margin-top:0">死记硬背型（不推荐）</h4>
+      <div class="formula red"><em>y = e<sup>−∫p(x)dx</sup> · (∫ f(x)·e<sup>∫p(x)dx</sup> dx + C)</em></div>
+      <div class="callout warn">
+        <div class="callout-label">缺点</div>
+        <p>时间长了容易记错，积分因子法推导更安全，建议用方法3。</p>
+      </div>
+    </div>
+    <div class="tab-panel active" id="m2">
+      <h4 style="margin-top:0">⭐ 强烈推荐：积分因子法</h4>
+      <ol class="steps">
+        <li><div style="flex:1;min-width:0;word-break:break-word"><strong>求积分因子：</strong><em>μ(x) = e<sup>∫p(x)dx</sup></em>（此处积分<strong style="color:var(--red)">不加 C</strong>）</div></li>
+        <li><div style="flex:1;min-width:0;word-break:break-word"><strong>两边同乘 μ(x)：</strong>左边<strong>自动凑成完美导数</strong> → <em>(y·μ(x))' = f(x)·μ(x)</em></div></li>
+        <li><div style="flex:1;min-width:0;word-break:break-word"><strong>两边积分：</strong><em>y·μ(x) = ∫ f(x)·μ(x) dx + C</em>（<strong>这里加 C</strong>）</div></li>
+        <li><div style="flex:1;min-width:0;word-break:break-word">除以 <em>μ(x)</em> 得最终的 <em>y</em></div></li>
+      </ol>
+      <div class="callout key" style="margin-top:1rem">
+        <div class="callout-label">为什么乘以 μ 后左边变成 (yμ)'？</div>
+        <p>对 <em>(y·μ)'</em> 展开：<em>y'μ + y·μ' = y'μ + y·p(x)μ = μ(y' + p(x)y)</em></p>
+        <p>这正好是原方程左边乘以 μ！<strong>配凑是链式法则的必然结果，不是凑巧。</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3>例题精讲（积分因子法）</h3>
+
+  <div class="example">
+    <div class="example-head">例 &nbsp;|&nbsp; y' − 2y/(x+1) = (x+1)³</div>
+    <div class="example-body">
+      <p><strong>Step 1 识别：</strong><em>p(x) = −2/(x+1)</em>，<em>f(x) = (x+1)³</em></p>
+      <p><strong>Step 2 求 μ：</strong></p>
+      <div class="formula"><em>μ(x) = e<sup>∫(−2/(x+1))dx</sup> = e<sup>−2ln(x+1)</sup> = (x+1)<sup>−2</sup></em></div>
+      <p><strong>Step 3 乘以 μ，左边直接写成导数：</strong></p>
+      <div class="formula"><em>( y · 1/(x+1)² )' = (x+1)³ · 1/(x+1)² = (x+1)</em></div>
+      <p><strong>Step 4 两边积分（左边去撇，右边积分并立刻+C）：</strong></p>
+      <div class="formula"><em>y/(x+1)² = ½(x+1)² + C</em></div>
+      <p><strong>Step 5 化简（两边乘以 (x+1)²）：</strong></p>
+    </div>
+    <div class="example-answer">y = ½(x+1)⁴ + C(x+1)²</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3>神级技巧：x 与 y 互换</h3>
+
+  <div class="callout warn">
+    <div class="callout-label">⚠ 当题目"什么类型都不像"时</div>
+    <p>遇到如 <em>y' = y/(y³+x)</em> 这类方程，既不可分离，也不是 y 的线性方程，尝试<strong>把 x 当未知函数，y 当自变量</strong>。</p>
+    <ol class="steps" style="margin-top:0.75rem">
+      <li><div style="flex:1;min-width:0;word-break:break-word">设 <em>x = x(y)</em>，利用 <em>y'(x) = 1/x'(y)</em></div></li>
+      <li><div style="flex:1;min-width:0;word-break:break-word">代入原方程得：<em>x' = (y³+x)/y = y² + (1/y)x</em></div></li>
+      <li><div style="flex:1;min-width:0;word-break:break-word">移项：<em>x' − (1/y)x = y²</em> ← 这正是关于 <em>x</em> 的<strong>一阶线性方程！</strong></div></li>
+      <li><div style="flex:1;min-width:0;word-break:break-word">用积分因子法秒杀</div></li>
+    </ol>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════
+     CHAPTER 4: 变量代换
+═══════════════════════════════════════════ -->
+<section class="chapter" id="ch4">
+  <div class="chapter-header">
+    <span class="chapter-num">CHAPTER 04</span>
+    <h2>变量代换（三种换元法）</h2>
+  </div>
+
+  <p>有些方程"乔装打扮"，换元后才能变成熟悉的可分离或线性方程。</p>
+
+  <table class="data">
+    <thead>
+      <tr>
+        <th>方程特征</th>
+        <th>换元类型</th>
+        <th>令什么变量</th>
+        <th>化为</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="math-cell">右边能凑成 f(y/x)</td>
+        <td>齐次方程</td>
+        <td class="math-cell">u = y/x</td>
+        <td>变量可分离</td>
+      </tr>
+      <tr>
+        <td class="math-cell">y' + py = qy<sup>a</sup>（a≠0,1）</td>
+        <td>Bernoulli 方程</td>
+        <td class="math-cell">u = y<sup>1−a</sup></td>
+        <td>一阶线性</td>
+      </tr>
+      <tr>
+        <td class="math-cell">x,y 绑在一起，如 cos(x+y)</td>
+        <td>整体换元（观察法）</td>
+        <td>令整体 = u</td>
+        <td>变量可分离</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <h3>类型 1：齐次方程</h3>
+
+  <div class="callout key">
+    <div class="callout-label">识别特征</div>
+    <p><em>y' = f(y/x)</em>。所有 x, y 的组合次数相同，能凑成 <em>y/x</em> 整体，等号右边<strong>没有单独游离的 x 或 y</strong>。</p>
+    <p style="margin-top:0.5rem"><strong>快速判断法：</strong>将 x 换成 tx，y 换成 ty，若方程不变（t 消掉），则是齐次方程。</p>
+  </div>
+
+  <ol class="steps">
+    <li><div style="flex:1;min-width:0;word-break:break-word">令 <em>u = y/x</em>，即 <em>y = ux</em></div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word">对 x 求导（链式法则）：<em>y' = u'x + u</em></div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word">代入原方程：<em>u'x + u = f(u)</em></div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word">整理：<em>du/(f(u)−u) = dx/x</em> → <strong>变量可分离！</strong></div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word">积分，解出 u，换回 <em>y = ux</em></div></li>
+  </ol>
+
+  <div class="example">
+    <div class="example-head">例 &nbsp;|&nbsp; y' = (x+y)/x</div>
+    <div class="example-body">
+      <p>整理：<em>y' = 1 + y/x</em>，令 <em>u = y/x</em></p>
+      <p><em>u'x + u = 1+u → u'x = 1 → du = dx/x</em></p>
+      <p>积分：<em>u = ln|x| + C</em></p>
+    </div>
+    <div class="example-answer">y = x(ln|x| + C)</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3>类型 2：Bernoulli（贝努利）方程</h3>
+
+  <div class="callout key">
+    <div class="callout-label">识别特征</div>
+    <div class="formula"><em>y' + p(x)y = q(x)·y<sup>a</sup> &nbsp;&nbsp;&nbsp;（a ≠ 0, 1）</em></div>
+    <p>比一阶线性方程多了一个 <em>y<sup>a</sup></em> 的尾巴。a=0 退化成线性；a=1 退化成可分离，均单独处理。</p>
+  </div>
+
+  <ol class="steps">
+    <li><div style="flex:1;min-width:0;word-break:break-word">若 <em>a > 0</em>，先记录 <em>y ≡ 0</em> 是一个解</div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word">两边除以 <em>y<sup>a</sup></em>：<em>y<sup>−a</sup>y' + p(x)y<sup>1−a</sup> = q(x)</em></div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word">令 <em>u = y<sup>1−a</sup></em>，则 <em>u' = (1−a)y<sup>−a</sup>y'</em></div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word">代入，得关于 u 的<strong>一阶线性方程</strong></div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word">用积分因子法解出 u，换回 <em>y = u<sup>1/(1−a)</sup></em></div></li>
+  </ol>
+
+  <div class="callout warn">
+    <div class="callout-label">⚠ 常见错误</div>
+    <p>换元后，不要忘了 <em>y<sup>−a</sup>y'</em> 整体被替换为 <em>u'/(1−a)</em>，整理时系数是 <em>1/(1−a)</em>，不是 1。</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3>类型 3：整体换元（观察法）</h3>
+
+  <div class="callout key">
+    <div class="callout-label">识别特征</div>
+    <p>x 和 y 被"绑在一起"出现，如 <em>y' = cos(x+y)</em> 或 <em>y' = (x+y)²</em>。</p>
+  </div>
+
+  <ol class="steps">
+    <li><div style="flex:1;min-width:0;word-break:break-word">观察"绑在一起"的整体，令它等于 <em>u</em>（如令 <em>u = x+y</em>）</div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word">对 x 求导，用 <em>u'</em> 替换 <em>y'</em>（如 <em>u' = 1 + y' → y' = u'−1</em>）</div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word">原方程化为关于 u 的可分离方程</div></li>
+  </ol>
+
+  <div class="example">
+    <div class="example-head">例 &nbsp;|&nbsp; y' = cos(x+y)</div>
+    <div class="example-body">
+      <p>令 <em>u = x+y → u' = 1+y' → y' = u'−1</em></p>
+      <p>代入：<em>u'−1 = cos u → u' = 1+cos u</em></p>
+      <p>利用 <em>1+cos u = 2cos²(u/2)</em>：</p>
+      <p><em>du/(2cos²(u/2)) = dx → ½tan(u/2) = x + C</em></p>
+    </div>
+    <div class="example-answer">tan((x+y)/2) = 2x + C</div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════
+     CHAPTER 5: 可降阶高阶
+═══════════════════════════════════════════ -->
+<section class="chapter" id="ch5">
+  <div class="chapter-header">
+    <span class="chapter-num">CHAPTER 05</span>
+    <h2>可降阶的高阶方程</h2>
+  </div>
+
+  <p>标准二阶方程含有 <em>x, y, y', y''</em>。只要它"缺项"，就可以降阶处理。</p>
+
+  <table class="data">
+    <thead>
+      <tr>
+        <th>缺什么</th>
+        <th>标准形式</th>
+        <th>代换</th>
+        <th>注意</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>缺 y 和 y'</td>
+        <td class="math-cell">y'' = f(x)</td>
+        <td>直接积分两次</td>
+        <td>每次积分都加新常数</td>
+      </tr>
+      <tr>
+        <td>缺 y（不显含 y）</td>
+        <td class="math-cell">y'' = f(x, y')</td>
+        <td class="math-cell">p = y'，p' = y''（p 看作 x 的函数）</td>
+        <td>化为关于 p(x) 的一阶方程</td>
+      </tr>
+      <tr>
+        <td>缺 x（不显含 x）</td>
+        <td class="math-cell">y'' = f(y, y')</td>
+        <td class="math-cell">p = y'，y'' = p·dp/dy（p 看作 y 的函数）</td>
+        <td><strong style="color:var(--red)">高频易错：链式法则！</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <h3>类型 1：缺 y 和 y'（y'' = f(x)）</h3>
+
+  <div class="callout tip">
+    <div class="callout-label">最简单：直接积分两次</div>
+    <p><em>y' = ∫f(x)dx + C₁</em>（第一次积分，立刻加 C₁）</p>
+    <p><em>y = ∫(∫f(x)dx + C₁)dx + C₂ = … + C₁x + C₂</em>（第二次积分，加 C₂）</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3>类型 2：缺 y（y'' = f(x, y')）</h3>
+
+  <ol class="steps">
+    <li><div style="flex:1;min-width:0;word-break:break-word">令 <em>p = y'</em>，则 <em>y'' = p'（= dp/dx）</em>，<strong>p 看作 x 的函数</strong></div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word">原方程变为 <em>p' = f(x, p)</em>，是关于 p(x) 的一阶方程</div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word">解出 <em>p(x, C₁)</em></div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word">由 <em>y' = p</em>，再积分一次得 <em>y</em>（加 C₂）</div></li>
+  </ol>
+
+  <div class="example">
+    <div class="example-head">例 &nbsp;|&nbsp; y'' = 2xy'（右边只有 x 和 y'，无 y）</div>
+    <div class="example-body">
+      <p>令 <em>p = y'</em>，则 <em>p' = 2xp</em>（可分离方程）</p>
+      <p><em>dp/p = 2x dx → ln|p| = x² + C₁ → p = C₁e<sup>x²</sup></em></p>
+      <p>（合并常数 ±e<sup>C₁</sup> 为 C₁）</p>
+    </div>
+    <div class="example-answer">y = C₁∫e<sup>x²</sup>dx + C₂</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3>类型 3：缺 x（y'' = f(y, y')）⭐ 最难最易错</h3>
+
+  <div class="callout danger">
+    <div class="callout-label">🔴 超级易错点：两种缺项的 y'' 替换方式完全不同！</div>
+    <div class="compare" style="margin-top:0.75rem">
+      <div class="compare-cell compare-head">缺 y 时（p 是 x 的函数）</div>
+      <div class="compare-cell compare-head">缺 x 时（p 是 y 的函数）</div>
+      <div class="compare-cell"><em>y'' = dp/dx = p'</em></div>
+      <div class="compare-cell" style="color:var(--red);font-style:italic"><strong>y'' = p·dp/dy（链式法则！）</strong></div>
+    </div>
+    <p style="margin-top:0.75rem;font-size:14px"><strong>推导：</strong><em>y'' = dp/dx = (dp/dy)·(dy/dx) = (dp/dy)·p = p·dp/dy</em></p>
+    <p style="font-size:13px;color:var(--red)">记忆口诀：缺 x → p·dp/dy；缺 y → dp/dx = p'。两者截然不同。</p>
+  </div>
+
+  <ol class="steps">
+    <li><div style="flex:1;min-width:0;word-break:break-word">令 <em>p = y'</em>，把 p 看作 y 的函数 <em>p = p(y)</em></div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word">代换：<em>y'' = p·dp/dy</em></div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word">原方程化为 <em>p·dp/dy = f(y, p)</em>，是关于 p, y 的一阶方程</div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word">解出 <em>p(y, C₁)</em></div></li>
+    <li><div style="flex:1;min-width:0;word-break:break-word">由 <em>dy/dx = p(y)</em>，分离变量 <em>dy/p(y) = dx</em>，再积分（加 C₂）</div></li>
+  </ol>
+
+  <div class="example">
+    <div class="example-head">经典例题 &nbsp;|&nbsp; yy'' − (y')² = 0</div>
+    <div class="example-body">
+      <p><strong>判断：</strong>含 y, y', y''，无独立 x → 缺 x 型。</p>
+      <p><strong>代换：</strong>令 <em>p = y', y'' = p·dp/dy</em>，代入：</p>
+      <div class="formula"><em>y·p·(dp/dy) − p² = 0 &nbsp;→&nbsp; p·(y·dp/dy − p) = 0</em></div>
+      <p><strong>路线 A（p=0）：</strong><em>y' = 0 → y = C</em>（常数解）</p>
+      <p><strong>路线 B（y·dp/dy = p）：</strong></p>
+      <p><em>dp/p = dy/y → ln|p| = ln|y| + C₁ → p = C₁y</em></p>
+      <p>换回：<em>y' = C₁y → dy/y = C₁dx → y = C₂e<sup>C₁x</sup></em></p>
+    </div>
+    <div class="example-answer">通解：y = C₂e<sup>C₁x</sup>（令 C₁=0 可包含路线 A 的常数解）</div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════
+     CHAPTER 6: 应用建模
+═══════════════════════════════════════════ -->
+<section class="chapter" id="ch6">
+  <div class="chapter-header">
+    <span class="chapter-num">CHAPTER 06</span>
+    <h2>应用与建模</h2>
+  </div>
+
+  <p>应用题核心是<strong>把中文翻译成微分方程</strong>，列方程后，回归前面章节的解法。</p>
+
+  <h3>几何应用</h3>
+
+  <div class="callout warn">
+    <div class="callout-label">⚠ 最容易犯的错误</div>
+    <p>题目说"曲线上任意一点"，<strong>必须用 (x₀, y₀) 表示</strong>，把 x, y 留给切线方程！</p>
+    <div class="formula"><em>切线方程：y − y₀ = y'(x₀)·(x − x₀)</em></div>
+    <p style="font-size:13px;margin-top:0.5rem">列出几何条件（切线截距、曲线长度等），用 x₀, y₀ 建立等式，化简后去掉下标 0，得微分方程。</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3>人口演化模型</h3>
+
+  <div class="grid2">
+    <div>
+      <h4>模型一：Malthus 模型</h4>
+      <div class="callout neutral">
+        <div class="callout-label">假设</div>
+        <p>出生率 b，死亡率 h 均为常数，净增长率 <em>r = b − h</em>。</p>
+      </div>
+      <div class="callout key">
+        <div class="callout-label">方程推导</div>
+        <p><em>[P(t+Δt)−P(t)]/Δt ≈ rP(t)</em></p>
+        <p>Δt→0 即得：</p>
+        <div class="formula"><em>P'(t) = rP(t)</em></div>
+      </div>
+      <div class="callout tip">
+        <div class="callout-label">求解（分离变量）</div>
+        <div class="formula"><em>P(t) = P₀·e<sup>rt</sup></em></div>
+      </div>
+      <div class="callout danger">
+        <div class="callout-label">致命缺陷</div>
+        <p>r > 0 时人口无限指数爆炸，不符合资源有限的现实。</p>
+      </div>
+    </div>
+    <div>
+      <h4>模型二：Logistic 模型</h4>
+      <div class="callout neutral">
+        <div class="callout-label">改进</div>
+        <p>引入最大承载力 <em>P<sub>max</sub></em>，增长率随人口增加而线性递减：</p>
+        <p><em>r<sub>actual</sub> = r(1 − P/P<sub>max</sub>)</em></p>
+      </div>
+      <div class="callout key">
+        <div class="callout-label">方程</div>
+        <div class="formula"><em>P' = r(1 − P/P<sub>max</sub>)·P</em></div>
+      </div>
+      <div class="callout tip">
+        <div class="callout-label">最终公式</div>
+        <div class="formula"><em>P(t) = P₀·P<sub>max</sub> / (P₀ + (P<sub>max</sub>−P₀)e<sup>−rt</sup>)</em></div>
+        <p style="font-size:13px">当 t→∞，P(t)→P<sub>max</sub>。增长曲线呈 "S" 型。</p>
+      </div>
+    </div>
+  </div>
+
+  <h3>Logistic 模型：部分分式积分详解</h3>
+
+  <div class="example">
+    <div class="example-head">关键步骤：裂项积分</div>
+    <div class="example-body">
+      <p>分离变量后，左边被积函数为 <em>1/[P(1−P/P<sub>max</sub>)]</em>，化简后：</p>
+      <div class="formula"><em>P<sub>max</sub>/[P(P<sub>max</sub>−P)] = 1/P + 1/(P<sub>max</sub>−P)</em></div>
+      <p>验证（通分）：<em>[(P<sub>max</sub>−P)+P]/[P(P<sub>max</sub>−P)] = P<sub>max</sub>/[P(P<sub>max</sub>−P)]</em> ✓</p>
+      <p>分别积分：<em>ln P − ln(P<sub>max</sub>−P) = rt + C</em></p>
+      <p>即 <em>ln[P/(P<sub>max</sub>−P)] = rt + C</em>，两边取指数，代入初值 P(0)=P₀，解出 P(t)。</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════
+     CHAPTER 7: 速查总表
+═══════════════════════════════════════════ -->
+<section class="chapter" id="ch7">
+  <div class="chapter-header">
+    <span class="chapter-num">CHAPTER 07</span>
+    <h2>速查总表</h2>
+  </div>
+
+  <p>看到题目，30 秒内确定武器。</p>
+
+  <h3>题型识别总表</h3>
+  <table class="data">
+    <thead>
+      <tr>
+        <th>方程类型</th>
+        <th>识别特征（一眼看出）</th>
+        <th>核心操作</th>
+        <th>常数个数</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>变量可分离</strong></td>
+        <td class="math-cell">y' = f(x)g(y)，能分开</td>
+        <td>分离，两边积分，+C</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td><strong>一阶线性</strong></td>
+        <td class="math-cell">y' + py = f(x)，y 只有一次方</td>
+        <td>积分因子 μ，乘后写成 (yμ)'</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td><strong>齐次方程</strong></td>
+        <td class="math-cell">y' = f(y/x)，右边只有 y/x</td>
+        <td>令 u=y/x，y=ux，y'=u'x+u</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td><strong>Bernoulli 方程</strong></td>
+        <td class="math-cell">y' + py = qy<sup>a</sup>（a≠0,1）</td>
+        <td>除以 y<sup>a</sup>，令 u=y<sup>1−a</sup></td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td><strong>整体换元</strong></td>
+        <td>x,y 绑在一起，如 cos(x+y)</td>
+        <td>令整体=u，用 u' 替换 y'</td>
+        <td>1</td>
+      </tr>
+      <tr>
+        <td><strong>二阶缺 y 和 y'</strong></td>
+        <td class="math-cell">y'' = f(x)</td>
+        <td>直接积分两次，两次都加新常数</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td><strong>二阶缺 y</strong></td>
+        <td class="math-cell">y'' = f(x,y')，无 y</td>
+        <td>令 p=y'，p'=y''（p 为 x 的函数）</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td><strong>二阶缺 x</strong> ⭐</td>
+        <td class="math-cell">y'' = f(y,y')，无 x</td>
+        <td>令 p=y'，<strong>y''=p·dp/dy</strong>（链式法则！）</td>
+        <td>2</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <h3>高频易错点汇总</h3>
+
+  <div class="grid2">
+    <div class="callout danger">
+      <div class="callout-label">错误 1：忘记加 +C</div>
+      <p style="font-size:13px">积分完成那一刻立刻加 C，不能等到最后。</p>
+    </div>
+    <div class="callout danger">
+      <div class="callout-label">错误 2：漏掉特殊解</div>
+      <p style="font-size:13px">令 g(y)=0 的常数解，有时无法被通解包含，须单独列出。</p>
+    </div>
+    <div class="callout danger">
+      <div class="callout-label">错误 3：缺 x 时 y'' 替换错</div>
+      <p style="font-size:13px">缺 x 时 <em>y''=p·dp/dy</em>；缺 y 时 <em>y''=dp/dx</em>。两者截然不同。</p>
+    </div>
+    <div class="callout danger">
+      <div class="callout-label">错误 4：通解常数不独立</div>
+      <p style="font-size:13px">二阶方程通解必须含<strong>两个独立</strong>常数。<em>C₁+C₂</em> 不独立，<em>C₁x+C₂</em> 才独立。</p>
+    </div>
+    <div class="callout danger">
+      <div class="callout-label">错误 5：几何题切点写 (x,y)</div>
+      <p style="font-size:13px">切点必须用 <em>(x₀,y₀)</em>，把 x,y 留给切线方程，否则混乱。</p>
+    </div>
+    <div class="callout danger">
+      <div class="callout-label">错误 6：积分因子的积分加了 C</div>
+      <p style="font-size:13px">求 <em>μ = e<sup>∫p(x)dx</sup></em> 时，指数上的积分<strong>不加 C</strong>。C 只在最后方程积分时加。</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h3>常用积分结果速查</h3>
+
+  <div class="grid2">
+    <div class="example">
+      <div class="example-head">三角与反三角</div>
+      <div class="example-body" style="font-family:var(--serif);font-style:italic">
+        <p>∫1/(1+u²)du = arctan u + C</p>
+        <p>∫1/cos²u du = tan u + C</p>
+        <p>∫1/√(1−u²)du = arcsin u + C</p>
+        <p>1+cos u = 2cos²(u/2)</p>
+      </div>
+    </div>
+    <div class="example">
+      <div class="example-head">对数与指数</div>
+      <div class="example-body" style="font-family:var(--serif);font-style:italic">
+        <p>∫1/u du = ln|u| + C</p>
+        <p>∫u<sup>n</sup> du = u<sup>n+1</sup>/(n+1) + C &nbsp;(n≠−1)</p>
+        <p>∫e<sup>au</sup> du = e<sup>au</sup>/a + C</p>
+        <p>∫1/(a²+u²)du = (1/a)arctan(u/a) + C</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+</main>
+</div>
+
+<script>
+// Tab switching
+function showTab(group, idx) {
+  const panels = document.querySelectorAll(`[id^="${group}"]`);
+  const buttons = document.querySelectorAll('.tab-btn');
+  panels.forEach((p, i) => p.classList.toggle('active', i === idx));
+  buttons.forEach((b, i) => b.classList.toggle('active', i === idx));
+}
+
+// Sidebar active state on scroll
+const chapters = document.querySelectorAll('.chapter, .cover');
+const navLinks = document.querySelectorAll('.nav-chapter');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { threshold: 0.2, rootMargin: '-10% 0px -60% 0px' });
+
+chapters.forEach(ch => observer.observe(ch));
+</script>
+</body>
+</html>

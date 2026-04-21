@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高阶线性微分方程 完全讲义</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #f7f5f0;
+  --surface:   #efede6;
+  --surface2:  #e4e1d8;
+  --ink:       #1c1a16;
+  --ink2:      #48453c;
+  --ink3:      #817d72;
+  --accent:    #b5360f;
+  --accent-bg: #fdf0eb;
+  --blue:      #1a4a82;
+  --blue-bg:   #e8f0fa;
+  --green:     #1f6140;
+  --green-bg:  #e6f4ec;
+  --amber:     #7a4800;
+  --amber-bg:  #fdf3e0;
+  --red:       #8b1515;
+  --red-bg:    #fdeaea;
+  --purple:    #4a2080;
+  --purple-bg: #f0ebfa;
+  --border:    #cdc9be;
+  --serif: 'Noto Serif SC', serif;
+  --sans:  'Noto Sans SC', sans-serif;
+  --mono:  'JetBrains Mono', monospace;
+  --r:     6px;
+  --r-lg:  10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--ink2);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+/* ── LAYOUT ── */
+.layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  max-width: 1080px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  position: sticky; top: 0; height: 100vh;
+  overflow-y: auto; padding: 1.75rem 0;
+  border-right: 1px solid var(--border);
+  background: var(--surface);
+}
+.sidebar::-webkit-scrollbar { width: 3px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); }
+
+.sb-brand { padding: 0 1.25rem 1.25rem; border-bottom: 1px solid var(--border); margin-bottom: 0.75rem; }
+.sb-tag  { font-family: var(--mono); font-size: 10px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); margin-bottom:5px; }
+.sb-title { font-family: var(--serif); font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.35; }
+
+.nav-link {
+  display: flex; align-items: center; gap: 9px;
+  padding: 0.38rem 1.25rem;
+  font-size: 12.5px; color: var(--ink3);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  transition: all .13s;
+}
+.nav-link:hover { color: var(--ink); background: var(--surface2); }
+.nav-link.active { color: var(--accent); border-left-color: var(--accent); background: var(--surface2); font-weight: 500; }
+.nav-n { font-family: var(--mono); font-size: 10px; color: var(--ink3); min-width: 18px; }
+
+/* ── MAIN ── */
+.main { padding: 3rem 3.5rem; max-width: 800px; }
+
+/* ── COVER ── */
+.cover { padding: 2rem 0 3rem; border-bottom: 1px solid var(--border); margin-bottom: 3.5rem; }
+.cover-eye { font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); margin-bottom:.75rem; }
+.cover h1 { font-family:var(--serif); font-size:34px; font-weight:700; color:var(--ink); line-height:1.22; margin-bottom:.9rem; }
+.cover-desc { font-size:14px; color:var(--ink3); line-height:1.7; max-width:560px; margin-bottom:1.5rem; }
+.cover-chips { display:flex; gap:10px; flex-wrap:wrap; }
+.chip { font-family:var(--mono); font-size:11px; padding:4px 10px; border-radius:20px; border:1px solid var(--border); color:var(--ink3); }
+.print-btn { display:inline-flex; align-items:center; gap:6px; padding:7px 15px; font-size:12px; font-family:var(--mono); border:1px solid var(--border); border-radius:var(--r); background:var(--surface); color:var(--ink3); cursor:pointer; margin-top:1.2rem; transition:all .13s; letter-spacing:.04em; }
+.print-btn:hover { background:var(--surface2); color:var(--ink); }
+
+/* ── SECTION ── */
+.sec { margin-bottom: 4.5rem; }
+.sec-hd { display:flex; align-items:baseline; gap:.9rem; padding-bottom:.9rem; border-bottom:1.5px solid var(--border); margin-bottom:1.8rem; }
+.sec-num { font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:.05em; }
+.sec-hd h2 { font-family:var(--serif); font-size:24px; font-weight:700; color:var(--ink); }
+
+h3 { font-family:var(--serif); font-size:18px; font-weight:600; color:var(--ink); margin:2rem 0 .7rem; }
+h4 { font-family:var(--mono); font-size:11.5px; font-weight:500; color:var(--ink3); text-transform:uppercase; letter-spacing:.07em; margin:1.5rem 0 .5rem; }
+
+p { margin-bottom:.75rem; }
+strong { color:var(--ink); font-weight:500; }
+
+/* ── CALLOUTS ── */
+.box { border-radius:var(--r); padding:.9rem 1.15rem; margin:1.1rem 0; font-size:14px; line-height:1.7; }
+.box-label { font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:5px; font-weight:400; }
+.box.key   { background:var(--blue-bg);   border-left:3px solid var(--blue);   } .box.key   .box-label { color:var(--blue);   }
+.box.tip   { background:var(--green-bg);  border-left:3px solid var(--green);  } .box.tip   .box-label { color:var(--green);  }
+.box.warn  { background:var(--amber-bg);  border-left:3px solid var(--amber);  } .box.warn  .box-label { color:var(--amber);  }
+.box.danger{ background:var(--red-bg);    border-left:3px solid var(--red);    } .box.danger.box-label { color:var(--red);    }
+.box.purple{ background:var(--purple-bg); border-left:3px solid var(--purple); } .box.purple .box-label { color:var(--purple); }
+.box.neutral{ background:var(--surface);  border-left:3px solid var(--border); } .box.neutral .box-label { color:var(--ink3); }
+.box.accent{ background:var(--accent-bg); border-left:3px solid var(--accent); } .box.accent .box-label { color:var(--accent); }
+
+/* ── FORMULA ── */
+.formula {
+  font-family: var(--serif); font-size:16px; font-style:italic;
+  text-align:center; padding:.9rem 1.5rem;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r); margin:.9rem 0; color:var(--ink);
+  overflow-x: auto;
+}
+.formula.hl { background:var(--blue-bg); border-color:#b8cfe8; color:var(--blue); }
+.formula.red { background:var(--red-bg); border-color:#e8b8b8; color:var(--red); }
+.formula.green { background:var(--green-bg); border-color:#b0d8c0; color:var(--green); }
+.formula.purple { background:var(--purple-bg); border-color:#c8b8e8; color:var(--purple); }
+.formula.amber { background:var(--amber-bg); border-color:#e0c890; color:var(--amber); }
+
+/* ── EXAMPLE ── */
+.eg { border:1px solid var(--border); border-radius:var(--r-lg); overflow:hidden; margin:1.2rem 0; }
+.eg-head { background:var(--surface2); padding:.5rem 1rem; font-family:var(--mono); font-size:12px; color:var(--ink3); border-bottom:1px solid var(--border); letter-spacing:.03em; }
+.eg-body { padding:1rem 1.2rem; font-size:14px; line-height:1.75; }
+.eg-body p { margin-bottom:.45rem; color:var(--ink2); }
+.eg-ans { background:var(--green-bg); border-top:1px solid var(--border); padding:.65rem 1.2rem; font-family:var(--serif); font-style:italic; font-size:14px; color:var(--green); }
+
+/* ── STEPS ── */
+.steps { list-style:none; counter-reset:step; margin:.7rem 0; }
+.steps li {
+  counter-increment: step;
+  display: flex; align-items:flex-start; gap:11px;
+  margin:.55rem 0; font-size:14px; color:var(--ink2); line-height:1.7;
+}
+.steps li::before {
+  content: counter(step);
+  min-width:26px; width:26px; height:26px;
+  background:var(--accent); color:#fff; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-family:var(--mono); flex-shrink:0; margin-top:2px;
+}
+.steps li > div { flex:1; min-width:0; word-break:break-word; }
+
+/* ── TABLE ── */
+table.dt { width:100%; border-collapse:collapse; font-size:13px; margin:1rem 0; }
+table.dt th { background:var(--surface2); padding:7px 11px; text-align:left; font-weight:500; font-size:11.5px; color:var(--ink2); border-bottom:1px solid var(--border); font-family:var(--mono); letter-spacing:.04em; }
+table.dt td { padding:8px 11px; border-bottom:1px solid var(--surface2); color:var(--ink2); vertical-align:top; line-height:1.55; }
+table.dt tr:last-child td { border-bottom:none; }
+table.dt tr:hover td { background:var(--surface); }
+table.dt .mi { font-family:var(--serif); font-style:italic; color:var(--ink); }
+
+/* ── GRID ── */
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin:.8rem 0; }
+.g3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.8rem; margin:.8rem 0; }
+
+/* ── COMPARE ── */
+.cmp { display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--border); border-radius:var(--r); overflow:hidden; font-size:13px; margin:.9rem 0; }
+.cmp-cell { padding:.6rem .9rem; border-bottom:1px solid var(--border); color:var(--ink2); }
+.cmp-cell:last-child,.cmp-cell:nth-last-child(2) { border-bottom:none; }
+.cmp-hd { background:var(--surface2); font-weight:500; color:var(--ink); font-size:12px; }
+
+/* ── BADGE ── */
+.badge { display:inline-block; font-size:10.5px; padding:2px 7px; border-radius:9px; font-family:var(--mono); }
+.b-blue { background:var(--blue-bg); color:var(--blue); }
+.b-green { background:var(--green-bg); color:var(--green); }
+.b-red { background:var(--red-bg); color:var(--red); }
+.b-amber { background:var(--amber-bg); color:var(--amber); }
+.b-purple { background:var(--purple-bg); color:var(--purple); }
+
+/* ── DIVIDER ── */
+hr.div { border:none; border-top:1px solid var(--border); margin:2rem 0; }
+
+/* ── TABS ── */
+.tabs { margin:1rem 0; }
+.tab-btns { display:flex; gap:5px; flex-wrap:wrap; }
+.tab-btn { padding:6px 13px; font-size:12px; font-family:var(--mono); border:1px solid var(--border); border-radius:var(--r) var(--r) 0 0; border-bottom:none; background:var(--surface); color:var(--ink3); cursor:pointer; transition:all .12s; }
+.tab-btn:hover { color:var(--ink); }
+.tab-btn.on { background:var(--bg); color:var(--accent); }
+.tab-pane { display:none; border:1px solid var(--border); border-radius:0 var(--r) var(--r) var(--r); padding:1.2rem; }
+.tab-pane.on { display:block; }
+
+/* ── FLOW ── */
+.flow { display:flex; align-items:center; gap:0; flex-wrap:wrap; margin:.9rem 0; }
+.fb { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:.45rem .8rem; font-size:13px; text-align:center; flex:1; min-width:80px; color:var(--ink2); }
+.fb.hl { background:var(--blue-bg); border-color:#b8cfe8; color:var(--blue); font-weight:500; }
+.fa { font-size:15px; color:var(--ink3); padding:0 5px; flex-shrink:0; }
+
+/* ── MATRIX ── */
+.mat { font-family:var(--serif); font-style:italic; font-size:14px; display:inline-block; vertical-align:middle; border-left:2px solid var(--ink2); border-right:2px solid var(--ink2); padding:6px 14px; line-height:1.9; margin:4px 0; }
+.mat-row { display:flex; gap:18px; }
+
+/* ── SPECIAL: condition card ── */
+.cond-card { border:1px solid var(--border); border-radius:var(--r-lg); overflow:hidden; margin:1.1rem 0; }
+.cond-head { display:flex; align-items:center; gap:10px; background:var(--surface2); padding:.6rem 1rem; border-bottom:1px solid var(--border); }
+.cond-tag { font-family:var(--mono); font-size:10px; background:var(--accent); color:#fff; padding:2px 7px; border-radius:3px; }
+.cond-title { font-size:13px; font-weight:500; color:var(--ink); }
+.cond-body { padding:.9rem 1.1rem; font-size:13.5px; line-height:1.75; }
+
+@media print {
+  .sidebar { display:none; }
+  .layout { grid-template-columns: 1fr; }
+  .main { padding:2cm; max-width:100%; }
+  .sec { page-break-before: always; }
+  .cover { page-break-before: avoid; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<!-- ════ SIDEBAR ════ -->
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-tag">数学分析 AII · §4</div>
+    <div class="sb-title">高阶线性<br>微分方程</div>
+  </div>
+  <a href="#cover"  class="nav-link active"><span class="nav-n">00</span>封面</a>
+  <a href="#s1"     class="nav-link"><span class="nav-n">01</span>解的结构定理</a>
+  <a href="#s2"     class="nav-link"><span class="nav-n">02</span>二阶常系数·齐次</a>
+  <a href="#s3"     class="nav-link"><span class="nav-n">03</span>待定系数法·特解</a>
+  <a href="#s4"     class="nav-link"><span class="nav-n">04</span>n阶方程推广</a>
+  <a href="#s5"     class="nav-link"><span class="nav-n">05</span>降阶方法</a>
+  <a href="#s6"     class="nav-link"><span class="nav-n">06</span>速查总表</a>
+</nav>
+
+<!-- ════ MAIN ════ -->
+<main class="main">
+
+<!-- COVER -->
+<section class="cover" id="cover">
+  <div class="cover-eye">CHAPTER 08.5 · §4 高阶线性微分方程</div>
+  <h1>高阶线性微分方程<br>完全讲义</h1>
+  <p class="cover-desc">覆盖课件全部内容：解的结构三大定理、二阶常系数齐次方程（特征方程三情形）、待定系数法求特解（五种 f(x) 类型）、n 阶方程推广、两类降阶方法，含所有例题详解与易错点。</p>
+  <div class="cover-chips">
+    <span class="chip">解的结构</span>
+    <span class="chip">特征方程</span>
+    <span class="chip">待定系数法</span>
+    <span class="chip">n阶推广</span>
+    <span class="chip">降阶</span>
+  </div>
+  <button class="print-btn" onclick="window.print()">⎙ 打印 / 导出 PDF</button>
+</section>
+
+<!-- ═══════════════════════════════════
+     §1 解的结构
+════════════════════════════════════ -->
+<section class="sec" id="s1">
+<div class="sec-hd">
+  <span class="sec-num">SECTION 01</span>
+  <h2>高阶线性方程·解的结构</h2>
+</div>
+
+<h3>1.1 方程的一般形式</h3>
+<p>n 阶线性微分方程的标准形式（已将最高阶系数化为 1）：</p>
+<div class="formula hl">y<sup>(n)</sup> + a<sub>1</sub>(x)y<sup>(n−1)</sup> + ⋯ + a<sub>n−1</sub>(x)y′ + a<sub>n</sub>(x)y = f(x) &nbsp;&nbsp;&nbsp; (*)</div>
+<p>其中 a<sub>1</sub>(x), …, a<sub>n</sub>(x) 称为<strong>变系数</strong>（都是已知函数），f(x) 是<strong>非齐次右端项</strong>。</p>
+
+<div class="g2">
+  <div class="box key">
+    <div class="box-label">非齐次方程 (*)</div>
+    <p>f(x) ≠ 0 时，(*) 称为非齐次线性方程。</p>
+    <p>其解集记为 <strong>T</strong>。</p>
+  </div>
+  <div class="box neutral">
+    <div class="box-label">对应的齐次方程 (**)</div>
+    <p>将右边换成 0：</p>
+    <div class="formula" style="margin:6px 0;font-size:14px">y<sup>(n)</sup> + a<sub>1</sub>(x)y<sup>(n−1)</sup> + ⋯ + a<sub>n</sub>(x)y = 0 &nbsp; (**)</div>
+    <p>其解集记为 <strong>S</strong>。</p>
+  </div>
+</div>
+
+<div class="box warn">
+  <div class="box-label">⚠ 关键背景</div>
+  <p>n ≥ 2 的高阶方程<strong>没有通解公式</strong>（不像一阶线性方程有积分因子公式）。因此我们转而研究解的结构，把问题拆成两步：① 找齐次方程的 n 个独立解；② 找非齐次方程的一个特解。</p>
+</div>
+
+<hr class="div">
+
+<h3>1.2 解集的三条性质（核心定理）</h3>
+
+<div class="box key">
+  <div class="box-label">定理：T 与 S 之间的关系</div>
+  <p>设 T 是非齐次方程 (*) 的解集，S 是齐次方程 (**) 的解集：</p>
+</div>
+
+<div class="g3" style="margin-top:.5rem">
+  <div class="box tip">
+    <div class="box-label">性质 (1) — S 对线性组合封闭</div>
+    <p>若 y₁, y₂ ∈ S，则对任意常数 k, l：</p>
+    <div class="formula green" style="margin:5px 0;font-size:14px">ky₁ + ly₂ ∈ S</div>
+    <p style="font-size:13px">齐次解的任意线性组合仍是齐次解。</p>
+  </div>
+  <div class="box key">
+    <div class="box-label">性质 (2) — 两非齐次解之差 ∈ S</div>
+    <p>若 y₁, y₂ ∈ T，则：</p>
+    <div class="formula hl" style="margin:5px 0;font-size:14px">y₁ − y₂ ∈ S</div>
+    <p style="font-size:13px">两个非齐次解相减，变成齐次解。</p>
+  </div>
+  <div class="box purple">
+    <div class="box-label">性质 (3) — 齐次解 + 特解 ∈ T</div>
+    <p>若 y₁ ∈ S，y₂ ∈ T，则：</p>
+    <div class="formula purple" style="margin:5px 0;font-size:14px">y₁ + y₂ ∈ T</div>
+    <p style="font-size:13px">齐次解 + 非齐次特解 = 非齐次解。</p>
+  </div>
+</div>
+
+<div class="box warn">
+  <div class="box-label">证明思路（三条性质的统一逻辑）</div>
+  <p>把相关函数代入方程，对方程做线性运算（乘以常数、相加减）：由于方程是<strong>线性的</strong>，线性运算可以穿过方程算子，右边自动得到 0（齐次）或 f(x)（非齐次）。例如性质(1)：把 ky₁ + ly₂ 代入 (**) 左边 = k·[(**) 对 y₁] + l·[(**) 对 y₂] = k·0 + l·0 = 0。</p>
+</div>
+
+<hr class="div">
+
+<h3>1.3 唯一性定理与通解结构</h3>
+
+<div class="box key">
+  <div class="box-label">唯一性定理</div>
+  <p>若 y(x) 满足齐次方程 (**) 且在某点 x₀ 处所有初值全为零：</p>
+  <div class="formula" style="margin:6px 0;font-size:14px">y(x₀) = y′(x₀) = y″(x₀) = ⋯ = y<sup>(n−1)</sup>(x₀) = 0</div>
+  <p>则 <strong>y(x) ≡ 0</strong>（恒为零函数）。</p>
+</div>
+
+<div class="box key">
+  <div class="box-label">推论：齐次方程通解 — Wronskian 行列式条件</div>
+  <p>若 y₁(x), y₂(x), …, yₙ(x) 是 (**) 的 n 个解，且在某点 x₀ 处 <strong>Wronskian 行列式不为零</strong>：</p>
+  <div style="overflow-x:auto;margin:.7rem 0">
+  <table style="margin:0 auto;font-family:var(--serif);font-style:italic;font-size:14px;border-left:2px solid var(--ink2);border-right:2px solid var(--ink2)">
+    <tr><td style="padding:4px 12px">y₁(x₀)</td><td style="padding:4px 12px">y₂(x₀)</td><td style="padding:4px 12px">⋯</td><td style="padding:4px 12px">yₙ(x₀)</td></tr>
+    <tr><td style="padding:4px 12px">y₁′(x₀)</td><td style="padding:4px 12px">y₂′(x₀)</td><td style="padding:4px 12px">⋯</td><td style="padding:4px 12px">yₙ′(x₀)</td></tr>
+    <tr><td style="padding:4px 12px">⋮</td><td style="padding:4px 12px">⋮</td><td style="padding:4px 12px">⋱</td><td style="padding:4px 12px">⋮</td></tr>
+    <tr><td style="padding:4px 12px">y₁<sup>(n−1)</sup>(x₀)</td><td style="padding:4px 12px">y₂<sup>(n−1)</sup>(x₀)</td><td style="padding:4px 12px">⋯</td><td style="padding:4px 12px">yₙ<sup>(n−1)</sup>(x₀)</td></tr>
+  </table>
+  <div style="text-align:center;font-family:var(--serif);font-style:italic;font-size:14px;margin:.3rem 0">≠ 0</div>
+  </div>
+  <p>则 (**) 的<strong>任意解</strong>都可以写成：</p>
+  <div class="formula hl">y(x) = C₁y₁(x) + C₂y₂(x) + ⋯ + Cₙyₙ(x)</div>
+  <p>此时称 y₁, …, yₙ 是 (**) 的 <strong>n 个线性独立的解</strong>（基本解组）。</p>
+</div>
+
+<div class="box tip">
+  <div class="box-label">最终结论：非齐次方程通解公式</div>
+  <p>若 y*(x) 是非齐次方程 (*) 的<strong>任意一个特解</strong>，则 (*) 的<strong>通解</strong>为：</p>
+  <div class="formula green">y(x) = C₁y₁(x) + C₂y₂(x) + ⋯ + Cₙyₙ(x) + y*(x)</div>
+  <p style="font-size:13px">= 齐次通解 + 非齐次特解</p>
+</div>
+
+<div class="box accent">
+  <div class="box-label">📌 好消息与坏消息（课件原话）</div>
+  <p><span class="badge b-green">好消息</span> 只要找到齐次方程的 n 个独立解 + 非齐次方程的一个特解，通解就全解决了。</p>
+  <p style="margin-top:6px"><span class="badge b-red">坏消息</span> 对<strong>变系数</strong>方程，通常找齐次方程的哪怕 1 个解都很难！特解更难。</p>
+  <p style="margin-top:6px"><span class="badge b-blue">好消息</span> 对<strong>常系数</strong>方程（下面要学的），有系统方法！</p>
+</div>
+
+</section>
+
+<!-- ═══════════════════════════════════
+     §2 二阶常系数齐次
+════════════════════════════════════ -->
+<section class="sec" id="s2">
+<div class="sec-hd">
+  <span class="sec-num">SECTION 02</span>
+  <h2>二阶常系数齐次方程</h2>
+</div>
+
+<h3>2.1 方程形式与核心思路</h3>
+
+<p>设 p, q 为<strong>常数</strong>，考察：</p>
+<div class="formula hl">y″(x) + py′(x) + qy(x) = 0 &nbsp;&nbsp;&nbsp; (**)</div>
+
+<div class="box key">
+  <div class="box-label">关键思路：试探解 y = e<sup>λx</sup></div>
+  <p>将 y = e<sup>λx</sup> 代入 (**)，由于求导只带来一个因子：</p>
+  <p style="font-size:13px;font-family:var(--serif);font-style:italic">(e<sup>λx</sup>)″ + p(e<sup>λx</sup>)′ + q·e<sup>λx</sup> = λ²e<sup>λx</sup> + pλe<sup>λx</sup> + qe<sup>λx</sup> = e<sup>λx</sup>(λ² + pλ + q)</p>
+  <p>因为 e<sup>λx</sup> ≠ 0，所以 y = e<sup>λx</sup> 是解的充要条件是括号内为零：</p>
+  <div class="formula amber">λ² + pλ + q = 0 &nbsp;&nbsp;&nbsp;（特征方程）</div>
+  <p>这是一个关于 λ 的<strong>二次代数方程</strong>，判别式 <strong>Δ = p² − 4q</strong>。</p>
+</div>
+
+<hr class="div">
+
+<h3>2.2 三种情形的通解</h3>
+
+<div class="tabs">
+<div class="tab-btns">
+  <button class="tab-btn on" onclick="switchTab('t2',0)">情形1：Δ > 0（两不等实根）</button>
+  <button class="tab-btn" onclick="switchTab('t2',1)">情形2：Δ = 0（重根）</button>
+  <button class="tab-btn" onclick="switchTab('t2',2)">情形3：Δ &lt; 0（复根）</button>
+</div>
+
+<div class="tab-pane on" id="t2-0">
+  <h4 style="margin-top:0">Δ > 0 — 特征方程有两个不等实根 λ₁ ≠ λ₂</h4>
+  <p>取两个线性独立的解：</p>
+  <div class="formula">y₁(x) = e<sup>λ₁x</sup>,&nbsp;&nbsp;&nbsp; y₂(x) = e<sup>λ₂x</sup></div>
+  <p>通解：</p>
+  <div class="formula green">y(x) = C₁e<sup>λ₁x</sup> + C₂e<sup>λ₂x</sup></div>
+
+  <div class="eg">
+    <div class="eg-head">例 &nbsp;|&nbsp; y″ − 5y′ + 6y = 0</div>
+    <div class="eg-body">
+      <p>特征方程：λ² − 5λ + 6 = 0</p>
+      <p>解：(λ−2)(λ−3) = 0，得 λ₁ = 2，λ₂ = 3，Δ = 25−24 = 1 > 0 ✓</p>
+    </div>
+    <div class="eg-ans">y = C₁e<sup>2x</sup> + C₂e<sup>3x</sup></div>
+  </div>
+</div>
+
+<div class="tab-pane" id="t2-1">
+  <h4 style="margin-top:0">Δ = 0 — 特征方程有重根 λ₁ = λ₂ = λ</h4>
+  <p>此时只有一个独立的指数解 y₁ = e<sup>λx</sup>。如何找第二个独立解？</p>
+  <div class="box key">
+    <div class="box-label">推导第二个解（极限法）</div>
+    <p>当 λ₂ → λ₁ 时：</p>
+    <div class="formula" style="font-size:14px">y₂(x) = lim<sub>λ₂→λ₁</sub> (e<sup>λ₂x</sup> − e<sup>λ₁x</sup>)/(λ₂ − λ₁) = xe<sup>λx</sup></div>
+    <p>（这相当于对 e<sup>λx</sup> 关于 λ 求导，本质是导函数仍满足方程。）可以直接代入验证 xe<sup>λx</sup> 也是解。</p>
+  </div>
+  <p>通解：</p>
+  <div class="formula green">y(x) = (C₁ + C₂x)e<sup>λx</sup></div>
+  <div class="box warn">
+    <div class="box-label">⚠ 重根时的错误</div>
+    <p><span class="badge b-red">错</span> y = C₁e<sup>λx</sup> + C₂e<sup>λx</sup> = (C₁+C₂)e<sup>λx</sup>（本质只有一个常数！）</p>
+    <p><span class="badge b-green">对</span> 第二个解必须是 <em>x</em>e<sup>λx</sup>，两者乘以 x 才真正独立。</p>
+  </div>
+
+  <div class="eg">
+    <div class="eg-head">例 &nbsp;|&nbsp; y″ − 8y′ + 16y = 0</div>
+    <div class="eg-body">
+      <p>特征方程：λ² − 8λ + 16 = 0</p>
+      <p>解：(λ−4)² = 0，得 λ₁ = λ₂ = 4，Δ = 64−64 = 0 ✓</p>
+    </div>
+    <div class="eg-ans">y = (C₁ + C₂x)e<sup>4x</sup></div>
+  </div>
+</div>
+
+<div class="tab-pane" id="t2-2">
+  <h4 style="margin-top:0">Δ &lt; 0 — 特征方程有共轭复根 λ₁,₂ = a ± bi （b ≠ 0）</h4>
+  <div class="box key">
+    <div class="box-label">推导实值解（欧拉公式）</div>
+    <p>复数形式的解 e<sup>(a±ib)x</sup> 代入欧拉公式 e<sup>iθ</sup> = cos θ + i sin θ：</p>
+    <div class="formula" style="font-size:14px">e<sup>(a±ib)x</sup> = e<sup>ax</sup>(cos bx ± i sin bx)</div>
+    <p>取实部和虚部，得到两个<strong>实值</strong>线性独立解：</p>
+    <div class="formula" style="font-size:14px">y₁(x) = e<sup>ax</sup>cos bx, &nbsp;&nbsp;&nbsp; y₂(x) = e<sup>ax</sup>sin bx</div>
+  </div>
+  <p>通解：</p>
+  <div class="formula green">y(x) = e<sup>ax</sup>(C₁cos bx + C₂sin bx)</div>
+  <div class="box warn">
+    <div class="box-label">⚠ 注意 a 和 b 的来源</div>
+    <p>复根 λ = a ± bi，其中 <strong>a = −p/2</strong>（实部），<strong>b = √(4q−p²)/2</strong>（虚部）。</p>
+    <p>特别地，若 p = 0，则 a = 0，通解变为 y = C₁cos bx + C₂sin bx（纯正弦振荡）。</p>
+  </div>
+
+  <div class="eg">
+    <div class="eg-head">例 &nbsp;|&nbsp; y″ − 6y′ + 25y = 0</div>
+    <div class="eg-body">
+      <p>特征方程：λ² − 6λ + 25 = 0</p>
+      <p>解：λ = (6 ± √(36−100))/2 = (6 ± √(−64))/2 = 3 ± 4i</p>
+      <p>所以 a = 3，b = 4，Δ = 36−100 = −64 < 0 ✓</p>
+    </div>
+    <div class="eg-ans">y = e<sup>3x</sup>(C₁cos 4x + C₂sin 4x)</div>
+  </div>
+</div>
+</div>
+
+<hr class="div">
+
+<h3>2.3 三情形速查</h3>
+<table class="dt">
+  <thead>
+    <tr><th>判别式 Δ = p²−4q</th><th>特征根</th><th>两个独立解</th><th>通解形式</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Δ > 0</strong></td>
+      <td class="mi">λ₁ ≠ λ₂（两实根）</td>
+      <td class="mi">e<sup>λ₁x</sup>，e<sup>λ₂x</sup></td>
+      <td class="mi">C₁e<sup>λ₁x</sup> + C₂e<sup>λ₂x</sup></td>
+    </tr>
+    <tr>
+      <td><strong>Δ = 0</strong></td>
+      <td class="mi">λ₁ = λ₂ = λ（重根）</td>
+      <td class="mi">e<sup>λx</sup>，xe<sup>λx</sup></td>
+      <td class="mi">(C₁ + C₂x)e<sup>λx</sup></td>
+    </tr>
+    <tr>
+      <td><strong>Δ &lt; 0</strong></td>
+      <td class="mi">λ = a ± bi（复根）</td>
+      <td class="mi">e<sup>ax</sup>cos bx，e<sup>ax</sup>sin bx</td>
+      <td class="mi">e<sup>ax</sup>(C₁cos bx + C₂sin bx)</td>
+    </tr>
+  </tbody>
+</table>
+
+</section>
+
+<!-- ═══════════════════════════════════
+     §3 待定系数法求特解
+════════════════════════════════════ -->
+<section class="sec" id="s3">
+<div class="sec-hd">
+  <span class="sec-num">SECTION 03</span>
+  <h2>待定系数法求特解</h2>
+</div>
+
+<h3>3.1 总体框架</h3>
+<p>对二阶常系数非齐次方程：</p>
+<div class="formula hl">y″(x) + py′(x) + qy(x) = f(x) &nbsp;&nbsp;&nbsp; (*)</div>
+
+<p>找到特解 y*(x) 后，通解 = 齐次通解 + y*。核心思路：</p>
+
+<div class="flow">
+  <div class="fb">观察 f(x) 的形式</div><div class="fa">→</div>
+  <div class="fb">查 λ₀ 是否是特征根（及重数）</div><div class="fa">→</div>
+  <div class="fb hl">确定 y* 的"模板"形式</div><div class="fa">→</div>
+  <div class="fb">代入方程，比较系数</div>
+</div>
+
+<div class="box warn">
+  <div class="box-label">⚠ 第一步必须：检查 λ₀ 与特征根的关系！</div>
+  <p>每一种情形，<strong>在设特解之前</strong>，必须先解出特征方程的根 λ₁, λ₂，然后比较 f(x) 中隐含的 λ₀ 与它们的关系。<strong>根的重数直接决定特解模板中要额外乘几次 x。</strong></p>
+</div>
+
+<hr class="div">
+
+<h3>3.2 五种情形 — f(x) = e<sup>λ₀x</sup>Pₙ(x) 型</h3>
+<p>这四种情形都属于 f(x) = e<sup>λ₀x</sup>Pₙ(x) 的大类（Pₙ 是 n 次多项式），区别仅在于 λ₀ 是不是特征根及重数。</p>
+
+<!-- 情形1 -->
+<div class="cond-card">
+  <div class="cond-head">
+    <span class="cond-tag">情形 1</span>
+    <span class="cond-title">f(x) = e<sup>λ₀x</sup>Pₙ(x)，且 λ₀ <em>不是</em>特征根（k=0）</span>
+  </div>
+  <div class="cond-body">
+    <p>设特解：</p>
+    <div class="formula">y*(x) = e<sup>λ₀x</sup>Qₙ(x)</div>
+    <p>其中 Qₙ 是<strong>同次数</strong>（n次）的待定多项式，代入方程，比较各次幂系数，解出 Qₙ 的系数。</p>
+
+    <div class="eg">
+      <div class="eg-head">例 &nbsp;|&nbsp; y″ − 2y′ − 3y = 2x² + 1 &nbsp;（λ₀ = 0，Pₙ = 2x²+1 为2次多项式）</div>
+      <div class="eg-body">
+        <p><strong>Step 1：</strong>解特征方程 λ²−2λ−3=0，λ₁,₂ = −1, 3。</p>
+        <p>λ₀ = 0 <strong>不是</strong>特征根（−1 ≠ 0，3 ≠ 0），用情形1。</p>
+        <p><strong>Step 2：</strong>设 y* = ax² + bx + c（同为2次多项式，e<sup>0·x</sup>=1）。</p>
+        <p><strong>Step 3：</strong>代入：y*″ = 2a，y*′ = 2ax+b</p>
+        <p>代入方程：2a − 2(2ax+b) − 3(ax²+bx+c) = 2x²+1</p>
+        <p>展开：−3ax² + (−4a−3b)x + (2a−2b−3c) = 2x²+1</p>
+        <p><strong>Step 4：</strong>比较系数：
+          <br>x² 项：−3a = 2 → a = −2/3
+          <br>x¹ 项：−4a−3b = 0 → b = −4a/3 = 8/9
+          <br>x⁰ 项：2a−2b−3c = 1 → c = (2a−2b−1)/3 = −37/27
+        </p>
+      </div>
+      <div class="eg-ans">y = C₁e<sup>−x</sup> + C₂e<sup>3x</sup> − (1/27)(18x² − 24x + 37)</div>
+    </div>
+  </div>
+</div>
+
+<!-- 情形2 -->
+<div class="cond-card">
+  <div class="cond-head">
+    <span class="cond-tag">情形 2</span>
+    <span class="cond-title">f(x) = e<sup>λ₀x</sup>Pₙ(x)，且 λ₀ 是特征方程的<em>单</em>实根（k=1，Δ > 0）</span>
+  </div>
+  <div class="cond-body">
+    <p>λ₀ 已经是一个特征根，原来的"e<sup>λ₀x</sup>·多项式"形式已经被齐次通解包含了，需要额外乘一个 x：</p>
+    <div class="formula">y*(x) = e<sup>λ₀x</sup> · x · Qₙ(x)</div>
+
+    <div class="eg">
+      <div class="eg-head">例 &nbsp;|&nbsp; y″ − 2y′ = 2x &nbsp;（λ₀ = 0，Pₙ = 2x 为1次多项式）</div>
+      <div class="eg-body">
+        <p><strong>Step 1：</strong>λ²−2λ=0，λ₁=0，λ₂=2。</p>
+        <p>λ₀ = 0 <strong>等于</strong> λ₁，是单根，用情形2。</p>
+        <p><strong>Step 2：</strong>设 y* = x(ax+b)（x·一次多项式 = 二次）。</p>
+        <p><strong>Step 3：</strong>y*′ = 2ax+b+x(2a) = wait… 直接展开：y* = ax²+bx，y*′=2ax+b，y*″=2a</p>
+        <p>代入：2a − 2(2ax+b) = 2x → 2a−2b−4ax = 2x</p>
+        <p><strong>Step 4：</strong>x¹：−4a=2 → a=−1/2；x⁰：2a−2b=0 → b=a=−1/2</p>
+      </div>
+      <div class="eg-ans">y = C₁ + C₂e<sup>2x</sup> − (1/2)x(x+1)</div>
+    </div>
+
+    <div class="eg">
+      <div class="eg-head">例 &nbsp;|&nbsp; y″ + 5y′ − 6y = xe<sup>x</sup> &nbsp;（λ₀ = 1，Pₙ = x 为1次）</div>
+      <div class="eg-body">
+        <p><strong>Step 1：</strong>λ²+5λ−6=0，λ₁=−6，λ₂=1。</p>
+        <p>λ₀ = 1 等于 λ₂，是单根，用情形2。</p>
+        <p><strong>Step 2：</strong>设 y* = x(ax+b)e<sup>x</sup>。</p>
+        <p><strong>Step 3：</strong>展开代入（过程繁琐），化简后：14ax + (2a+7b) = x</p>
+        <p><strong>Step 4：</strong>14a=1 → a=1/14；2a+7b=0 → b=−2a/7=−1/49</p>
+      </div>
+      <div class="eg-ans">y = C₁e<sup>−6x</sup> + C₂e<sup>x</sup> + x(x/14 − 1/49)e<sup>x</sup></div>
+    </div>
+  </div>
+</div>
+
+<!-- 情形3 -->
+<div class="cond-card">
+  <div class="cond-head">
+    <span class="cond-tag">情形 3</span>
+    <span class="cond-title">f(x) = e<sup>λ₀x</sup>Pₙ(x)，且 λ₀ 是特征方程的<em>二重</em>实根（k=2，Δ = 0）</span>
+  </div>
+  <div class="cond-body">
+    <p>λ₀ 是二重根，需要额外乘 x²：</p>
+    <div class="formula">y*(x) = e<sup>λ₀x</sup> · x² · Qₙ(x)</div>
+
+    <div class="eg">
+      <div class="eg-head">例 &nbsp;|&nbsp; y″ − 2y′ + y = e<sup>x</sup> &nbsp;（λ₀ = 1，Pₙ = 1 为0次多项式）</div>
+      <div class="eg-body">
+        <p><strong>Step 1：</strong>λ²−2λ+1=0，(λ−1)²=0，λ₁=λ₂=1。</p>
+        <p>λ₀ = 1 是<strong>二重根</strong>，用情形3。</p>
+        <p><strong>Step 2：</strong>设 y* = x²·a·e<sup>x</sup>（x²·0次多项式）。</p>
+        <p><strong>Step 3：</strong>代入方程，化简得 2a = 1 → a = 1/2。</p>
+      </div>
+      <div class="eg-ans">y = (C₁ + C₂x)e<sup>x</sup> + (1/2)x²e<sup>x</sup></div>
+    </div>
+  </div>
+</div>
+
+<!-- 统一规律 -->
+<div class="box purple">
+  <div class="box-label">🔑 统一规律（实根三情形合并记忆）</div>
+  <p>f(x) = e<sup>λ₀x</sup>Pₙ(x) 时，特解模板：</p>
+  <div class="formula purple">y*(x) = e<sup>λ₀x</sup> · x<sup>k</sup> · Qₙ(x)</div>
+  <p>其中 <strong>k = λ₀ 作为特征根的重数</strong>（不是根则 k=0，单根则 k=1，二重根则 k=2）。Qₙ 与 Pₙ <strong>次数相同</strong>。</p>
+</div>
+
+<hr class="div">
+
+<h3>3.3 三角函数型 f(x)</h3>
+<p>当 f(x) 含三角函数时，属于以下两种情形。</p>
+
+<!-- 情形4 -->
+<div class="cond-card">
+  <div class="cond-head">
+    <span class="cond-tag">情形 4</span>
+    <span class="cond-title">f(x) = e<sup>a₀x</sup>(P¹ₙcos b₀x + P²ₙsin b₀x)，且 λ₀ = a₀+ib₀ <em>不是</em>特征复根（k=0）</span>
+  </div>
+  <div class="cond-body">
+    <p>设特解：</p>
+    <div class="formula">y*(x) = e<sup>a₀x</sup>(Q¹ₙ(x)cos b₀x + Q²ₙ(x)sin b₀x)</div>
+    <p>注意：<strong>即使 f(x) 只有 cos 或只有 sin，特解中两者都要设！</strong>（因为求导会交叉产生另一个。）</p>
+
+    <div class="eg">
+      <div class="eg-head">例 &nbsp;|&nbsp; y″ + y = sin 3x &nbsp;（a₀=0，b₀=3，故 λ₀ = 3i）</div>
+      <div class="eg-body">
+        <p><strong>Step 1：</strong>λ²+1=0，λ₁,₂ = ±i。</p>
+        <p>λ₀ = 3i <strong>不等于</strong> ±i，不是特征根，用情形4。</p>
+        <p><strong>Step 2：</strong>设 y* = a cos 3x + b sin 3x（Q¹₀=a，Q²₀=b，均为0次多项式）。</p>
+        <p><strong>Step 3：</strong>y*″ = −9a cos 3x − 9b sin 3x，代入：</p>
+        <p>(−9a+a)cos 3x + (−9b+b)sin 3x = sin 3x → −8a cos 3x − 8b sin 3x = sin 3x</p>
+        <p><strong>Step 4：</strong>cos 3x 系数：−8a=0 → a=0；sin 3x 系数：−8b=1 → b=−1/8</p>
+      </div>
+      <div class="eg-ans">y = C₁cos x + C₂sin x − (1/8)sin 3x</div>
+    </div>
+  </div>
+</div>
+
+<!-- 情形5 -->
+<div class="cond-card">
+  <div class="cond-head">
+    <span class="cond-tag">情形 5</span>
+    <span class="cond-title">f(x) = e<sup>a₀x</sup>(P¹ₙcos b₀x + P²ₙsin b₀x)，且 λ₀ = a₀+ib₀ <em>是</em>特征复根（k=1）</span>
+  </div>
+  <div class="cond-body">
+    <p>λ₀ 已是特征根，额外乘一个 x：</p>
+    <div class="formula">y*(x) = e<sup>a₀x</sup> · x · (Q¹ₙ(x)cos b₀x + Q²ₙ(x)sin b₀x)</div>
+
+    <div class="eg">
+      <div class="eg-head">例 &nbsp;|&nbsp; y″ + y = 2cos x &nbsp;（a₀=0，b₀=1，故 λ₀ = i）</div>
+      <div class="eg-body">
+        <p><strong>Step 1：</strong>λ²+1=0，λ₁,₂ = ±i。</p>
+        <p>λ₀ = i <strong>等于</strong> λ₁，是特征根！用情形5。</p>
+        <p><strong>Step 2：</strong>设 y* = x(c cos x + d sin x)。</p>
+        <p><strong>Step 3：</strong>求导：y*′ = (c cos x + d sin x) + x(−c sin x + d cos x)</p>
+        <p>y*″ = 2(−c sin x + d cos x) + x(−c cos x − d sin x)</p>
+        <p>代入 y*″ + y*：= 2(−c sin x + d cos x) + x(−c cos x − d sin x) + x(c cos x + d sin x)</p>
+        <p>= 2(−c sin x + d cos x) + x·0 = 2d cos x − 2c sin x = 2cos x</p>
+        <p><strong>Step 4：</strong>cos x 系数：2d=2 → d=1；sin x 系数：−2c=0 → c=0</p>
+      </div>
+      <div class="eg-ans">y = C₁cos x + C₂sin x + x sin x</div>
+    </div>
+
+    <div class="box accent">
+      <div class="box-label">⚡ 物理直觉：共振现象！</div>
+      <p>y″ + y = 0 描述一个固有频率为 1 的振动系统（弹簧）。当外力 2cos x 的频率恰好等于固有频率（即 λ₀ = ±i 正好是特征根）时，产生<strong>共振</strong>——特解中出现 <em>x</em> sin x，振幅随时间线性增大！这就是情形5 中额外乘 x 的物理含义。</p>
+    </div>
+  </div>
+</div>
+
+<!-- 情形5 合并 -->
+<div class="box purple">
+  <div class="box-label">🔑 三角函数情形统一规律</div>
+  <div class="formula purple">y*(x) = e<sup>a₀x</sup> · x<sup>k</sup> · (Q¹ₙcos b₀x + Q²ₙsin b₀x)</div>
+  <p>k = λ₀ = a₀+ib₀ 作为特征根的重数（一般方程中 k=0 或 1）。</p>
+</div>
+
+<hr class="div">
+
+<h3>3.4 叠加原理</h3>
+
+<div class="box key">
+  <div class="box-label">线性叠加性</div>
+  <p>若 f(x) = f₁(x) + f₂(x)，则分别求出对应 f₁ 的特解 y₃ 和对应 f₂ 的特解 y₄，叠加得到特解：</p>
+  <div class="formula hl">y* = y₃(x) + y₄(x)</div>
+</div>
+
+<div class="eg">
+  <div class="eg-head">例 &nbsp;|&nbsp; y″ + y = sin 3x + 2cos x &nbsp;（两个右端项的叠加）</div>
+  <div class="eg-body">
+    <p>特征方程 λ²+1=0，λ₁,₂ = ±i。</p>
+    <p><strong>对 sin 3x：</strong>λ₀ = 3i 不是特征根（情形4），设 y₃ = a cos 3x + b sin 3x。</p>
+    <p>代入求得 a=0，b=−1/8，故 y₃ = −(1/8)sin 3x。</p>
+    <p><strong>对 2cos x：</strong>λ₀ = i 是特征根（情形5），设 y₄ = x(c cos x + d sin x)。</p>
+    <p>代入求得 c=0，d=1，故 y₄ = x sin x。</p>
+    <p>合并设特解：y* = a cos 3x + b sin 3x + x(c cos x + d sin x)</p>
+  </div>
+  <div class="eg-ans">y = C₁cos x + C₂sin x − (1/8)sin 3x + x sin x</div>
+</div>
+
+<hr class="div">
+
+<h3>3.5 特解模板总结</h3>
+<table class="dt">
+  <thead>
+    <tr><th>f(x) 的形式</th><th>λ₀ 是否为特征根</th><th>特解模板 y*</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="mi" rowspan="3">e<sup>λ₀x</sup>Pₙ(x)</td>
+      <td>不是特征根（k=0）</td>
+      <td class="mi">e<sup>λ₀x</sup>Qₙ(x)</td>
+    </tr>
+    <tr>
+      <td>单实根（k=1，Δ>0）</td>
+      <td class="mi">e<sup>λ₀x</sup>·x·Qₙ(x)</td>
+    </tr>
+    <tr>
+      <td>二重实根（k=2，Δ=0）</td>
+      <td class="mi">e<sup>λ₀x</sup>·x²·Qₙ(x)</td>
+    </tr>
+    <tr>
+      <td class="mi" rowspan="2">e<sup>a₀x</sup>(P¹ₙcos b₀x + P²ₙsin b₀x)</td>
+      <td>λ₀=a₀+ib₀ 不是复特征根（k=0）</td>
+      <td class="mi">e<sup>a₀x</sup>(Q¹ₙcos b₀x + Q²ₙsin b₀x)</td>
+    </tr>
+    <tr>
+      <td>λ₀=a₀+ib₀ 是复特征根（k=1）</td>
+      <td class="mi">e<sup>a₀x</sup>·x·(Q¹ₙcos b₀x + Q²ₙsin b₀x)</td>
+    </tr>
+  </tbody>
+</table>
+
+</section>
+
+<!-- ═══════════════════════════════════
+     §4 n 阶推广
+════════════════════════════════════ -->
+<section class="sec" id="s4">
+<div class="sec-hd">
+  <span class="sec-num">SECTION 04</span>
+  <h2>n 阶常系数方程推广</h2>
+</div>
+
+<h3>4.1 n 阶齐次方程的特征根法</h3>
+<div class="formula hl">y<sup>(n)</sup> + a₁y<sup>(n−1)</sup> + ⋯ + aₙ₋₁y′ + aₙy = 0 &nbsp;&nbsp;&nbsp; (**)</div>
+<p>对应的 <strong>n 次特征方程</strong>：</p>
+<div class="formula amber">λⁿ + a₁λⁿ⁻¹ + ⋯ + aₙ₋₁λ + aₙ = 0</div>
+
+<div class="box key">
+  <div class="box-label">特征根与独立解的对应规则</div>
+  <div class="g2">
+    <div>
+      <h4 style="margin-top:.5rem">实特征根</h4>
+      <p style="font-size:13px">若 λ = λ₁ 是 <strong>k 重</strong>实特征根，则对应 <strong>k 个</strong>独立解：</p>
+      <div class="formula" style="font-size:13px">e<sup>λ₁x</sup>, &nbsp;xe<sup>λ₁x</sup>, &nbsp;x²e<sup>λ₁x</sup>, &nbsp;…, &nbsp;x<sup>k−1</sup>e<sup>λ₁x</sup></div>
+    </div>
+    <div>
+      <h4 style="margin-top:.5rem">复特征根</h4>
+      <p style="font-size:13px">若 λ = a±bi 是 <strong>k 重</strong>共轭复根，则对应 <strong>2k 个</strong>独立解：</p>
+      <div class="formula" style="font-size:13px">e<sup>ax</sup>cos bx，&nbsp;xe<sup>ax</sup>cos bx，&nbsp;…，&nbsp;x<sup>k−1</sup>e<sup>ax</sup>cos bx<br>e<sup>ax</sup>sin bx，&nbsp;xe<sup>ax</sup>sin bx，&nbsp;…，&nbsp;x<sup>k−1</sup>e<sup>ax</sup>sin bx</div>
+    </div>
+  </div>
+  <p style="margin-top:.7rem;font-size:13px"><strong>关键性质：</strong>不同特征值对应的解一定线性独立，所有特征根提供的独立解总数恰好等于方程的阶数 n。</p>
+</div>
+
+<hr class="div">
+
+<h3>4.2 例题精讲</h3>
+
+<div class="eg">
+  <div class="eg-head">例1 &nbsp;|&nbsp; y<sup>(4)</sup> − 2y‴ + 2y′ − y = 0 &nbsp;（4阶）</div>
+  <div class="eg-body">
+    <p>特征方程：λ⁴ − 2λ³ + 2λ − 1 = 0</p>
+    <p>分解：注意到 λ=1 是根，除法得 (λ−1)(λ³−λ²−λ+1) = (λ−1)²(λ²−1)·… 实际上：</p>
+    <p>λ⁴−2λ³+2λ−1 = (λ−1)³(λ+1)，得 <strong>λ₁=1（三重），λ₂=−1（单根）</strong></p>
+    <p>λ=1（三重）→ 3个解：e<sup>x</sup>，xe<sup>x</sup>，x²e<sup>x</sup></p>
+    <p>λ=−1（单根）→ 1个解：e<sup>−x</sup></p>
+  </div>
+  <div class="eg-ans">y = (C₁ + C₂x + C₃x²)e<sup>x</sup> + C₄e<sup>−x</sup></div>
+</div>
+
+<div class="eg">
+  <div class="eg-head">例2 &nbsp;|&nbsp; y<sup>(5)</sup> − y<sup>(4)</sup> + 2y‴ − 2y″ + y′ − y = 0 &nbsp;（5阶）</div>
+  <div class="eg-body">
+    <p>特征方程：λ⁵ − λ⁴ + 2λ³ − 2λ² + λ − 1 = 0</p>
+    <p>分解：尝试 λ=1 代入 = 1−1+2−2+1−1=0 ✓，提取 (λ−1)：</p>
+    <p>= (λ−1)(λ⁴+2λ²+1) = (λ−1)(λ²+1)²</p>
+    <p>得 <strong>λ₁=1（单根），λ₂,₃=±i（二重复根）</strong></p>
+    <p>λ=1 → e<sup>x</sup>（1个）</p>
+    <p>λ=±i 二重 → cos x，x cos x，sin x，x sin x（2×2=4个）</p>
+  </div>
+  <div class="eg-ans">y = (C₁+C₂x)cos x + (C₃+C₄x)sin x + C₅e<sup>x</sup></div>
+</div>
+
+<hr class="div">
+
+<h3>4.3 n 阶非齐次方程的特解</h3>
+
+<div class="box key">
+  <div class="box-label">规则（与二阶完全一致，只是 k 的取值范围可能更大）</div>
+  <div class="g2">
+    <div>
+      <p><strong>f(x) = e<sup>λ₀x</sup>Pₘ(x)：</strong></p>
+      <div class="formula" style="font-size:14px">y* = e<sup>λ₀x</sup>·x<sup>k</sup>·Qₘ(x)</div>
+      <p style="font-size:13px">k = λ₀ 作为特征根的重数</p>
+    </div>
+    <div>
+      <p><strong>f(x) = e<sup>a₀x</sup>(P¹ₘcos b₀x + P²ₘsin b₀x)：</strong></p>
+      <div class="formula" style="font-size:14px">y* = e<sup>a₀x</sup>·x<sup>k</sup>·(Q¹ₘcos b₀x+Q²ₘsin b₀x)</div>
+      <p style="font-size:13px">k = λ₀=a₀+ib₀ 作为特征根的重数</p>
+    </div>
+  </div>
+</div>
+
+<div class="eg">
+  <div class="eg-head">例3 &nbsp;|&nbsp; y<sup>(6)</sup> + y<sup>(5)</sup> − y<sup>(4)</sup> = x−1 &nbsp;（λ₀=0，Pₘ=x−1 为1次）</div>
+  <div class="eg-body">
+    <p>特征方程：λ⁶+λ⁵−λ⁴=0 → λ⁴(λ²+λ−1)=0</p>
+    <p>λ=0（<strong>四重根</strong>），λ=(−1±√5)/2（另外两个单实根）</p>
+    <p>λ₀=0 是<strong>四重</strong>特征根（k=4），设特解：</p>
+    <p>y* = x⁴(ax+b)（x⁴ · 一次多项式）</p>
+    <p>展开代入，化简得：120a − (240ax+48b) = x−1（高阶导数项消掉了）</p>
+    <p>比较：x¹：−240a=1 → a=−1/240；x⁰：120a−48b=−1 → b=1/96</p>
+  </div>
+  <div class="eg-ans">y = C₁+C₂x+C₃x²+C₄x³+C₅e<sup>λ₅x</sup>+C₆e<sup>λ₆x</sup> + (1/96)x⁴ − (1/240)x⁵</div>
+</div>
+
+</section>
+
+<!-- ═══════════════════════════════════
+     §5 降阶方法
+════════════════════════════════════ -->
+<section class="sec" id="s5">
+<div class="sec-hd">
+  <span class="sec-num">SECTION 05</span>
+  <h2>可降阶的二阶变系数线性方程</h2>
+</div>
+
+<p>对于一般的<strong>变系数</strong>二阶方程，没有通用解法，但存在两种可降阶的特殊结构。</p>
+
+<h3>降阶法 I：不含 y(x) 的项</h3>
+
+<div class="box key">
+  <div class="box-label">方程形式</div>
+  <div class="formula hl">y″(x) + p(x)y′(x) = f(x) &nbsp;&nbsp;&nbsp;（方程中无 y(x) 项）</div>
+</div>
+
+<ol class="steps">
+  <li><div>设 <strong>u(x) = y′(x)</strong>，则 u′(x) = y″(x)</div></li>
+  <li><div>原方程化为：u′(x) + p(x)u(x) = f(x)，这是关于 u 的<strong>一阶线性方程</strong>（用积分因子法解）</div></li>
+  <li><div>解出 u(x)（含常数 C₁）</div></li>
+  <li><div>再积分：y(x) = ∫u(x)dx + C₂（加第二个常数）</div></li>
+</ol>
+
+<hr class="div">
+
+<h3>降阶法 II：已知齐次方程一个特解</h3>
+
+<div class="box key">
+  <div class="box-label">方程形式</div>
+  <div class="formula hl">y″(x) + p(x)y′(x) + q(x)y(x) = f(x) &nbsp;&nbsp;&nbsp;(****)</div>
+  <p><strong>前提条件：</strong>已知对应齐次方程有一个非零特解 y*(x)（即 y*满足 y*″+py*′+qy*=0）。</p>
+</div>
+
+<ol class="steps">
+  <li><div>设非齐次方程的解为 <strong>y(x) = y*(x)·u(x)</strong>（用已知特解乘以待定函数）</div></li>
+  <li><div>代入方程 (****)，计算 y′, y″ 并展开：<br>
+  y′ = y*′u + y*u′，&nbsp; y″ = y*″u + 2y*′u′ + y*u″<br>
+  代入后，含 u 的项（因为 y* 满足齐次方程）<strong>自动抵消</strong></div></li>
+  <li><div>化简得：<strong>u″y* + (2y*′ + p(x)y*)u′ = f(x)</strong><br>
+  这正好是<strong>降阶法 I</strong> 的形式（关于 u′ 的一阶线性方程）！</div></li>
+  <li><div>设 v = u′，按降阶法 I 解出 v，再积分两次得 y</div></li>
+</ol>
+
+<div class="box warn">
+  <div class="box-label">适用场景</div>
+  <p>变系数方程通常靠<strong>观察</strong>或<strong>物理/几何背景</strong>猜出一个齐次特解（例如已知 y*=x 是某方程的解），然后用这个方法找全部解。是变系数方程中少数可以系统求解的情形之一。</p>
+</div>
+
+</section>
+
+<!-- ═══════════════════════════════════
+     §6 速查总表
+════════════════════════════════════ -->
+<section class="sec" id="s6">
+<div class="sec-hd">
+  <span class="sec-num">SECTION 06</span>
+  <h2>速查总表</h2>
+</div>
+
+<h3>完整解题流程</h3>
+<div class="flow" style="flex-direction:column;align-items:stretch">
+  <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:.3rem 0">
+    <div class="fb hl">读题：确认是常系数还是变系数</div>
+  </div>
+  <div style="text-align:center;color:var(--ink3);font-size:13px;margin:.15rem 0">↓</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin:.2rem 0">
+    <div class="fb" style="background:var(--blue-bg);border-color:#b8cfe8;color:var(--blue)">
+      <strong>常系数</strong><br>
+      <small>①解特征方程→写齐次通解<br>②待定系数法找特解<br>③相加</small>
+    </div>
+    <div class="fb" style="background:var(--amber-bg);border-color:#e0c890;color:var(--amber)">
+      <strong>变系数</strong><br>
+      <small>①看是否缺项（降阶法I）<br>②看是否已知一个特解（降阶法II）<br>③否则一般无法求解</small>
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<h3>特征根对应解 速查</h3>
+<table class="dt">
+  <thead>
+    <tr><th>特征根类型</th><th>重数 k</th><th>提供的 k 个独立解</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="mi">实根 λ</td><td>k</td>
+      <td class="mi">e<sup>λx</sup>, xe<sup>λx</sup>, …, x<sup>k−1</sup>e<sup>λx</sup></td>
+    </tr>
+    <tr>
+      <td class="mi">复根 a±bi</td><td>k（共轭各 k 重）</td>
+      <td class="mi">e<sup>ax</sup>cos bx, xe<sup>ax</sup>cos bx, …, x<sup>k−1</sup>e<sup>ax</sup>cos bx<br>e<sup>ax</sup>sin bx, xe<sup>ax</sup>sin bx, …, x<sup>k−1</sup>e<sup>ax</sup>sin bx</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr class="div">
+
+<h3>特解模板 速查</h3>
+<table class="dt">
+  <thead>
+    <tr><th>f(x) 形式</th><th>λ₀ 的重数 k</th><th>特解模板 y*</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="mi" rowspan="3">e<sup>λ₀x</sup>Pₙ(x)</td>
+      <td>k=0（不是特征根）</td>
+      <td class="mi">e<sup>λ₀x</sup>Qₙ(x)</td>
+    </tr>
+    <tr>
+      <td>k=1（单实根）</td>
+      <td class="mi">xe<sup>λ₀x</sup>Qₙ(x)</td>
+    </tr>
+    <tr>
+      <td>k=2（二重实根）</td>
+      <td class="mi">x²e<sup>λ₀x</sup>Qₙ(x)</td>
+    </tr>
+    <tr>
+      <td class="mi" rowspan="2">e<sup>a₀x</sup>(P¹ₙcos b₀x + P²ₙsin b₀x)</td>
+      <td>k=0（λ₀=a₀+ib₀ 非特征根）</td>
+      <td class="mi">e<sup>a₀x</sup>(Q¹ₙcos b₀x + Q²ₙsin b₀x)</td>
+    </tr>
+    <tr>
+      <td>k=1（λ₀=a₀+ib₀ 是特征根）</td>
+      <td class="mi">xe<sup>a₀x</sup>(Q¹ₙcos b₀x + Q²ₙsin b₀x)</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr class="div">
+
+<h3>高频易错点</h3>
+<div class="g2">
+  <div class="box danger">
+    <div class="box-label">❌ 错误1：忘检查 λ₀ 是否是特征根</div>
+    <p style="font-size:13px">设特解前必须先解特征方程！λ₀ 是否为特征根（及重数）直接决定特解模板中 x 的幂次。</p>
+  </div>
+  <div class="box danger">
+    <div class="box-label">❌ 错误2：重根通解写错</div>
+    <p style="font-size:13px">Δ=0 时通解是 (C₁+C₂x)e<sup>λx</sup>，不是 C₁e<sup>λx</sup>+C₂e<sup>λx</sup>（后者只有一个独立常数）。</p>
+  </div>
+  <div class="box danger">
+    <div class="box-label">❌ 错误3：三角函数特解少设一个</div>
+    <p style="font-size:13px">f(x) 只含 cos 时，特解中仍需同时设 cos 和 sin，因为求导会产生另一个。</p>
+  </div>
+  <div class="box danger">
+    <div class="box-label">❌ 错误4：多项式次数设低了</div>
+    <p style="font-size:13px">Qₙ 的次数必须和 Pₙ（f(x) 中多项式）<strong>相同</strong>，不能少设。</p>
+  </div>
+  <div class="box danger">
+    <div class="box-label">❌ 错误5：n阶方程特根重数判断错</div>
+    <p style="font-size:13px">n 阶方程中，若 λ₀ 是 k 重特征根，特解要乘 x<sup>k</sup>，k 可能是 0/1/2/3…</p>
+  </div>
+  <div class="box danger">
+    <div class="box-label">❌ 错误6：代入比较系数时计算错</div>
+    <p style="font-size:13px">设好特解后，求导代入展开是最易出错的步骤，务必耐心逐项展开、合并同类项再比较。</p>
+  </div>
+</div>
+
+</section>
+
+</main>
+</div>
+
+<script>
+function switchTab(group, idx) {
+  const panes = document.querySelectorAll(`[id^="${group}-"]`);
+  const btns  = document.querySelectorAll('.tab-btn');
+  panes.forEach((p,i) => p.classList.toggle('on', i===idx));
+  btns.forEach((b,i)  => b.classList.toggle('on', i===idx));
+}
+
+const secs = document.querySelectorAll('.sec, .cover');
+const links = document.querySelectorAll('.nav-link');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      links.forEach(l => l.classList.toggle('active', l.getAttribute('href')==='#'+id));
+    }
+  });
+}, { threshold: 0.15, rootMargin: '-10% 0px -60% 0px' });
+secs.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>

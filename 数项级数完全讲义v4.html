@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数项级数 完全讲义 · 复旦数学分析AII</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f8f6f0; --surf:#f0ede5; --surf2:#e6e2d8; --surf3:#dbd6cb;
+  --ink:#1b1914; --ink2:#48443c; --ink3:#84806f;
+  --acc:#982b10; --acc-bg:#fef1ec;
+  --blue:#193f82; --blue-bg:#eaf0fb; --blue-lt:#dce8f7;
+  --green:#1c5c3a; --green-bg:#e6f4ec; --green-lt:#d4ecdd;
+  --amber:#784600; --amber-bg:#fdf3de; --amber-lt:#f9e9c0;
+  --red:#8a1414; --red-bg:#fdecec; --red-lt:#fbd8d8;
+  --purple:#4a1e82; --purple-bg:#f1ecfb;
+  --teal:#0e4f60; --teal-bg:#e5f2f6;
+  --border:#cec9bc; --border2:#dcd8ce;
+  --serif:'Noto Serif SC',serif;
+  --sans:'Noto Sans SC',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --r:6px; --rl:10px; --rxl:14px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink2);font-size:15px;line-height:1.82;}
+
+/* ── LAYOUT ── */
+.page{display:grid;grid-template-columns:248px 1fr;max-width:1130px;margin:0 auto;min-height:100vh;}
+
+/* ── SIDEBAR ── */
+.side{position:sticky;top:0;height:100vh;overflow-y:auto;border-right:1px solid var(--border);background:var(--surf);padding:1.6rem 0;}
+.side::-webkit-scrollbar{width:3px;}.side::-webkit-scrollbar-thumb{background:var(--border);}
+.side-brand{padding:0 1.3rem 1.2rem;border-bottom:1px solid var(--border);margin-bottom:.75rem;}
+.side-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);margin-bottom:4px;}
+.side-title{font-family:var(--serif);font-size:15.5px;font-weight:700;color:var(--ink);line-height:1.3;}
+a.nav{display:flex;align-items:center;gap:8px;padding:.34rem 1.3rem;font-size:12.5px;color:var(--ink3);text-decoration:none;border-left:2px solid transparent;transition:all .12s;}
+a.nav:hover{color:var(--ink);background:var(--surf2);}
+a.nav.active{color:var(--acc);border-left-color:var(--acc);background:var(--surf2);font-weight:500;}
+.nav-n{font-family:var(--mono);font-size:10px;color:var(--ink3);min-width:18px;}
+a.nav.sub{padding-left:2.8rem;font-size:12px;color:var(--ink3);}
+
+/* ── MAIN ── */
+.main{padding:2.8rem 3.5rem;max-width:850px;}
+
+/* ── COVER ── */
+.cover{padding:1.5rem 0 3rem;border-bottom:1px solid var(--border);margin-bottom:3.5rem;}
+.cover-eye{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:.7rem;}
+.cover h1{font-family:var(--serif);font-size:36px;font-weight:700;color:var(--ink);line-height:1.2;margin-bottom:.9rem;}
+.cover-sub{font-size:14px;color:var(--ink3);max-width:590px;margin-bottom:1.5rem;line-height:1.75;}
+.tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:1.1rem;}
+.tag{font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--ink3);}
+.pbtn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;font-size:12px;font-family:var(--mono);border:1px solid var(--border);border-radius:var(--r);background:var(--surf);color:var(--ink3);cursor:pointer;transition:all .12s;letter-spacing:.04em;}
+.pbtn:hover{background:var(--surf2);color:var(--ink);}
+
+/* ── SECTION ── */
+.sec{margin-bottom:4.8rem;}
+.sec-head{display:flex;align-items:baseline;gap:.9rem;padding-bottom:.9rem;border-bottom:1.5px solid var(--border);margin-bottom:1.8rem;}
+.sec-num{font-family:var(--mono);font-size:11px;color:var(--acc);letter-spacing:.06em;}
+.sec-head h2{font-family:var(--serif);font-size:25px;font-weight:700;color:var(--ink);}
+h3{font-family:var(--serif);font-size:18.5px;font-weight:600;color:var(--ink);margin:2rem 0 .65rem;}
+h4{font-family:var(--mono);font-size:11.5px;font-weight:500;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin:1.4rem 0 .45rem;}
+p{margin-bottom:.72rem;}
+strong{color:var(--ink);font-weight:500;}
+
+/* ── CALLOUT BOXES ── */
+.box{border-radius:var(--r);padding:.88rem 1.12rem;margin:1rem 0;font-size:14px;line-height:1.72;}
+.box-lbl{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;font-weight:400;}
+.box.def   {background:var(--blue-bg); border-left:3px solid var(--blue);}    .box.def   .box-lbl{color:var(--blue);}
+.box.thm   {background:var(--green-bg);border-left:3px solid var(--green);}   .box.thm   .box-lbl{color:var(--green);}
+.box.warn  {background:var(--amber-bg);border-left:3px solid var(--amber);}   .box.warn  .box-lbl{color:var(--amber);}
+.box.danger{background:var(--red-bg);  border-left:3px solid var(--red);}     .box.danger.box-lbl{color:var(--red);}
+.box.note  {background:var(--purple-bg);border-left:3px solid var(--purple);} .box.note  .box-lbl{color:var(--purple);}
+.box.tip   {background:var(--teal-bg); border-left:3px solid var(--teal);}    .box.tip   .box-lbl{color:var(--teal);}
+.box.plain {background:var(--surf);    border-left:3px solid var(--border);}  .box.plain .box-lbl{color:var(--ink3);}
+.box.acc   {background:var(--acc-bg);  border-left:3px solid var(--acc);}     .box.acc   .box-lbl{color:var(--acc);}
+
+/* ── FORMULA ── */
+.fm{font-family:var(--serif);font-size:15.5px;font-style:italic;text-align:center;padding:.85rem 1.5rem;border-radius:var(--r);border:1px solid var(--border2);margin:.85rem 0;color:var(--ink);overflow-x:auto;}
+.fm.neutral{background:var(--surf);}
+.fm.blue   {background:var(--blue-bg); border-color:#b4ceea;color:var(--blue);}
+.fm.green  {background:var(--green-bg);border-color:#a6d9bc;color:var(--green);}
+.fm.amber  {background:var(--amber-bg);border-color:#dfbf88;color:var(--amber);}
+.fm.red    {background:var(--red-bg);  border-color:#e8b4b4;color:var(--red);}
+.fm.purple {background:var(--purple-bg);border-color:#c4b4e8;color:var(--purple);}
+
+/* ── EXAMPLE ── */
+.eg{border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin:1.15rem 0;}
+.eg-head{background:var(--surf2);padding:.52rem 1rem;font-family:var(--mono);font-size:12px;color:var(--ink3);border-bottom:1px solid var(--border);letter-spacing:.02em;}
+.eg-body{padding:.92rem 1.15rem;font-size:14px;line-height:1.78;}
+.eg-body p{margin-bottom:.45rem;color:var(--ink2);}
+.eg-ans {background:var(--green-lt); border-top:1px solid var(--border);padding:.62rem 1.15rem;font-family:var(--serif);font-style:italic;font-size:14px;color:var(--green);}
+.eg-trap{background:var(--red-lt);   border-top:1px solid var(--border);padding:.55rem 1.15rem;font-size:13px;color:var(--red);}
+
+/* ── STEPS ── */
+.steps{list-style:none;counter-reset:stp;margin:.7rem 0;}
+.steps li{counter-increment:stp;display:flex;align-items:flex-start;gap:11px;margin:.52rem 0;font-size:14px;color:var(--ink2);line-height:1.72;}
+.steps li::before{content:counter(stp);min-width:25px;width:25px;height:25px;background:var(--acc);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:var(--mono);flex-shrink:0;margin-top:2px;}
+.steps li>div{flex:1;min-width:0;word-break:break-word;}
+
+/* ── TABLE ── */
+table.tbl{width:100%;border-collapse:collapse;font-size:13px;margin:.9rem 0;}
+table.tbl th{background:var(--surf2);padding:7px 12px;text-align:left;font-weight:500;font-size:11.5px;color:var(--ink2);border-bottom:1px solid var(--border);font-family:var(--mono);letter-spacing:.04em;}
+table.tbl td{padding:7px 12px;border-bottom:1px solid var(--surf2);color:var(--ink2);vertical-align:top;line-height:1.58;}
+table.tbl tr:last-child td{border-bottom:none;}
+table.tbl tr:hover td{background:var(--surf);}
+.mi{font-family:var(--serif);font-style:italic;}
+
+/* ── GRID ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.95rem;margin:.82rem 0;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.8rem;margin:.82rem 0;}
+
+/* ── COMPARE ── */
+.cmp{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;font-size:13px;margin:.9rem 0;}
+.cmp>div{padding:.6rem .95rem;border-bottom:1px solid var(--border);}
+.cmp>div:last-child,.cmp>div:nth-last-child(2){border-bottom:none;}
+.cmp.head>div{background:var(--surf2);font-weight:500;font-size:12px;color:var(--ink);}
+
+/* ── BADGE ── */
+.b{display:inline-block;font-size:10.5px;padding:1.5px 7px;border-radius:9px;font-family:var(--mono);}
+.b-g{background:var(--green-lt);color:var(--green);}
+.b-r{background:var(--red-lt);color:var(--red);}
+.b-b{background:var(--blue-lt);color:var(--blue);}
+.b-a{background:var(--amber-lt);color:var(--amber);}
+
+hr.div{border:none;border-top:1px solid var(--border);margin:1.9rem 0;}
+
+/* ── WEAPON CARD ── */
+.weapon{border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin:1.3rem 0;}
+.weapon-head{display:flex;align-items:center;gap:10px;padding:.68rem 1.05rem;background:var(--surf2);border-bottom:1px solid var(--border);}
+.weapon-num{font-family:var(--mono);font-size:11px;background:var(--acc);color:#fff;padding:2px 9px;border-radius:3px;white-space:nowrap;}
+.weapon-title{font-size:14px;font-weight:500;color:var(--ink);flex:1;}
+.weapon-tag{font-size:11px;font-family:var(--mono);color:var(--ink3);}
+.weapon-body{padding:.95rem 1.12rem;font-size:14px;line-height:1.78;}
+
+/* ── KUMMER LADDER ── */
+.ladder{border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin:1rem 0;font-size:13px;}
+.ldr-row{display:grid;grid-template-columns:110px 1fr 1fr;border-bottom:1px solid var(--border);}
+.ldr-row:last-child{border-bottom:none;}
+.ldr-row>div{padding:.6rem .95rem;color:var(--ink2);}
+.ldr-head>div{background:var(--surf2);font-family:var(--mono);font-size:11px;color:var(--ink3);font-weight:500;letter-spacing:.04em;}
+.ldr-row:not(.ldr-head):hover>div{background:var(--surf);}
+
+/* ── DECISION TREE ── */
+.dtree{background:var(--surf);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin:1rem 0;}
+.dt-q{display:flex;align-items:flex-start;gap:10px;font-weight:500;color:var(--ink);margin:.5rem 0;font-size:14px;}
+.dt-a{display:flex;align-items:flex-start;gap:10px;margin:.4rem 0;font-size:13.5px;color:var(--ink2);}
+.dt-s{font-family:var(--mono);font-size:11px;background:var(--surf2);min-width:24px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.indent{margin-left:34px;}
+
+/* ── PRINT ── */
+@media print{
+  .side{display:none;}
+  .page{grid-template-columns:1fr;}
+  .main{padding:2cm;max-width:100%;}
+  .sec{page-break-before:always;}
+  .cover{page-break-before:avoid;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ══════ SIDEBAR ══════ -->
+<nav class="side">
+  <div class="side-brand">
+    <div class="side-label">数学分析 AII · 第九章</div>
+    <div class="side-title">数项级数<br>完全讲义</div>
+  </div>
+  <a href="#cover" class="nav active"><span class="nav-n">00</span>封面总览</a>
+  <a href="#s1" class="nav"><span class="nav-n">01</span>收敛定义与基本性质</a>
+  <a href="#s2" class="nav"><span class="nav-n">02</span>上下极限</a>
+  <a href="#s3" class="nav"><span class="nav-n">03</span>正项级数判别法</a>
+  <a href="#s3a" class="nav sub"><span class="nav-n">·</span>比较判别法</a>
+  <a href="#s3b" class="nav sub"><span class="nav-n">·</span>积分判别法</a>
+  <a href="#s3c" class="nav sub"><span class="nav-n">·</span>比值法与根值法</a>
+  <a href="#s3d" class="nav sub"><span class="nav-n">·</span>Raabe / Bertrand</a>
+  <a href="#s3e" class="nav sub"><span class="nav-n">·</span>Kummer（母判别法）</a>
+  <a href="#s4" class="nav"><span class="nav-n">04</span>任意项级数</a>
+  <a href="#s5" class="nav"><span class="nav-n">05</span>Abel变换与D/A判别法</a>
+  <a href="#s6" class="nav"><span class="nav-n">06</span>绝对与条件收敛的性质</a>
+  <a href="#s7" class="nav"><span class="nav-n">07</span>Riemann重排 · 级数乘法</a>
+  <a href="#s8" class="nav"><span class="nav-n">08</span>速查总表 · 决策树</a>
+</nav>
+
+<!-- ══════ MAIN ══════ -->
+<main class="main">
+
+<!-- ══ COVER ══ -->
+<section class="cover" id="cover">
+  <div class="cover-eye">FUDAN · 数学分析AII · 第九章</div>
+  <h1>数项级数<br>完全讲义</h1>
+  <p class="cover-sub">基于课件原文逐页重构。八个章节覆盖全部内容：收敛定义与Cauchy准则、上下极限及分离性、正项级数五大判别法、Leibniz交错级数、Abel变换与D-A判别法、绝对与条件收敛的深层性质、Riemann重排定理完整构造、Cauchy乘积四定理。所有课件例题完整解法与易错点一网打尽。</p>
+  <div class="tags">
+    <span class="tag">收敛定义</span><span class="tag">Cauchy准则</span><span class="tag">上下极限</span>
+    <span class="tag">p-级数</span><span class="tag">q-级数</span><span class="tag">比较判别</span>
+    <span class="tag">积分判别</span><span class="tag">比值/根值</span><span class="tag">Raabe判别</span>
+    <span class="tag">Bertrand判别</span><span class="tag">Kummer判别</span>
+    <span class="tag">Leibniz判别</span><span class="tag">Abel变换</span>
+    <span class="tag">Dirichlet/Abel</span><span class="tag">Riemann重排</span><span class="tag">Cauchy乘积</span>
+  </div>
+  <button class="pbtn" onclick="window.print()">⎙ 打印 / 导出 PDF</button>
+</section>
+
+<!-- ══════════════════════════════════════════
+     §1  收敛定义与基本性质
+══════════════════════════════════════════ -->
+<section class="sec" id="s1">
+<div class="sec-head"><span class="sec-num">SECTION 01</span><h2>收敛定义与基本性质</h2></div>
+
+<h3>1.1 级数的本质</h3>
+<p>芝诺悖论（阿基里斯追乌龟）提示我们：<strong>无穷多个有限量相加，结果可以是一个有限常数</strong>。数项级数用严谨的极限语言来回答"无穷多个数加起来等于多少"。</p>
+
+<div class="box def">
+  <div class="box-lbl">基本定义</div>
+  <p>给定数列 {aₙ}，定义<strong>部分和数列</strong> Sₙ = a₁ + a₂ + ⋯ + aₙ。</p>
+  <p>若 lim<sub>n→∞</sub> Sₙ = S（有限数存在），称 ∑aₙ <strong>收敛</strong>，S 是级数的和。</p>
+  <p>若极限不存在或为 ±∞，称 ∑aₙ <strong>发散</strong>。</p>
+</div>
+
+<div class="box acc">
+  <div class="box-lbl">核心公理（贯穿全章）</div>
+  <p>级数的收敛性与前面<strong>有限项完全无关</strong>。增删改变有限项只影响收敛时的"和"，不影响"是否收敛"。</p>
+  <p style="margin-top:4px">对正项级数：Sₙ 单调递增，故收敛 ⟺ Sₙ <strong>有上界</strong>；要么收敛，要么发散到 +∞。</p>
+</div>
+
+<h3>1.2 两个基本模型</h3>
+<div class="g2">
+  <div class="box def">
+    <div class="box-lbl">等比级数（几何级数）</div>
+    <p>部分和 Sₙ = (1−qⁿ)/(1−q)</p>
+    <p><strong>|q| &lt; 1</strong>：收敛，和 = 1/(1−q)</p>
+    <p><strong>|q| ≥ 1</strong>：发散</p>
+  </div>
+  <div class="box def">
+    <div class="box-lbl">p-级数（最重要的参照标尺）</div>
+    <div class="fm blue" style="margin:5px 0;font-size:14px">∑ 1/nᵖ</div>
+    <p><span class="b b-g">p &gt; 1</span> 收敛 &nbsp;|&nbsp; <span class="b b-r">p ≤ 1</span> 发散</p>
+    <p style="font-size:12.5px">p = 1 即<strong>调和级数</strong>，发散！</p>
+  </div>
+</div>
+
+<h3>1.3 收敛的必要条件</h3>
+<div class="box warn">
+  <div class="box-lbl">⚠ 必要条件 — 逆否才是做题武器</div>
+  <p><strong>定理：</strong>∑aₙ 收敛 ⟹ lim aₙ = 0</p>
+  <p><strong>逆否（做题用）：</strong>lim aₙ ≠ 0 ⟹ ∑aₙ <span style="color:var(--red)">必然发散</span></p>
+  <p style="margin-top:6px;font-size:13px"><span class="b b-r">陷阱</span> 反之不成立！aₙ → 0 只是必要条件，不充分。最经典反例：调和级数 ∑1/n，通项趋0但<strong>发散</strong>。</p>
+</div>
+
+<div class="eg">
+  <div class="eg-head">调和级数发散的严格证明（Cauchy准则法）</div>
+  <div class="eg-body">
+    <p>取 n = 2m，考察第 m+1 项到第 2m 项的和：</p>
+    <div class="fm neutral" style="font-size:14px;margin:5px 0">1/(m+1) + 1/(m+2) + ⋯ + 1/(2m) ≥ m · 1/(2m) = <strong>1/2</strong></div>
+    <p>无论 m 多大，长度为 m 的一段的和始终 ≥ 1/2，不满足 Cauchy 收敛准则。</p>
+  </div>
+  <div class="eg-trap">这个证明思路务必掌握——是 Cauchy 准则"证发散"的典型用法。</div>
+</div>
+
+<h3>1.4 Cauchy 收敛准则（充要条件）</h3>
+<div class="box def">
+  <div class="box-lbl">Cauchy 收敛准则</div>
+  <p>∑aₙ 收敛 ⟺ 对任意 ε > 0，存在 N，当 <strong>n > m > N</strong> 时：</p>
+  <div class="fm blue" style="margin:7px 0">|aₘ₊₁ + aₘ₊₂ + ⋯ + aₙ| &lt; ε</div>
+  <p>即：<em>从任意远处开始，任意有限段的和都可以任意小。</em></p>
+</div>
+
+<h3>1.5 级数的基本性质</h3>
+<table class="tbl">
+  <thead><tr><th>性质</th><th>内容</th><th>注意</th></tr></thead>
+  <tbody>
+    <tr><td><strong>线性性</strong></td><td class="mi">∑aₙ=A, ∑bₙ=B 均收敛 ⟹ ∑(kaₙ+lbₙ) = kA+lB</td><td>两收敛级数可线性组合</td></tr>
+    <tr><td><strong>加括号</strong></td><td>收敛级数加括号后仍收敛，和不变</td><td>逆命题<strong>不成立</strong></td></tr>
+    <tr><td><strong>去有限项</strong></td><td>增删有限项，敛散性不变</td><td>和会改变</td></tr>
+  </tbody>
+</table>
+
+</section>
+
+<!-- ══════════════════════════════════════════
+     §2  上下极限
+══════════════════════════════════════════ -->
+<section class="sec" id="s2">
+<div class="sec-head"><span class="sec-num">SECTION 02</span><h2>上下极限（limsup 与 liminf）</h2></div>
+
+<h3>2.0 为什么需要上下极限</h3>
+<p>许多数列（如 aₙ = cos(2nπ/5)）<strong>根本没有普通极限</strong>，但它们的"振荡范围"是有规律的。普通极限要求所有子列都收敛到同一个值，而上下极限只盯住"最大的"和"最小的"那两个聚集方向——它们对<strong>任意数列都存在</strong>（可以取 ±∞），是比普通极限更基本的概念。</p>
+
+<div class="box acc">
+  <div class="box-lbl">本节路线图</div>
+  <p><strong>极限点</strong>（子列收敛的目标）→ <strong>极限点集 E</strong> → <strong>sup E, inf E 也在 E 里</strong> → 定义<strong>上/下极限 = max E / min E</strong> → 特征刻画 → 性质与运算 → 广义推广（去掉有界性）</p>
+</div>
+
+<hr class="div">
+
+<h3>2.1 极限点与极限点集</h3>
+
+<div class="box def">
+  <div class="box-lbl">定义 · 极限点（凝聚点）</div>
+  <p>称 ξ ∈ ℝ 为数列 {aₙ} 的一个<strong>极限点</strong>，若存在 {aₙ} 的子列 {aₙₖ}，使得</p>
+  <div class="fm blue" style="margin:7px 0;font-size:15px">aₙₖ → ξ，（k → ∞）</div>
+  <p>记 {aₙ} 的极限点集为 <strong>E = { ξ | ξ 为 {aₙ} 的极限点 }</strong>。</p>
+  <p style="font-size:13px;margin-top:5px">极限点也称<strong>凝聚点</strong>。注意：这里 ξ ∈ ℝ（有限实数），不含 ±∞；后面广义版本才允许 ±∞。</p>
+</div>
+
+<div class="box thm">
+  <div class="box-lbl">等价刻画定理</div>
+  <p>ξ ∈ E &nbsp; ⟺ &nbsp; 对任意 δ > 0，集合 <strong>S(δ) = { n | aₙ ∈ O(ξ, δ) }</strong> 是<strong>无限集</strong>。</p>
+  <p style="font-size:13px;margin-top:5px">（O(ξ, δ) = (ξ−δ, ξ+δ) 表示 ξ 的 δ-邻域）</p>
+  <p style="font-size:13px">换句话说：ξ 是极限点 ⟺ 无论多小的邻域，总有无限项落进去。</p>
+</div>
+
+<div class="box plain">
+  <div class="box-lbl">证明思路（"⇐"方向的子列构造——关键！）</div>
+  <p>已知：对每个 δ > 0，S(δ) 均为无限集。<br>
+  利用 δ 的任意性，<strong>递归地</strong>构造严格递增下标的子列（注意保证 nₖ 严格递增，这是关键！）：</p>
+  <ul style="margin:.5rem 0 0 1rem;font-size:13.5px;line-height:2;">
+    <li>任取 n₁ ∈ S(1)；</li>
+    <li>任取 n₂ ∈ S(1/2) ∩ { n > n₁ }；&nbsp;&nbsp;<em>（S(1/2) 是无限集，故 { n > n₁ } 内有元素）</em></li>
+    <li>任取 n₃ ∈ S(1/3) ∩ { n > n₂ }；</li>
+    <li>一般地，任取 nₖ ∈ S(1/k) ∩ { n > nₖ₋₁ }。</li>
+  </ul>
+  <p style="margin-top:.6rem">则 |aₙₖ − ξ| &lt; 1/k → 0，（k → ∞），故 aₙₖ → ξ，即 ξ ∈ E。&nbsp; ∎</p>
+</div>
+
+<div class="eg">
+  <div class="eg-head">三个典型例子</div>
+  <div class="eg-body">
+    <p><strong>(1)</strong> aₙ = (−1)ⁿ⁻¹：奇数项 = 1，偶数项 = −1，故极限点集 <strong>E = {1, −1}</strong>。</p>
+    <p><strong>(2)</strong> {aₙ} 是有理数集 ℚ 的一个排列：ℝ 中每一点都有 ℚ 中的序列逼近，故 <strong>E = ℝ</strong>。</p>
+    <p><strong>(3)</strong> aₙ = n：趋于 +∞，没有任何有限收敛子列，故 <strong>E = ∅</strong>（有界性不满足）。</p>
+  </div>
+</div>
+
+<hr class="div">
+
+<h3>2.2 上下极限的定义（有界数列版）</h3>
+
+<div class="box thm">
+  <div class="box-lbl">定理：有界数列的极限点集非空，且 sup E、inf E 都属于 E</div>
+  <p>设 {aₙ} 有界，则极限点集 E <strong>非空有界</strong>，且</p>
+  <div class="fm green" style="margin:7px 0">sup E ∈ E，&nbsp; inf E ∈ E</div>
+  <p style="font-size:13px">即 E 的上确界和下确界都能被子列真正"达到"，故 sup E = max E，inf E = min E。</p>
+</div>
+
+<div class="box plain">
+  <div class="box-lbl">证明（以 sup E 为例）</div>
+  <p>记 β = sup E。对任意 δ > 0，由上确界定义，存在 ξ ∈ E 使 β − δ &lt; ξ ≤ β。</p>
+  <p>取 δ' = ξ − (β − δ) > 0，则邻域 O(ξ, δ') ⊂ O(β, δ)。</p>
+  <p>又因 ξ ∈ E，O(ξ, δ') 含 {aₙ} 无限项，从而 O(β, δ) 也含 {aₙ} 无限项。</p>
+  <p>由等价刻画定理，β ∈ E。同理可证 inf E ∈ E。 &nbsp; ∎</p>
+</div>
+
+<div class="box def">
+  <div class="box-lbl">定义 · 上极限与下极限</div>
+  <p>设 {aₙ} <strong>有界</strong>，定义：</p>
+  <div class="fm blue" style="margin:7px 0;font-size:15.5px">
+    <span style="display:block">lim sup<sub>n→∞</sub> aₙ = <span style="text-decoration:overline">lim</span><sub>n→∞</sub> aₙ &nbsp;:= max E &nbsp;（最大极限点）</span>
+    <span style="display:block;margin-top:6px">lim inf<sub>n→∞</sub> aₙ = <span style="text-decoration:underline">lim</span><sub>n→∞</sub> aₙ &nbsp;:= min E &nbsp;（最小极限点）</span>
+  </div>
+  <p style="font-size:13px;margin-top:5px">记号说明：上极限常写作 limsup 或 <span style="text-decoration:overline">lim</span>，下极限常写作 liminf 或 <span style="text-decoration:underline">lim</span>。</p>
+</div>
+
+<hr class="div">
+
+<h3>2.3 上下极限的特征刻画</h3>
+<p>上极限 β = max E 有一个非常实用的等价刻画，是做题时的常用工具：</p>
+
+<div class="box thm">
+  <div class="box-lbl">定理 · β 是上极限的充要条件</div>
+  <p>设 {aₙ} 有界，β ∈ ℝ，则</p>
+  <div class="fm green" style="margin:7px 0">
+    β = lim sup aₙ &nbsp; ⟺ &nbsp; 对任意 ε > 0：<br>
+    <span style="font-size:14px">① O(β, ε) 含 {aₙ} <strong>无限项</strong>（β 处有无穷多项聚集）</span><br>
+    <span style="font-size:14px">② (β + ε, +∞) <strong>至多含有限项</strong>（β 以上"几乎没有"项）</span>
+  </div>
+  <p style="font-size:13px">类似地，α = lim inf aₙ ⟺ ① O(α, ε) 含无限项；② (−∞, α − ε) 至多含有限项。</p>
+</div>
+
+<div class="box plain">
+  <div class="box-lbl">证明（"⇒" 方向：证②）</div>
+  <p>假设 (β + ε, +∞) 含 {aₙ} 无限项，由 Bolzano-Weierstrass 定理，存在子列 aₙₖ → ξ ≥ β + ε，则 ξ ∈ E 且 ξ &gt; β = max E，矛盾。故②成立。</p>
+</div>
+
+<div class="box warn">
+  <div class="box-lbl">直觉理解</div>
+  <p>β = lim sup aₙ 意味着：β 是数列"最终到不了的最高处"。<br>
+  · 数列<strong>无限次接近</strong> β（条件①），但<br>
+  · 超过 β 的地方，只有<strong>有限项</strong>（条件②）。</p>
+  <p style="margin-top:5px;font-size:13px">换句话说：β 是数列所有极限点里<strong>最大的那个</strong>，也是数列"几乎最终不超过"的门槛。</p>
+</div>
+
+<hr class="div">
+
+<h3>2.4 极限存在的充要条件</h3>
+
+<div class="box thm">
+  <div class="box-lbl">定理 · 极限与上下极限的关系</div>
+  <p>设 {aₙ} 有界，则</p>
+  <div class="fm green" style="margin:7px 0">lim<sub>n→∞</sub> aₙ 存在 &nbsp; ⟺ &nbsp; lim sup aₙ = lim inf aₙ</div>
+  <p>此时极限值等于该公共值。</p>
+</div>
+
+<div class="box plain">
+  <div class="box-lbl">证明（"⇐"方向，用分离性）</div>
+  <p>设 lim sup aₙ = lim inf aₙ = A。对任意 ε > 0，由上下极限的特征刻画：</p>
+  <p>· (A + ε, +∞) 至多含有限项，所以从某 N₁ 起：aₙ &lt; A + ε</p>
+  <p>· (−∞, A − ε) 至多含有限项，所以从某 N₂ 起：aₙ &gt; A − ε</p>
+  <p>取 N = max{N₁, N₂}，则 n > N 时 |aₙ − A| &lt; ε，即 lim aₙ = A。 &nbsp; ∎</p>
+</div>
+
+<div class="box acc">
+  <div class="box-lbl">重要推论：上下极限替代极限证明</div>
+  <p>从此以后，<strong>证明极限存在并求值</strong>，完全可以用<strong>计算上极限和下极限是否相等</strong>来替代。这往往比用 ε-N 语言直接证明更为方便——特别是在不等式估计中，取上/下极限是一种强大的操作。</p>
+</div>
+
+<hr class="div">
+
+<h3>2.5 保序性与分离性</h3>
+
+<div class="box thm">
+  <div class="box-lbl">保序性定理</div>
+  <p>设 {aₙ}、{bₙ} 有界，且从某 N₀ 起恒有 aₙ ≤ bₙ，则：</p>
+  <div class="fm neutral" style="margin:6px 0">lim inf aₙ ≤ lim inf bₙ，&nbsp; lim sup aₙ ≤ lim sup bₙ</div>
+</div>
+
+<div class="box note">
+  <div class="box-lbl">分离性定理（所有判别法证明的根基）</div>
+  <p>设 {aₙ}、{bₙ} 有界，若 <strong>lim sup aₙ &lt; lim inf bₙ</strong>，则存在 N₀，当 n > N₀ 时恒有：</p>
+  <div class="fm blue" style="margin:7px 0;font-size:15px">aₙ &lt; bₙ</div>
+  <p style="font-size:13px;margin-top:5px"><strong>证明：</strong>取 ε = (lim inf bₙ − lim sup aₙ)/2 &gt; 0，则存在 N₀，当 n > N₀ 时：</p>
+  <p style="font-size:13px">aₙ &lt; lim sup aₙ + ε = lim inf bₙ − ε &lt; bₙ。 &nbsp; ∎</p>
+  <p style="font-size:13px;margin-top:6px;color:var(--ink2)"><strong>应用：</strong>比值法中，若 lim sup (aₙ₊₁/aₙ) = ρ &lt; 1，则在 ρ 和 1 之间取 r，由分离性从某项起 aₙ₊₁/aₙ &lt; r，从而 aₙ &lt; a₁·rⁿ，再与等比级数比较得收敛。</p>
+  <p style="font-size:13px;margin-top:4px;color:var(--ink3)">注：实际应用中，{bₙ} 经常取成常数数列。</p>
+</div>
+
+<hr class="div">
+
+<h3>2.6 上下极限的运算性质</h3>
+
+<div class="box thm">
+  <div class="box-lbl">加法运算（一般不等式）</div>
+  <p>设 {aₙ}、{bₙ} 有界，则：</p>
+  <div class="fm neutral" style="margin:6px 0;font-size:14px">
+    lim inf aₙ + lim inf bₙ &nbsp; ≤ &nbsp; lim inf (aₙ + bₙ) &nbsp; ≤ &nbsp; lim sup (aₙ + bₙ) &nbsp; ≤ &nbsp; lim sup aₙ + lim sup bₙ
+  </div>
+  <p style="font-size:13px;margin-top:5px">不等号一般不能取等！例：aₙ = (−1)ⁿ，bₙ = (−1)ⁿ⁺¹ = −aₙ，则 aₙ + bₙ = 0，但 lim sup aₙ + lim sup bₙ = 1+1 = 2。</p>
+</div>
+
+<div class="box thm">
+  <div class="box-lbl">加法运算（等号成立：一个极限存在时）</div>
+  <p>若 lim<sub>n→∞</sub> aₙ <strong>存在</strong>（记为 A），则：</p>
+  <div class="fm green" style="margin:6px 0;font-size:14.5px">
+    lim sup (aₙ + bₙ) = A + lim sup bₙ<br>
+    lim inf (aₙ + bₙ) = A + lim inf bₙ
+  </div>
+  <p style="font-size:13px;margin-top:5px"><strong>证明思路（下极限）：</strong>一方面由一般不等式有 lim inf(aₙ+bₙ) ≥ A + lim inf bₙ。另一方面，lim inf bₙ = lim inf((aₙ+bₙ)−aₙ) ≥ lim inf(aₙ+bₙ) − A，故 lim inf(aₙ+bₙ) ≤ A + lim inf bₙ。两方向合并得等式。 ∎</p>
+</div>
+
+<div class="box thm">
+  <div class="box-lbl">乘法运算（aₙ, bₙ ≥ 0 时）</div>
+  <p>设 aₙ, bₙ ≥ 0 有界，则：</p>
+  <div class="fm neutral" style="margin:6px 0;font-size:14px">
+    lim inf aₙ · lim inf bₙ &nbsp; ≤ &nbsp; lim inf (aₙbₙ) &nbsp; ≤ &nbsp; lim sup (aₙbₙ) &nbsp; ≤ &nbsp; lim sup aₙ · lim sup bₙ
+  </div>
+  <p style="font-size:13px;margin-top:5px">同样，若 lim aₙ 存在（= A ≠ 0），则 lim sup (aₙbₙ) = A · lim sup bₙ，等号成立。</p>
+</div>
+
+<hr class="div">
+
+<h3>2.7 广义极限点与广义上下极限</h3>
+<p>前面的定义要求数列有界，但我们希望<strong>对任意数列都能定义上下极限</strong>。</p>
+
+<div class="box def">
+  <div class="box-lbl">定义 · 广义极限点集 Ẽ</div>
+  <p>将极限点的定义扩展到 ξ ∈ ℝ̃ = ℝ ∪ {+∞, −∞}：称 ξ ∈ ℝ̃ 为 {aₙ} 的广义极限点，若存在子列 aₙₖ → ξ（允许趋于 ±∞）。</p>
+  <p>记广义极限点集为 <strong>Ẽ</strong>，显然 E ⊂ Ẽ。</p>
+  <p style="font-size:13px;margin-top:5px"><strong>规定扩展运算：</strong>对任意 x ∈ ℝ 有 −∞ &lt; x &lt; +∞；若 A ⊂ ℝ̃ 含 +∞ 或 A∩ℝ 无上界，则 sup A = +∞；若含 −∞ 或无下界，则 inf A = −∞。</p>
+</div>
+
+<div class="box thm">
+  <div class="box-lbl">定理：Ẽ 包含自身的上/下确界</div>
+  <div class="fm green" style="margin:7px 0">sup Ẽ ∈ Ẽ，&nbsp; inf Ẽ ∈ Ẽ</div>
+  <p style="font-size:13px">关键情形：当 Ẽ∩ℝ 非空无上界时，+∞ ∈ Ẽ（即存在子列趋于 +∞）。这可以用"取 n₁ 使 aₙ₁ &gt; 1，取 n₂ &gt; n₁ 使 aₙ₂ &gt; 2，……"的构造来严格证明。</p>
+</div>
+
+<div class="box def">
+  <div class="box-lbl">重新定义（无需有界性）· 上下极限</div>
+  <p>对任意实数列 {aₙ}（无需有界），定义：</p>
+  <div class="fm blue" style="margin:7px 0;font-size:15.5px">
+    <span style="display:block">lim sup<sub>n→∞</sub> aₙ = max Ẽ &nbsp;（允许取 +∞）</span>
+    <span style="display:block;margin-top:6px">lim inf<sub>n→∞</sub> aₙ = min Ẽ &nbsp;（允许取 −∞）</span>
+  </div>
+  <p style="font-size:13px;margin-top:5px">有了这个定义，<strong>任何数列都有上下极限</strong>（可以是 ±∞），前面关于有界数列的所有定理仍然成立（运算中需避免未定型如 (+∞)+(−∞)）。</p>
+</div>
+
+<div class="box thm">
+  <div class="box-lbl">广义极限存在的充要条件</div>
+  <div class="fm green" style="margin:7px 0">lim<sub>n→∞</sub> aₙ = ξ₀ (∈ ℝ̃) &nbsp; ⟺ &nbsp; lim sup aₙ = lim inf aₙ = ξ₀ &nbsp; ⟺ &nbsp; Ẽ = {ξ₀}</div>
+</div>
+
+<div class="box warn">
+  <div class="box-lbl">⚠ 易混淆：E = {ξ₀} 不等于极限等于 ξ₀！</div>
+  <p>必须是<strong>广义</strong>极限点集 Ẽ = {ξ₀} 才能推出极限存在。若仅有<strong>狭义</strong>极限点集 E = {ξ₀}，结论不成立。</p>
+  <p style="font-size:13px;margin-top:5px">反例：aₙ = n^(−1)ⁿ = 1, n, 1, n, 1, n,…（n 为偶数时 aₙ = n，n 为奇数时 aₙ = 1）</p>
+  <p style="font-size:13px">狭义极限点集 E = {1}（只有有限子列收敛），但 Ẽ = {1, +∞}，lim inf = 1，lim sup = +∞，极限不存在！</p>
+</div>
+
+<hr class="div">
+
+<h3>2.8 用上下极限证题的典型方法</h3>
+
+<div class="eg">
+  <div class="eg-head">例1（课件）&nbsp;|&nbsp; 求 xₙ = cos(2nπ/5) 的上下极限</div>
+  <div class="eg-body">
+    <p>cos(2nπ/5) 以 5 为周期，列出一个周期内的值：</p>
+    <table class="tbl" style="margin:.5rem 0">
+      <thead><tr><th>n mod 5</th><th>1</th><th>2</th><th>3</th><th>4</th><th>0(5)</th></tr></thead>
+      <tbody><tr>
+        <td>xₙ</td>
+        <td>cos(2π/5)</td>
+        <td>cos(4π/5) = −cos(π/5)</td>
+        <td>cos(6π/5) = −cos(π/5)</td>
+        <td>cos(8π/5) = cos(2π/5)</td>
+        <td>cos(2π) = 1</td>
+      </tr></tbody>
+    </table>
+    <p>故极限点集 E = { cos(2π/5), −cos(π/5), 1 }，其中最大值为 1，最小值为 −cos(π/5)。</p>
+  </div>
+  <div class="eg-ans">lim sup xₙ = 1，&nbsp; lim inf xₙ = −cos(π/5)</div>
+</div>
+
+<div class="eg">
+  <div class="eg-head">例2（课件）&nbsp;|&nbsp; 证明 lim<sub>n→∞</sub> ∫₀^(π/2) sinⁿx dx = 0</div>
+  <div class="eg-body">
+    <p>记 Iₙ = ∫₀^(π/2) sinⁿx dx。对任意 ε ∈ (0, π/2)，将积分拆开估计：</p>
+    <div class="fm neutral" style="font-size:14px;margin:6px 0">0 ≤ Iₙ = ∫₀^(π/2−ε) sinⁿx dx + ∫_(π/2−ε)^(π/2) sinⁿx dx ≤ sinⁿ(π/2−ε) · π/2 + ε</div>
+    <p>固定 ε，因为 sin(π/2−ε) &lt; 1，故 sinⁿ(π/2−ε) → 0（n→∞）。<br>
+    对不等式两端同时取上下极限：</p>
+    <div class="fm neutral" style="font-size:14px;margin:6px 0">0 ≤ lim inf Iₙ ≤ lim sup Iₙ ≤ 0 · π/2 + ε = ε</div>
+    <p>令 ε → 0⁺，得 0 ≤ lim inf Iₙ ≤ lim sup Iₙ ≤ 0，故 lim inf = lim sup = 0。</p>
+  </div>
+  <div class="eg-ans">lim<sub>n→∞</sub> ∫₀^(π/2) sinⁿx dx = 0 &nbsp;（上下极限相等，极限存在且为 0）</div>
+  <div class="eg-trap">技巧：先用参数 ε 将"大头"（靠近 π/2 的部分）隔离，然后用上极限 ≤ ε 再令 ε→0，是经典的两步夹逼法。</div>
+</div>
+
+<div class="eg">
+  <div class="eg-head">例3（Cesàro均值）&nbsp;|&nbsp; 已知 lim aₙ = 0，证明 lim (a₁+⋯+aₙ)/n = 0</div>
+  <div class="eg-body">
+    <p>对任意 ε > 0，由 aₙ → 0，存在 N 使 n > N 时 |aₙ| &lt; ε。<br>
+    当 n > N 时：</p>
+    <div class="fm neutral" style="font-size:14px;margin:6px 0">|(a₁+⋯+aₙ)/n| ≤ |a₁+⋯+aₙ|/n ≤ |a₁+⋯+aₙ|/n ≤ |a₁+⋯+a_N|/n + ε</div>
+    <p>固定 ε（从而固定 N），对右端取上极限：前一项 |a₁+⋯+aₙ|/n → 0（N 固定，分母趋∞），故</p>
+    <div class="fm neutral" style="font-size:14px;margin:6px 0">0 ≤ lim sup |(a₁+⋯+aₙ)/n| ≤ 0 + ε = ε</div>
+    <p>令 ε → 0⁺ 得 lim sup = 0，而 lim inf ≥ 0，故极限存在且为 0。</p>
+  </div>
+  <div class="eg-ans">lim (a₁+⋯+aₙ)/n = 0 &nbsp;（均值收敛到同一极限）</div>
+  <div class="eg-trap">这个结论可以推广：若 lim aₙ = A（任意有限数），则 lim (a₁+⋯+aₙ)/n = A。用 bₙ = aₙ − A 代入即得。</div>
+</div>
+
+<hr class="div">
+
+<h3>2.9 关键引理（判别法的基础）</h3>
+<div class="box tip">
+  <div class="box-lbl">比值 ≤ 根值（根值法比比值法更强）</div>
+  <div class="fm neutral" style="font-size:14px;margin:6px 0">lim inf aₙ₊₁/aₙ &nbsp; ≤ &nbsp; lim inf ⁿ√aₙ &nbsp; ≤ &nbsp; lim sup ⁿ√aₙ &nbsp; ≤ &nbsp; lim sup aₙ₊₁/aₙ</div>
+  <p>含义：比值法"判断不了"（lim sup = 1）的情形，根值法有时仍能判断；比值法能判断的，根值法一定也能判断。</p>
+  <p style="font-size:13px;margin-top:5px">实用建议：通项含 <strong>n!</strong> 优先用比值法（阶乘消得干净）；含 <strong>nⁿ</strong> 优先用根值法（ⁿ√(nⁿ) = n）。</p>
+</div>
+
+<div class="box def">
+  <div class="box-lbl">总结：上下极限的本质</div>
+  <p>上极限 = 数列"无穷次到达"的最高点；下极限 = 数列"无穷次到达"的最低点。</p>
+  <p>它们是数列振荡的"天花板"和"地板"，普通极限存在当且仅当天花板等于地板。</p>
+  <p style="margin-top:5px">上下极限的最大价值：<strong>在不知道极限是否存在时，仍能做不等式估计</strong>——这是它贯穿整个级数理论的原因。</p>
+</div>
+
+</section>
+
+<!-- ══════════════════════════════════════════
+     §3  正项级数五大武器
+══════════════════════════════════════════ -->
+<section class="sec" id="s3">
+<div class="sec-head"><span class="sec-num">SECTION 03</span><h2>正项级数判别法（五大武器）</h2></div>
+
+<div class="box acc">
+  <div class="box-lbl">无穷大量的碾压关系（必背）</div>
+  <div class="fm neutral" style="font-size:15px;margin:6px 0">ln n  ≪  nᵃ  ≪  rⁿ  ≪  n!  ≪  nⁿ &nbsp;&nbsp;&nbsp;（a &gt; 0, r &gt; 1）</div>
+  <p style="font-size:13px">含义：相对于 nᵃ，lnn 几乎等于 n⁰（常数级）；相对于 rⁿ，nᵃ 几乎等于 1ⁿ（被指数碾压）。这是所有等价替换和比较判别的直觉基础。</p>
+</div>
+
+<!-- 武器1 -->
+<div id="s3a">
+<div class="weapon">
+  <div class="weapon-head">
+    <span class="weapon-num">武器 1</span>
+    <span class="weapon-title">比较判别法 + 等价无穷小 / Taylor展开</span>
+    <span class="weapon-tag">最常用</span>
+  </div>
+  <div class="weapon-body">
+    <h4 style="margin-top:0">直接比较形式</h4>
+    <p>0 ≤ aₙ ≤ bₙ（从某项起）：∑bₙ 收敛 ⟹ ∑aₙ 收敛；∑aₙ 发散 ⟹ ∑bₙ 发散。</p>
+    <p><strong>课件原话的做法思路：</strong>欲证收敛，把 uₙ <em>放大一点</em>变成简单的 vₙ，使 ∑vₙ 一眼看出收敛；欲证发散，把 uₙ <em>缩小一点</em>变成简单的 vₙ，使 ∑vₙ 一眼看出发散。</p>
+
+    <h4>极限比较形式（实战首选）</h4>
+    <p>设 aₙ, bₙ > 0，λ = lim aₙ/bₙ：</p>
+    <div class="g3">
+      <div class="box thm" style="margin:0"><div class="box-lbl">0 &lt; λ &lt; +∞</div><p>同敛散</p></div>
+      <div class="box plain" style="margin:0"><div class="box-lbl">λ = 0</div><p>∑bₙ 收敛 ⟹ ∑aₙ 收敛</p></div>
+      <div class="box plain" style="margin:0"><div class="box-lbl">λ = +∞</div><p>∑bₙ 发散 ⟹ ∑aₙ 发散</p></div>
+    </div>
+
+    <h4>常用等价无穷小速查（n→∞）</h4>
+    <table class="tbl">
+      <thead><tr><th>原式</th><th>等价替换</th><th>备注</th></tr></thead>
+      <tbody>
+        <tr><td class="mi">sin(1/n), tan(1/n)</td><td class="mi">∼ 1/n</td><td>直接等价</td></tr>
+        <tr><td class="mi">1 − cos(1/n)</td><td class="mi">∼ 1/(2n²)</td><td>注意是 n² 量级！</td></tr>
+        <tr><td class="mi">ln(1+1/n)</td><td class="mi">∼ 1/n（精确式：= 1/n − 1/(2n²)+…）</td><td>两项相减必须展到 1/n²</td></tr>
+        <tr><td class="mi">e^(1/n) − 1</td><td class="mi">∼ 1/n</td><td>直接等价</td></tr>
+        <tr><td class="mi">(1+1/n)ᵅ − 1</td><td class="mi">∼ α/n</td><td>广义 Bernoulli</td></tr>
+      </tbody>
+    </table>
+
+    <div class="box warn">
+      <div class="box-lbl">⚠ 课件重点易错：两等价量相减，必须多展一项 Taylor！</div>
+      <p>判断 ∑[1/n − ln(1+1/n)] 的敛散性：</p>
+      <p><span class="b b-r">错</span> &nbsp;用 ln(1+1/n) ∼ 1/n，通项 ∼ 0 → 无法判断。</p>
+      <p><span class="b b-g">对</span> &nbsp;展开到 1/n² 项：ln(1+1/n) = <strong>1/n − 1/(2n²)</strong> + o(1/n²)</p>
+      <p style="margin-top:4px">故通项 = 1/n − [1/n − 1/(2n²) + …] = <strong>1/(2n²) + o(1/n²) ∼ 1/(2n²)</strong></p>
+    </div>
+
+    <div class="eg">
+      <div class="eg-head">例（课件两种解法）&nbsp;|&nbsp; 判断 ∑[1/n − ln(1+1/n)] 的敛散性</div>
+      <div class="eg-body">
+        <p><strong>解法一（Taylor展开）：</strong>如上，通项 ∼ 1/(2n²)，p=2>1，∑1/(2n²) 收敛，由比较判别法收敛。</p>
+        <p><strong>解法二（"不觉明厉法"，课件原话）：</strong></p>
+        <p>计算 lim [1/n − ln(1+1/n)] / (1/n²)，令 x = 1/n → 0，转化为：</p>
+        <p>lim [x − ln(1+x)] / x² （洛必达两次）= lim (1 − 1/(1+x)) / (2x) = lim 1/(2(1+x)) = <strong>1/2</strong></p>
+        <p>故通项 ∼ 1/(2n²)，由比较判别法收敛。</p>
+      </div>
+      <div class="eg-ans">∑[1/n − ln(1+1/n)] 收敛（p=2>1）</div>
+    </div>
+
+    <div class="eg">
+      <div class="eg-head">例（课件四题组）&nbsp;|&nbsp; 判断四个级数的敛散性</div>
+      <div class="eg-body">
+        <p>(1) ∑ sin(1/2ⁿ)：sin(1/2ⁿ) ∼ 1/2ⁿ，等比级数 r=1/2&lt;1，<span class="b b-g">收敛</span></p>
+        <p>(2) ∑ sin(1/n)：sin(1/n) ∼ 1/n，调和级数 p=1，<span class="b b-r">发散</span></p>
+        <p>(3) ∑ (n−1)/(n²+n+3)：∼ n/n² = 1/n，p=1，<span class="b b-r">发散</span></p>
+        <p>(4) ∑ (n+1)/(n³−n−3)：∼ n/n³ = 1/n²，p=2>1，<span class="b b-g">收敛</span></p>
+        <p style="font-size:13px;color:var(--green);margin-top:4px">这里用等价量处理次要项，"显得非常豪放"（课件原话）。</p>
+      </div>
+    </div>
+
+    <div class="eg">
+      <div class="eg-head">例（课件"严格性"示范）&nbsp;|&nbsp; 证明 ∑ n¹⁰⁰/2ⁿ 收敛</div>
+      <div class="eg-body">
+        <p><strong>问：</strong>能直接说 n¹⁰⁰/2ⁿ ≈ 1/2ⁿ，所以收敛吗？</p>
+        <p><strong>答：不能。</strong>几乎等于不是等于，不能代替严格证明！</p>
+        <p><strong>正确做法（用分离性）：</strong>在"几乎等于的公比" r₀=1/2 和临界点 r₁=1 之间取 r₂=3/4。</p>
+        <p>lim [n¹⁰⁰/2ⁿ] / (3/4)ⁿ = lim n¹⁰⁰·(2·4/3)⁻ⁿ ·(…) → 0 &lt; 1</p>
+        <p>故从某项起 n¹⁰⁰/2ⁿ &lt; (3/4)ⁿ，由比较判别法收敛。</p>
+        <p style="font-size:13px;color:var(--ink3)">类似地，∑ 2ⁿ/n¹⁰⁰ 发散：几乎等于 2ⁿ，取 r₂=3/2>1，从某项起 2ⁿ/n¹⁰⁰ > (3/2)ⁿ，发散。</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 武器2 -->
+<div id="s3b">
+<div class="weapon">
+  <div class="weapon-head">
+    <span class="weapon-num">武器 2</span>
+    <span class="weapon-title">Cauchy 积分判别法</span>
+    <span class="weapon-tag">通项含 ln n，且 f(x) 单调时用</span>
+  </div>
+  <div class="weapon-body">
+    <div class="box def" style="margin-top:0">
+      <div class="box-lbl">定理（充要条件）</div>
+      <p>设 f(x) 在 [1,+∞) 上<strong>连续、正值、单调递减</strong>，令 aₙ = f(n)，则：</p>
+      <div class="fm blue" style="margin:6px 0">∑<sub>n=1</sub><sup>∞</sup> f(n)  与  ∫<sub>1</sub><sup>+∞</sup> f(x)dx  同敛散</div>
+    </div>
+    <div class="box plain">
+      <div class="box-lbl">证明思路（Cauchy积分估计式）</div>
+      <p>画阶梯矩形图，得夹逼关系：</p>
+      <div class="fm neutral" style="font-size:13.5px;margin:5px 0">∫<sub>1</sub><sup>n+1</sup> f(x)dx  &lt;  f(1)+f(2)+⋯+f(n)  &lt;  f(1) + ∫<sub>1</sub><sup>n</sup> f(x)dx</div>
+      <p style="font-size:13px">积分有上界 ⟺ 部分和有上界 ⟺ 级数收敛。</p>
+    </div>
+
+    <h4>衍生：第三把标尺 — q-级数（Bertrand级数）</h4>
+    <div class="box note">
+      <div class="box-lbl">∑ 1/(n·lnᵍn)（课件例题）</div>
+      <p>令 f(x)=1/(x lnᵍx)，换元 t=ln x：</p>
+      <div class="fm purple" style="margin:6px 0;font-size:14px">∫<sub>e</sub><sup>+∞</sup> dx/(x lnᵍx)  =  ∫<sub>1</sub><sup>+∞</sup> dt/tᵍ</div>
+      <div class="cmp"><div class="cmp head">收敛</div><div class="cmp head">发散</div>
+      <div><strong>q &gt; 1</strong></div><div><strong>q ≤ 1</strong></div></div>
+      <p style="font-size:12.5px;margin-top:4px">类比 p-级数！将"n"换成"n·lnᵍn"，临界条件形式完全相同。</p>
+    </div>
+
+    <h4>级数族的层级结构（课件完整列出）</h4>
+    <table class="tbl">
+      <thead><tr><th>级数</th><th>收敛条件</th><th>临界点</th></tr></thead>
+      <tbody>
+        <tr><td class="mi">∑ λⁿ（几何）</td><td>λ &lt; 1</td><td>λ = 1</td></tr>
+        <tr><td class="mi">∑ 1/nᵖ（p-级数）</td><td>p &gt; 1</td><td>p = 1</td></tr>
+        <tr><td class="mi">∑ 1/(n·lnᵍn)</td><td>q &gt; 1</td><td>q = 1</td></tr>
+        <tr><td class="mi">∑ 1/(n·lnn·(lnlnn)ˢ)</td><td>s &gt; 1</td><td>s = 1</td></tr>
+        <tr><td colspan="3" style="color:var(--ink3);font-size:12px">每层多套一个对数，临界点始终是 1……以此类推。</td></tr>
+      </tbody>
+    </table>
+
+    <div class="eg">
+      <div class="eg-head">例（课件综合分析）&nbsp;|&nbsp; ∑ rⁿ/(nᵖ lnᵍn (lnlnn)ˢ) 收敛性</div>
+      <div class="eg-body">
+        <p><strong>r ≠ 1 时：</strong>rⁿ 起主导，多项式/对数因子均可忽略。r&lt;1 收敛，r&gt;1 发散，与 p,q,s 无关。</p>
+        <p><strong>r=1, p≠1 时：</strong>p-级数规则，与 q,s 无关。</p>
+        <p><strong>r=1, p=1, q≠1 时：</strong>q-级数规则，与 s 无关。</p>
+        <p><strong>r=1, p=1, q=1 时：</strong>s-级数，s&gt;1 收敛，s≤1 发散。</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 武器3 -->
+<div id="s3c">
+<div class="weapon">
+  <div class="weapon-head">
+    <span class="weapon-num">武器 3</span>
+    <span class="weapon-title">比值判别法（d'Alembert）&amp; 根值判别法（Cauchy）</span>
+    <span class="weapon-tag">含 n! 或 aⁿ 时</span>
+  </div>
+  <div class="weapon-body">
+    <div class="g2">
+      <div class="box def" style="margin:0">
+        <div class="box-lbl">比值法（d'Alembert）</div>
+        <p>r&#773; = lim sup aₙ₊₁/aₙ，r = lim inf aₙ₊₁/aₙ</p>
+        <p><span class="b b-g">r&#773; &lt; 1</span>：收敛</p>
+        <p><span class="b b-r">r &gt; 1</span>：发散</p>
+        <p><span class="b b-a">r ≤ 1 ≤ r&#773;</span>：失效，换 Raabe</p>
+      </div>
+      <div class="box def" style="margin:0">
+        <div class="box-lbl">根值法（Cauchy）</div>
+        <p>λ = lim sup ⁿ√aₙ</p>
+        <p><span class="b b-g">λ &lt; 1</span>：收敛</p>
+        <p><span class="b b-r">λ &gt; 1</span>：发散</p>
+        <p><span class="b b-a">λ = 1</span>：失效，换 Raabe</p>
+      </div>
+    </div>
+
+    <div class="eg">
+      <div class="eg-head">例（课件四道）&nbsp;|&nbsp; 判别收敛性</div>
+      <div class="eg-body">
+        <p>(A) ∑ xⁿ/n!（x>0）：比值法，aₙ₊₁/aₙ = x/(n+1) → 0 &lt; 1，<span class="b b-g">收敛</span></p>
+        <p>(B) ∑ (1+1/n)^n² / (2n)：根值法，ⁿ√aₙ = (1+1/n)ⁿ/2 → e/2 > 1，<span class="b b-r">发散</span></p>
+        <p>(C) ∑ 2ⁿ·sin(π/3ⁿ)：等价量，2ⁿ·sin(π/3ⁿ) ∼ π(2/3)ⁿ，r=2/3&lt;1，<span class="b b-g">收敛</span></p>
+        <p>(D) ∑ (2+(−1)ⁿ)/2ⁿ：比较，≤ 3/2ⁿ，<span class="b b-g">收敛</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 武器4 -->
+<div id="s3d">
+<div class="weapon">
+  <div class="weapon-head">
+    <span class="weapon-num">武器 4</span>
+    <span class="weapon-title">Raabe 判别法 &amp; Bertrand 判别法</span>
+    <span class="weapon-tag">比值法失效（ρ=1）后的救场武器</span>
+  </div>
+  <div class="weapon-body">
+    <div class="box def" style="margin-top:0">
+      <div class="box-lbl">Raabe 判别法（极限形式）</div>
+      <p>当比值法失效后，计算：</p>
+      <div class="fm amber" style="margin:8px 0">p = lim<sub>n→∞</sub> n · (aₙ/aₙ₊₁ − 1)</div>
+      <p><span class="b b-g">p &gt; 1</span>：收敛 &nbsp;|&nbsp; <span class="b b-r">p &lt; 1</span>：发散 &nbsp;|&nbsp; <span class="b b-a">p = 1</span>：再失效，换 Bertrand</p>
+    </div>
+
+    <div class="box warn">
+      <div class="box-lbl">⚠ 最高频易错点：括号里是"前/后"，与比值法方向相反！</div>
+      <div class="cmp">
+        <div class="cmp head">比值法（d'Alembert）</div>
+        <div class="cmp head">Raabe 判别法</div>
+        <div>lim <strong>aₙ₊₁/aₙ</strong>（后除以前）</div>
+        <div style="color:var(--red)">lim n·(<strong>aₙ/aₙ₊₁</strong> − 1)（<strong>前除以后！</strong>）</div>
+      </div>
+    </div>
+
+    <div class="box def">
+      <div class="box-lbl">Bertrand 判别法（Raabe 也等于1时）</div>
+      <div class="fm blue" style="margin:6px 0;font-size:14px">q = lim<sub>n→∞</sub> ln n · [n·(aₙ/aₙ₊₁ − 1) − 1]</div>
+      <p><span class="b b-g">q &gt; 1</span>：收敛 &nbsp;|&nbsp; <span class="b b-r">q &lt; 1</span>：发散 &nbsp;|&nbsp; <span class="b b-a">q = 1</span>：还是失效</p>
+    </div>
+
+    <div class="box note">
+      <div class="box-lbl">强 Raabe 判别法（课件定理，泰勒渐进形式）</div>
+      <p>若比值 aₙ₊₁/aₙ 可展为：</p>
+      <div class="fm purple" style="margin:5px 0;font-size:14px">aₙ₊₁/aₙ = 1 − p/n + O(1/n²)</div>
+      <p>则 ∃正常数 A 使得 <strong>aₙ ∼ A/nᵖ</strong>，由 p-级数，p&gt;1 收敛，p≤1 发散。</p>
+      <p style="margin-top:5px">若进一步 aₙ₊₁/aₙ = 1 − p/n − q/(n lnn) + …，则 aₙ ∼ A/(nᵖ lnᵍn)。</p>
+    </div>
+
+    <div class="box plain">
+      <div class="box-lbl">Raabe/Bertrand 的非极限形式（课件完整版，用于理论分析）</div>
+      <p><strong>Raabe 收敛：</strong>若存在 p > 1 及 N，当 n > N 时 n·(aₙ/aₙ₊₁ − 1) ≥ p，则收敛。</p>
+      <p><strong>Raabe 发散：</strong>若存在 N，当 n > N 时 n·(aₙ/aₙ₊₁ − 1) ≤ 1，则发散。</p>
+      <p style="font-size:13px;color:var(--ink3)">Bertrand 形式类似，只是把 n 换成 n·lnn，把括号内减1项加在外面。</p>
+    </div>
+
+    <div class="eg">
+      <div class="eg-head">例（课件最难例题）&nbsp;|&nbsp; ∑ (n−1)!·n!·4ⁿ / ((2n)!·√n)</div>
+      <div class="eg-body">
+        <p>记 xₙ = (n−1)!·n!·4ⁿ / ((2n)!·√n)，计算 xₙ₊₁/xₙ：</p>
+        <p>化简得 xₙ₊₁/xₙ = 4n²/[(2n+1)(2n+2)] · √n/√(n+1) → 1（比值法失效）</p>
+        <p>用强 Raabe：展开后 n·(xₙ/xₙ₊₁ − 1) = 1 + 1/(8n) + O(1/n²) → <strong>p = 1（Raabe 也失效）</strong></p>
+        <p>由强 Raabe 定理的渐进式，展开：xₙ₊₁/xₙ = 1 − 1/n + … 故 xₙ ∼ A/n，对应 p=1，</p>
+        <p>由 ∑1/n 发散（p=1≤1），原级数<strong>发散</strong>。</p>
+      </div>
+      <div class="eg-ans">发散（强 Raabe 判别法，p=1）</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- 武器5 Kummer -->
+<div id="s3e">
+<div class="weapon">
+  <div class="weapon-head">
+    <span class="weapon-num">武器 5</span>
+    <span class="weapon-title">Kummer 判别法（万法之宗）</span>
+    <span class="weapon-tag">理论框架，考试用于推导</span>
+  </div>
+  <div class="weapon-body">
+    <div class="box def" style="margin-top:0">
+      <div class="box-lbl">Kummer 判别法（充要条件版）</div>
+      <p>设 aₙ > 0，选辅助正项数列 {bₙ}，令 Kₙ = bₙ·(aₙ/aₙ₊₁) − bₙ₊₁：</p>
+      <p><strong>收敛充要：</strong>lim inf Kₙ &gt; 0</p>
+      <p><strong>发散充分：</strong>lim sup Kₙ &lt; 0 且 ∑1/bₙ 发散</p>
+    </div>
+    <div class="box note">
+      <div class="box-lbl">Kummer 家族谱系（取不同 bₙ 即得各判别法）</div>
+      <div class="ladder">
+        <div class="ldr-row ldr-head"><div>取 bₙ =</div><div>得到</div><div>公式</div></div>
+        <div class="ldr-row"><div style="font-family:var(--mono);font-size:13px">1</div><div>d'Alembert 比值法</div><div class="mi">lim aₙ/aₙ₊₁（即 lim aₙ₊₁/aₙ 的倒数）</div></div>
+        <div class="ldr-row"><div style="font-family:var(--mono);font-size:13px">n</div><div>Raabe 判别法</div><div class="mi">lim n(aₙ/aₙ₊₁ − 1)</div></div>
+        <div class="ldr-row"><div style="font-family:var(--mono);font-size:13px">n·lnn</div><div>Bertrand 判别法</div><div class="mi">lim lnn·[n(aₙ/aₙ₊₁−1)−1]</div></div>
+        <div class="ldr-row"><div style="font-family:var(--mono);font-size:13px">n·lnn·lnlnn</div><div>更深层</div><div style="color:var(--ink3)">以此类推……</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</section>
+
+<!-- ══════════════════════════════════════════
+     §4  任意项级数
+══════════════════════════════════════════ -->
+<section class="sec" id="s4">
+<div class="sec-head"><span class="sec-num">SECTION 04</span><h2>任意项级数：绝对收敛与条件收敛</h2></div>
+
+<h3>4.1 定义与逻辑关系</h3>
+<div class="g2">
+  <div class="box def">
+    <div class="box-lbl">绝对收敛</div>
+    <p>∑|aₙ| 收敛 → 称 ∑aₙ <strong>绝对收敛</strong></p>
+    <hr style="border:none;border-top:1px solid var(--border2);margin:.6rem 0">
+    <p><strong>定理：绝对收敛 ⟹ 收敛</strong></p>
+    <p style="font-size:12.5px">证：0 ≤ |aₙ|−aₙ ≤ 2|aₙ|，比较知 ∑(|aₙ|−aₙ) 收敛，再用 aₙ=|aₙ|−(|aₙ|−aₙ) 即得。</p>
+  </div>
+  <div class="box note">
+    <div class="box-lbl">条件收敛</div>
+    <p>∑aₙ 收敛，但 ∑|aₙ| 发散</p>
+    <hr style="border:none;border-top:1px solid var(--border2);margin:.6rem 0">
+    <p><strong>深层本质：</strong>正项部分 ∑aₙ⁺ = +∞，负项部分 ∑aₙ⁻ = +∞。</p>
+    <p style="font-size:12.5px">条件收敛是正负两个无穷大精妙抵消的结果。</p>
+  </div>
+</div>
+
+<div class="box warn">
+  <div class="box-lbl">逻辑关系（考试高频）</div>
+  <p>绝对收敛 ⟹ 收敛（<span class="b b-g">正确</span>） &nbsp;|&nbsp; 收敛 ⟹ 绝对收敛（<span class="b b-r">错误</span>，条件收敛是反例）</p>
+</div>
+
+<h3>4.2 Leibniz 判别法（交错级数专用）</h3>
+<div class="weapon">
+  <div class="weapon-head">
+    <span class="weapon-num">武器</span>
+    <span class="weapon-title">Leibniz 判别法</span>
+    <span class="weapon-tag">正负交替型 ∑(−1)ⁿaₙ</span>
+  </div>
+  <div class="weapon-body">
+    <div class="box def" style="margin-top:0">
+      <div class="box-lbl">Leibniz 级数 — 三个条件缺一不可</div>
+      <ol class="steps">
+        <li><div>aₙ &gt; 0（通项正值）</div></li>
+        <li><div>aₙ 单调递减（aₙ₊₁ ≤ aₙ）</div></li>
+        <li><div>lim<sub>n→∞</sub> aₙ = 0</div></li>
+      </ol>
+      <p style="margin-top:5px"><strong>结论：</strong>Leibniz 级数必收敛，且 0 ≤ S ≤ a₁。</p>
+      <p><strong>余项误差：</strong>|rₙ| ≤ aₙ₊₁，且 rₙ 与 (−1)ⁿaₙ₊₁ 同号。</p>
+    </div>
+
+    <div class="box plain">
+      <div class="box-lbl">证明思路（课件完整给出）</div>
+      <p>偶数项部分和 S₂ₙ：</p>
+      <p>S₂ₙ = (a₁−a₂)+(a₃−a₄)+⋯+(a₂ₙ₋₁−a₂ₙ) ≥ 0（单调减保证每括号 ≥ 0）</p>
+      <p>S₂ₙ = a₁−(a₂−a₃)−⋯−a₂ₙ ≤ a₁（有上界）</p>
+      <p>故 {S₂ₙ} 单调有界，收敛到 S。由 S₂ₙ₋₁=S₂ₙ−a₂ₙ → S，故 limSₙ=S，级数收敛。</p>
+    </div>
+
+    <div class="eg">
+      <div class="eg-head">例 &nbsp;|&nbsp; ∑(−1)ⁿ⁻¹/nᵖ 的收敛性完整分析</div>
+      <div class="eg-body">
+        <p>p ≤ 0：1/nᵖ = n|ᵖ| → ∞，通项不趋于0，<span class="b b-r">发散</span></p>
+        <p>p &gt; 0：满足 Leibniz 三条件，<span class="b b-g">收敛</span></p>
+        <p>进一步区分：p &gt; 1 时 ∑1/nᵖ 收敛 → <strong>绝对收敛</strong>；0 &lt; p ≤ 1 时 ∑1/nᵖ 发散 → <strong>条件收敛</strong></p>
+      </div>
+    </div>
+
+    <div class="box warn">
+      <div class="box-lbl">⚠ 课件夺命易错题：变号级数不能用等价无穷小！</div>
+      <p>考察：(1) ∑(−1)ⁿ⁻¹/√n 与 (2) ∑[(−1)ⁿ⁻¹/√n + 1/n]</p>
+      <p>两者通项的比值趋于1，是等价的。但：</p>
+      <p>(1) 满足 Leibniz，<span class="b b-g">收敛</span>；&nbsp;(2) = Leibniz级数 + 调和级数，<span class="b b-r">发散</span>！</p>
+      <p style="margin-top:5px"><strong>结论：正项级数可以用等价量替换；任意项级数绝对不可以！</strong></p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<!-- ══════════════════════════════════════════
+     §5  Abel变换与D/A判别法
+══════════════════════════════════════════ -->
+<section class="sec" id="s5">
+<div class="sec-head"><span class="sec-num">SECTION 05</span><h2>Abel 变换与 Dirichlet / Abel 判别法</h2></div>
+
+<h3>5.1 Abel 变换（离散分部积分）</h3>
+<div class="box def">
+  <div class="box-lbl">Abel 变换公式</div>
+  <p>设 Bₖ = b₁+b₂+⋯+bₖ，B₀=0，则：</p>
+  <div class="fm blue">∑<sub>k=1</sub><sup>p</sup> aₖbₖ  =  aₚBₚ  −  ∑<sub>k=1</sub><sup>p−1</sup> Bₖ(aₖ₊₁−aₖ)</div>
+  <p>与积分分部 ∫u dv = uv − ∫v du 完全对应：aₖ → u，bₖ → dv，Bₖ → v。</p>
+</div>
+
+<div class="box note">
+  <div class="box-lbl">Abel 引理（估计核心）</div>
+  <p>设 |Bₙ| ≤ M，{aₙ} 非负单调递减，则：</p>
+  <div class="fm purple" style="margin:6px 0">|∑<sub>k=1</sub><sup>p</sup> aₖbₖ| ≤ M·a₁</div>
+  <p style="font-size:13px">这是 D/A 判别法的证明基础。实际应用中更常用的加强版：</p>
+  <div class="fm neutral" style="font-size:13.5px;margin:5px 0">|∑<sub>k=m+1</sub><sup>n</sup> aₖbₖ| ≤ 2 · max<sub>m&lt;k≤n</sub>|Sₖ−Sₘ| · (|aₘ₊₁|+|aₙ|)</div>
+</div>
+
+<h3>5.2 D-A 判别法（统一定理）</h3>
+<div class="box def">
+  <div class="box-lbl">A-D 判别法（课件统一表述）</div>
+  <p>若下述两个条件之一满足，则 ∑aₙbₙ 收敛：</p>
+</div>
+
+<div class="g2" style="margin-top:.5rem">
+  <div class="weapon" style="margin:0">
+    <div class="weapon-head">
+      <span class="weapon-num">D 法</span>
+      <span class="weapon-title">Dirichlet 判别法</span>
+    </div>
+    <div class="weapon-body">
+      <div class="box def" style="margin:0">
+        <div class="box-lbl">条件</div>
+        <p>① {aₙ} 单调趋于 0（aₙ → 0）</p>
+        <p>② ∑bₙ 的部分和<strong>有界</strong>（|Bₙ| ≤ M）</p>
+      </div>
+      <p style="font-size:13px;margin-top:8px">口诀：对 aₙ <strong>要求高</strong>（趋于0），对 bₙ <strong>要求低</strong>（仅有界）。</p>
+    </div>
+  </div>
+  <div class="weapon" style="margin:0">
+    <div class="weapon-head">
+      <span class="weapon-num">A 法</span>
+      <span class="weapon-title">Abel 判别法</span>
+    </div>
+    <div class="weapon-body">
+      <div class="box def" style="margin:0">
+        <div class="box-lbl">条件</div>
+        <p>① {aₙ} 单调有界（不必趋于0）</p>
+        <p>② ∑bₙ 本身<strong>收敛</strong></p>
+      </div>
+      <p style="font-size:13px;margin-top:8px">口诀：对 bₙ <strong>要求高</strong>（已收敛），对 aₙ <strong>要求低</strong>（仅单调有界）。</p>
+    </div>
+  </div>
+</div>
+
+<div class="box tip" style="margin-top:.6rem">
+  <div class="box-lbl">统一证明框架（课件完整给出）</div>
+  <p>由 Abel 引理加强版：|∑aₖbₖ| ≤ 2·max|Bₖ|·(|aₘ₊₁|+|aₙ|)</p>
+  <p><strong>D 法：</strong>部分和有界 → max|Bₖ| ≤ M；aₙ→0 → |aₘ₊₁|+|aₙ| → 0 → 右端 → 0 → Cauchy 准则。</p>
+  <p><strong>A 法：</strong>∑bₙ 收敛 → 尾段 Bₖ=Sₖ−Sₘ → 0；aₙ 有界 → 右端 → 0。</p>
+</div>
+
+<h3>5.3 经典例题（课件必考模型）</h3>
+
+<div class="eg">
+  <div class="eg-head">例1（必考模型）&nbsp;|&nbsp; 设 aₙ 单调趋于零，证明 ∑aₙ sin(nx) 对所有 x∈ℝ 收敛</div>
+  <div class="eg-body">
+    <p>令 bₙ=sin(nx)，需证其部分和有界。<strong>课件给出两种三角求和方法：</strong></p>
+    <p><strong>方法1（Euler公式）：</strong>sin(kx) = (e<sup>ikx</sup>−e<sup>−ikx</sup>)/(2i)，两个等比数列之差，直接求和。</p>
+    <p><strong>方法2（裂项法，积化和差）：</strong></p>
+    <p>对 2sin(x/2)·sin(kx) 用积化和差 = cos(kx−x/2) − cos(kx+x/2)，累加后大量抵消：</p>
+    <div class="fm neutral" style="font-size:13.5px;margin:5px 0">∑<sub>k=1</sub><sup>n</sup> sin(kx) = [cos(x/2) − cos((2n+1)x/2)] / (2sin(x/2)) &nbsp;&nbsp;（sin(x/2)≠0时）</div>
+    <p>故 |∑sin(kx)| ≤ 1/|sin(x/2)|（<strong>有界</strong>）；当 x=2kπ 时，∑sin(kx)=0，也有界。</p>
+    <p>由 <strong>Dirichlet 判别法</strong>，∑aₙ sin(nx) 收敛。</p>
+  </div>
+  <div class="eg-ans">对所有 x∈ℝ 收敛（Dirichlet 判别法 + 三角和有界性）</div>
+</div>
+
+<div class="eg">
+  <div class="eg-head">例2 &nbsp;|&nbsp; ∑ sin(nx)/nᵖ（x∈(0,π)）的完整分析</div>
+  <div class="eg-body">
+    <p><strong>p &gt; 1：</strong>|sin(nx)/nᵖ| ≤ 1/nᵖ，∑1/nᵖ 收敛 → <span class="b b-g">绝对收敛</span></p>
+    <p><strong>0 &lt; p ≤ 1：</strong>Dirichlet 法知级数收敛。但加绝对值：</p>
+    <p>|sin(nx)/nᵖ| ≥ sin²(nx)/nᵖ = [1−cos(2nx)]/(2nᵖ) = 1/(2nᵖ) − cos(2nx)/(2nᵖ)</p>
+    <p>后一项 ∑cos(2nx)/(2nᵖ) 由 Dirichlet 法收敛；∑1/(2nᵖ) 发散（p≤1）。</p>
+    <p>故 ∑|sin(nx)/nᵖ| 发散 → <span class="b b-a">条件收敛</span></p>
+    <p><strong>p ≤ 0：</strong>通项不趋于0 → <span class="b b-r">发散</span></p>
+  </div>
+</div>
+
+<div class="eg">
+  <div class="eg-head">例3（精妙处理）&nbsp;|&nbsp; ∑(−1)ⁿ⁻¹/(nᵖ+(−1)ⁿ⁻¹) 的完整敛散性分析</div>
+  <div class="eg-body">
+    <p><strong>p &lt; 0：</strong>通项 → 1，<span class="b b-r">发散</span>；<strong>p = 0：</strong>n=2k 时分母=0，无意义。</p>
+    <p><strong>p &gt; 1：</strong>|通项| ∼ 1/nᵖ，<span class="b b-g">绝对收敛</span>。</p>
+    <p><strong>0 &lt; p ≤ 1（精妙部分）：</strong>通项 ∼ (−1)ⁿ⁻¹/nᵖ，但这是变号级数，不能直接等价！</p>
+    <p>裂项（<span style="color:var(--green)">课件原话：惊喜，这个差是定号的！</span>）：</p>
+    <p>(−1)ⁿ⁻¹/(nᵖ+(−1)ⁿ⁻¹) − (−1)ⁿ⁻¹/nᵖ = <strong>−1/[(nᵖ+(−1)ⁿ⁻¹)·nᵖ] ∼ −1/n²ᵖ</strong>（定号！）</p>
+    <p>∑[差项] 当 2p &gt; 1（即 p &gt; 1/2）收敛；原式 = ∑(−1)ⁿ⁻¹/nᵖ（条件收敛）+ ∑[差项]。</p>
+  </div>
+  <div class="eg-ans">p≤1/2（p≠0）：发散；1/2&lt;p≤1：条件收敛；p&gt;1：绝对收敛</div>
+</div>
+
+</section>
+
+<!-- ══════════════════════════════════════════
+     §6  绝对/条件收敛的性质
+══════════════════════════════════════════ -->
+<section class="sec" id="s6">
+<div class="sec-head"><span class="sec-num">SECTION 06</span><h2>绝对与条件收敛的深层性质</h2></div>
+
+<h3>6.1 正部与负部分解</h3>
+<div class="box plain">
+  <div class="box-lbl">定义</div>
+  <p>aₙ⁺ = max(aₙ,0)（正部）；aₙ⁻ = max(−aₙ,0)（负部绝对值）</p>
+  <p>aₙ = aₙ⁺ − aₙ⁻，|aₙ| = aₙ⁺ + aₙ⁻</p>
+  <div class="cmp" style="margin-top:8px">
+    <div class="cmp head">绝对收敛时</div>
+    <div class="cmp head">条件收敛时</div>
+    <div>∑aₙ⁺ 和 ∑aₙ⁻ <strong>都有限收敛</strong></div>
+    <div>∑aₙ⁺ = +∞ <strong>且</strong> ∑aₙ⁻ = +∞</div>
+  </div>
+</div>
+
+<h3>6.2 绝对收敛的特权：更序定理</h3>
+<div class="box thm">
+  <div class="box-lbl">更序定理（课件定理）</div>
+  <p>设 ∑aₙ 绝对收敛，则任意一个更序 ∑bₙ 也绝对收敛，且 ∑bₙ = ∑aₙ。</p>
+  <p style="font-size:13px;margin-top:5px">证明核心：先对正项级数证，更序后的部分和 ≤ 原级数和 S，且反过来 ∑aₙ 也是 ∑bₙ 的更序，故相等。变号绝对收敛级数拆成正负部分别用正项结论。</p>
+</div>
+
+</section>
+
+<!-- ══════════════════════════════════════════
+     §7  Riemann重排 · 级数乘法
+══════════════════════════════════════════ -->
+<section class="sec" id="s7">
+<div class="sec-head"><span class="sec-num">SECTION 07</span><h2>Riemann 重排定理 · 级数乘法</h2></div>
+
+<h3>7.1 Riemann 重排定理（震惊定理）</h3>
+<div class="box danger">
+  <div class="box-lbl">🔴 Riemann 重排定理</div>
+  <p>设 ∑xₙ 条件收敛，则对任意 a ≤ b（a,b ∈ ℝ∪{±∞}），存在 ∑xₙ 的一个更序 ∑xₙ'，使得：</p>
+  <div class="fm red" style="margin:8px 0">lim<sub>n→∞</sub> S'ₙ 的下极限 = a，&nbsp;上极限 = b</div>
+  <p>特别地：取 a=b，可以使更序级数收敛到任意实数；取 a=−∞,b=+∞，可以使其振荡发散。</p>
+</div>
+
+<div class="box warn">
+  <div class="box-lbl">证明构造（课件完整给出，理解思路即可）</div>
+  <p>由条件收敛知 ∑xₙ⁺=+∞，∑xₙ⁻=+∞，且 xₙ⁺,xₙ⁻→0。</p>
+  <p>以使级数收敛到给定 S（取 a=b=S）为例，构造如下：</p>
+  <ol class="steps">
+    <li><div>取最少正项（x₁⁺,x₂⁺,…,xₙ₁⁺）使部分和 &gt; S（因∑xₙ⁺=+∞，这样的 n₁ 存在）</div></li>
+    <li><div>取最少负项（x₁⁻,…,xₘ₁⁻）使部分和 &lt; S（因∑xₙ⁻=+∞，这样的 m₁ 存在）</div></li>
+    <li><div>再取最少正项使超过 S，再取最少负项使低于 S……如此循环构造更序</div></li>
+    <li><div>因为 xₙ→0，每次"超调"越来越小（上下夹逼），部分和最终收敛到 S</div></li>
+  </ol>
+</div>
+
+<div class="eg">
+  <div class="eg-head">例（课件经典）&nbsp;|&nbsp; 交错调和级数重排后和变为原来的 1/2</div>
+  <div class="eg-body">
+    <p>已知 ln2 = 1 − 1/2 + 1/3 − 1/4 + ⋯（交错调和级数的和）</p>
+    <p>重排为：1 − 1/2 − 1/4 + 1/3 − 1/6 − 1/8 + 1/5 − ⋯（每个奇数项后跟两个偶数项）</p>
+    <p>每组三项：1/(2n−1) − 1/(4n−2) − 1/(4n) = 1/(4n−2) − 1/(4n) = (1/2)[1/(2n−1) − 1/(2n)]</p>
+    <p>重排后级数 = (1/2) × 原级数 = ln2/2</p>
+  </div>
+  <div class="eg-trap">仅改变加法顺序，和就从 ln2 变成了 ln2/2！这是条件收敛不满足加法交换律的直观例子。</div>
+</div>
+
+<h3>7.2 级数乘法：Cauchy 乘积</h3>
+<div class="box def">
+  <div class="box-lbl">Cauchy（对角线）乘积定义</div>
+  <p>类比多项式乘法，合并"斜对角"的项：</p>
+  <div class="fm blue">cₙ = a₀bₙ + a₁bₙ₋₁ + ⋯ + aₙb₀ = ∑<sub>k=0</sub><sup>n</sup> aₖbₙ₋ₖ</div>
+  <p>称 ∑cₙ 为 ∑aₙ 与 ∑bₙ 的 <strong>Cauchy 乘积</strong>。</p>
+</div>
+<div class="box plain">
+  <div class="box-lbl">正方形乘积（辅助工具）</div>
+  <p>dₙ = ∑<sub>i,j≤n，max(i,j)=n</sub> aᵢbⱼ（第 n 个"L形框"所有项之和）</p>
+  <p>关键性质：<strong>Sₙ(d) = Sₙ(a)·Sₙ(b)</strong>，故两个级数收敛 → 正方形乘积收敛且等于两者之积。</p>
+</div>
+
+<h3>7.3 四个定理（课件全部给出）</h3>
+<table class="tbl">
+  <thead><tr><th>定理</th><th>条件</th><th>结论</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>定理 1</strong></td>
+      <td>∑aₙ 和 ∑bₙ 均<strong>绝对收敛</strong></td>
+      <td>Cauchy 乘积 ∑cₙ 绝对收敛，且 ∑cₙ = (∑aₙ)(∑bₙ)</td>
+    </tr>
+    <tr>
+      <td><strong>定理 2</strong></td>
+      <td>∑aₙ 和 ∑bₙ 均<strong>收敛</strong></td>
+      <td>正方形乘积 ∑dₙ 收敛，且 ∑dₙ = (∑aₙ)(∑bₙ)</td>
+    </tr>
+    <tr>
+      <td><strong>定理 3</strong></td>
+      <td>∑aₙ <strong>绝对收敛</strong>，∑bₙ <strong>收敛</strong></td>
+      <td>Cauchy 乘积 ∑cₙ 收敛，且 ∑cₙ = (∑aₙ)(∑bₙ)</td>
+    </tr>
+    <tr>
+      <td><strong>定理 4</strong></td>
+      <td>∑aₙ, ∑bₙ, ∑cₙ 三者均收敛</td>
+      <td>∑cₙ = (∑aₙ)(∑bₙ)（证明在幂级数中给出）</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="box warn">
+  <div class="box-lbl">注意：两个收敛级数的 Cauchy 乘积不一定收敛！</div>
+  <p>取 aₙ=bₙ=(−1)ⁿ/√(n+1)，两者均条件收敛，但可验证 |cₙ| ≥ 2(n+1)/(n+2) → 2 ≠ 0，Cauchy 乘积<strong>发散</strong>！</p>
+  <p>定理1"两绝对收敛"的条件是本质性的，不可弱化为"仅收敛"。</p>
+</div>
+
+</section>
+
+<!-- ══════════════════════════════════════════
+     §8  速查总表 · 决策树
+══════════════════════════════════════════ -->
+<section class="sec" id="s8">
+<div class="sec-head"><span class="sec-num">SECTION 08</span><h2>速查总表 · 做题决策树</h2></div>
+
+<h3>判别法完整速查</h3>
+<table class="tbl">
+  <thead>
+    <tr><th>判别法</th><th>适用类型</th><th>核心公式</th><th>结论</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>必要条件</strong></td><td>所有（第0步）</td><td class="mi">lim aₙ ≠ 0</td><td><span class="b b-r">发散</span>，直接结束</td></tr>
+    <tr><td><strong>比较（极限型）</strong></td><td>正项，多项式/根式</td><td class="mi">lim aₙ/bₙ ∈ (0,+∞)</td><td>与 bₙ 同敛散</td></tr>
+    <tr><td><strong>积分判别</strong></td><td>正项，含 lnn，f 单调</td><td>∑f(n) 与 ∫f(x)dx 同敛散</td><td>看积分</td></tr>
+    <tr><td><strong>比值法</strong></td><td>正项，含 n!, aⁿ</td><td class="mi">lim sup aₙ₊₁/aₙ</td><td>&lt;1收，&gt;1散，=1失效</td></tr>
+    <tr><td><strong>根值法</strong></td><td>正项，含 nⁿ</td><td class="mi">lim sup ⁿ√aₙ</td><td>同上，更强</td></tr>
+    <tr><td><strong>Raabe</strong></td><td>正项，比值=1后</td><td class="mi">lim n·(aₙ/aₙ₊₁−1)（注意前/后！）</td><td>&gt;1收，&lt;1散，=1换Bertrand</td></tr>
+    <tr><td><strong>Bertrand</strong></td><td>正项，Raabe=1后</td><td class="mi">lim lnn·[n(aₙ/aₙ₊₁−1)−1]</td><td>&gt;1收，&lt;1散</td></tr>
+    <tr><td><strong>Leibniz</strong></td><td>交错级数 ∑(−1)ⁿaₙ</td><td>aₙ↓ 单调减趋零</td><td><span class="b b-g">收敛</span></td></tr>
+    <tr><td><strong>Dirichlet (D)</strong></td><td>∑aₙbₙ，含 sin(nx)</td><td>aₙ↓0 + 部分和有界</td><td><span class="b b-g">收敛</span></td></tr>
+    <tr><td><strong>Abel (A)</strong></td><td>∑aₙbₙ</td><td>aₙ单调有界 + ∑bₙ收敛</td><td><span class="b b-g">收敛</span></td></tr>
+  </tbody>
+</table>
+
+<hr class="div">
+
+<h3>参照模型速查</h3>
+<table class="tbl">
+  <thead><tr><th>级数</th><th>收敛</th><th>发散</th><th>用途</th></tr></thead>
+  <tbody>
+    <tr><td class="mi">∑ 1/nᵖ</td><td>p &gt; 1</td><td>p ≤ 1</td><td>最基础标尺</td></tr>
+    <tr><td class="mi">∑ 1/(n·lnᵍn)</td><td>q &gt; 1</td><td>q ≤ 1</td><td>积分判别，第二层</td></tr>
+    <tr><td class="mi">∑ 1/(n·lnn·(lnlnn)ˢ)</td><td>s &gt; 1</td><td>s ≤ 1</td><td>第三层</td></tr>
+    <tr><td class="mi">∑ qⁿ</td><td>|q| &lt; 1</td><td>|q| ≥ 1</td><td>几何级数</td></tr>
+    <tr><td class="mi">∑(−1)ⁿ⁻¹/nᵖ</td><td>p &gt; 0</td><td>p ≤ 0</td><td>p&gt;1绝对，0&lt;p≤1条件</td></tr>
+  </tbody>
+</table>
+
+<hr class="div">
+
+<h3>做题决策树</h3>
+<div class="dtree">
+  <div class="dt-q"><div class="dt-s">0</div><div>检查必要条件：lim aₙ = 0？不为零 → <span style="color:var(--red)">直接发散，结束</span></div></div>
+  <div class="dt-q" style="margin-top:.8rem"><div class="dt-s">1</div><div>看符号类型</div></div>
+  <div class="indent">
+    <div class="dt-a"><div class="dt-s">↳</div><div><strong>全正项</strong> → Step 2</div></div>
+    <div class="dt-a"><div class="dt-s">↳</div><div><strong>问绝对收敛</strong> → 套绝对值，转正项级数</div></div>
+    <div class="dt-a"><div class="dt-s">↳</div><div><strong>交错级数</strong> → Leibniz（验单调减+趋零），再查 ∑|aₙ| 判绝对/条件</div></div>
+    <div class="dt-a"><div class="dt-s">↳</div><div><strong>含 sin(nx)/cos(nx)</strong> → Dirichlet 或 Abel 判别法</div></div>
+  </div>
+  <div class="dt-q" style="margin-top:.8rem"><div class="dt-s">2</div><div>正项级数：按通项特征选武器</div></div>
+  <div class="indent">
+    <div class="dt-a"><div class="dt-s">↳</div><div>含 <strong>n!</strong> → 比值法；含 <strong>nⁿ</strong> → 根值法；结果=1 → <strong>Raabe</strong>；=1 → <strong>Bertrand</strong></div></div>
+    <div class="dt-a"><div class="dt-s">↳</div><div>多项式/根式 → 等价无穷小抓大头 → 比较（对比 <strong>p-级数</strong>）</div></div>
+    <div class="dt-a"><div class="dt-s">↳</div><div>含 <strong>lnn</strong>，f(x) 单调 → 积分判别（对比 <strong>q-级数</strong>）</div></div>
+    <div class="dt-a"><div class="dt-s">↳</div><div>含 sin(1/n), ln(1+1/n), e^(1/n)−1 → <strong>Taylor展开</strong>，化简后再比较</div></div>
+    <div class="dt-a"><div class="dt-s">↳</div><div>两项相减（量级消掉）→ <strong>必须多展一项 Taylor</strong> 才能看出真实量级</div></div>
+  </div>
+</div>
+
+<hr class="div">
+
+<h3>高频易错点（8条）</h3>
+<div class="g2">
+  <div class="box danger"><div class="box-lbl">错误1</div><p style="font-size:13px">aₙ→0 就认为收敛。调和级数是终身反例。</p></div>
+  <div class="box danger"><div class="box-lbl">错误2</div><p style="font-size:13px">两等价量相减直接用一阶等价。∑[1/n−ln(1+1/n)] 必须展到 1/(2n²)。</p></div>
+  <div class="box danger"><div class="box-lbl">错误3</div><p style="font-size:13px">Raabe 括号里的分数方向写反。是 <strong>aₙ/aₙ₊₁</strong>（前/后），不是 aₙ₊₁/aₙ。</p></div>
+  <div class="box danger"><div class="box-lbl">错误4</div><p style="font-size:13px">变号级数用等价替换。通项等价不代表级数敛散等价。</p></div>
+  <div class="box danger"><div class="box-lbl">错误5</div><p style="font-size:13px">"几乎等于"代替严格证明。需用分离性取中间值才能严格。</p></div>
+  <div class="box danger"><div class="box-lbl">错误6</div><p style="font-size:13px">条件收敛误以为可随意交换加法顺序。只有绝对收敛才行（更序定理）。</p></div>
+  <div class="box danger"><div class="box-lbl">错误7</div><p style="font-size:13px">两收敛级数的 Cauchy 乘积一定收敛。不对，至少需要一个绝对收敛（定理3）。</p></div>
+  <div class="box danger"><div class="box-lbl">错误8</div><p style="font-size:13px">绝对值换元后直接比较变号级数。∑sin(nx)/nᵖ 的条件收敛证明需要 sin²nx = (1−cos2nx)/2 技巧。</p></div>
+</div>
+
+</section>
+
+</main>
+</div>
+
+<script>
+const sections = document.querySelectorAll('.sec, .cover');
+const navLinks = document.querySelectorAll('a.nav');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { threshold: 0.12, rootMargin: '-8% 0px -65% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
