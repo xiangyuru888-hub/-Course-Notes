@@ -4,201 +4,66 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Xiang Yuru · 知识库</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --ink:      #1c1c2e;
-  --ink2:     #3a3a5c;
-  --bg:       #f9f6f0;
-  --warm:     #f2ebe0;
-  --border:   #ddd0b8;
-  --red:      #b5270e;
-  --blue:     #0b5394;
-  --green:    #1a6b35;
-  --orange:   #c96b00;
-  --purple:   #5b2d8e;
-  --gold:     #9a7000;
-  --muted:    #888;
+  --ink: #1c1c2e; --ink2: #3a3a5c;
+  --bg: #f9f6f0; --warm: #f2ebe0; --border: #ddd0b8; --muted: #888;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans SC', sans-serif; background: var(--bg); color: var(--ink); }
 
-body {
-  font-family: 'Noto Sans SC', sans-serif;
-  background: var(--bg);
-  color: var(--ink);
-  min-height: 100vh;
-}
-
-/* HERO */
 .hero {
   background: linear-gradient(135deg, #1c1c2e 0%, #2d2d55 60%, #1a3a5c 100%);
-  color: #f0e8d0;
-  padding: 4rem 3rem 3.5rem;
-  position: relative;
-  overflow: hidden;
+  color: #f0e8d0; padding: 4rem 3rem 3rem;
+  position: relative; overflow: hidden;
 }
 .hero::before {
-  content: '知识库';
-  position: absolute;
-  right: -1rem; bottom: -2rem;
-  font-size: 10rem; font-weight: 900;
-  color: rgba(255,255,255,0.03);
-  font-family: 'Noto Serif SC', serif;
+  content: 'NOTES'; position: absolute; right: -1rem; bottom: -2rem;
+  font-size: 9rem; font-weight: 900; color: rgba(255,255,255,.03);
   line-height: 1; pointer-events: none;
 }
-.hero-tag {
-  font-size: 11px; letter-spacing: 0.35em;
-  color: #8fafd0; text-transform: uppercase;
-  margin-bottom: 1rem;
-}
-.hero h1 {
-  font-family: 'Noto Serif SC', serif;
-  font-size: 2.2rem; font-weight: 700;
-  line-height: 1.2; margin-bottom: 0.6rem;
-}
-.hero .sub {
-  font-size: 0.9rem; color: #a0b8cc;
-  font-weight: 300; line-height: 1.8;
-  max-width: 500px;
-}
-.hero-chips {
-  margin-top: 1.5rem;
-  display: flex; gap: 0.5rem; flex-wrap: wrap;
-}
-.chip {
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.18);
-  color: #d0e4f0;
-  font-size: 11.5px; padding: 3px 12px;
-  border-radius: 20px;
-}
+.hero-tag { font-size: 11px; letter-spacing: .35em; color: #8fafd0; text-transform: uppercase; margin-bottom: 1rem; }
+.hero h1 { font-family: 'Noto Serif SC', serif; font-size: 2.1rem; font-weight: 700; line-height: 1.25; margin-bottom: .5rem; }
+.hero .sub { font-size: .9rem; color: #a0b8cc; font-weight: 300; line-height: 1.8; max-width: 480px; }
+.chips { margin-top: 1.4rem; display: flex; gap: .5rem; flex-wrap: wrap; }
+.chip { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); color: #d0e4f0; font-size: 11.5px; padding: 3px 12px; border-radius: 20px; }
 
-/* MAIN */
-.main {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 2.5rem 2rem 5rem;
-}
+.main { max-width: 880px; margin: 0 auto; padding: 2.5rem 2rem 5rem; }
+.status { font-size: 13px; color: var(--muted); text-align: center; padding: 3rem 0; }
+.err { color: #b5270e; }
 
-/* SECTION */
-.section { margin-bottom: 3rem; }
-.section-header {
-  display: flex; align-items: center; gap: 0.7rem;
-  margin-bottom: 1.2rem;
-  padding-bottom: 0.7rem;
+.section { margin-bottom: 2.8rem; }
+.sec-head {
+  display: flex; align-items: center; gap: .7rem;
+  margin-bottom: 1.1rem; padding-bottom: .65rem;
   border-bottom: 1px solid var(--border);
 }
-.section-icon {
-  width: 28px; height: 28px;
-  border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px;
-}
-.icon-blue  { background: #edf4fc; }
-.icon-green { background: #edf7f0; }
-.icon-purple{ background: #f5f0fb; }
-.icon-orange{ background: #fff8ee; }
-.icon-red   { background: #fdf0ed; }
+.sec-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.sec-title { font-family: 'Noto Serif SC', serif; font-size: 1.05rem; font-weight: 600; }
+.sec-count { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-left: auto; }
 
-.section-title {
-  font-family: 'Noto Serif SC', serif;
-  font-size: 1.1rem; font-weight: 600;
-  color: var(--ink);
-}
-.section-count {
-  font-size: 11px; color: var(--muted);
-  font-family: 'JetBrains Mono', monospace;
-  margin-left: auto;
-}
-
-/* CARDS GRID */
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 0.9rem;
-}
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: .85rem; }
 
 .card {
-  background: white;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 1.1rem 1.3rem;
-  text-decoration: none;
-  color: inherit;
-  display: block;
+  background: white; border: 1px solid var(--border);
+  border-radius: 8px; padding: 1.1rem 1.3rem;
+  text-decoration: none; color: inherit; display: block;
   transition: box-shadow .18s, transform .18s, border-color .18s;
-  cursor: pointer;
 }
-.card:hover {
-  box-shadow: 0 4px 16px rgba(28,28,46,0.10);
-  transform: translateY(-2px);
-  border-color: #c0b098;
-}
-.card-top {
-  display: flex; align-items: flex-start;
-  justify-content: space-between; gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-.card-label {
-  font-size: 10px; letter-spacing: 0.08em;
-  font-family: 'JetBrains Mono', monospace;
-  padding: 2px 7px; border-radius: 4px;
-  white-space: nowrap;
-}
-.label-blue   { background: #edf4fc; color: var(--blue); }
-.label-green  { background: #edf7f0; color: var(--green); }
-.label-purple { background: #f5f0fb; color: var(--purple); }
-.label-orange { background: #fff8ee; color: var(--orange); }
-.label-red    { background: #fdf0ed; color: var(--red); }
+.card:hover { box-shadow: 0 4px 16px rgba(28,28,46,.10); transform: translateY(-2px); border-color: #c0b098; }
+.badge { font-size: 10px; font-family: 'JetBrains Mono', monospace; padding: 2px 7px; border-radius: 4px; display: inline-block; margin-bottom: .6rem; }
+.card-title { font-family: 'Noto Serif SC', serif; font-size: .97rem; font-weight: 600; line-height: 1.4; margin-bottom: .35rem; }
+.card-fname { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
 
-.card-chapter {
-  font-size: 10px; color: var(--muted);
-  font-family: 'JetBrains Mono', monospace;
-}
-.card-title {
-  font-family: 'Noto Serif SC', serif;
-  font-size: 0.97rem; font-weight: 600;
-  color: var(--ink); line-height: 1.4;
-  margin-bottom: 0.4rem;
-}
-.card-desc {
-  font-size: 12.5px; color: #666;
-  line-height: 1.6;
-}
-.card-tags {
-  margin-top: 0.7rem;
-  display: flex; gap: 0.4rem; flex-wrap: wrap;
-}
-.tag {
-  font-size: 10.5px; padding: 1px 7px;
-  border-radius: 3px;
-  background: var(--warm); color: var(--ink2);
-  border: 1px solid var(--border);
-}
-
-/* COMING SOON */
-.card.soon {
-  opacity: 0.5;
-  cursor: default;
-  pointer-events: none;
-}
-.card.soon .card-title { color: var(--muted); }
-
-/* FOOTER */
-footer {
-  text-align: center;
-  padding: 2rem;
-  font-size: 12px; color: #aaa;
-  border-top: 1px solid var(--border);
-}
+footer { text-align: center; padding: 2rem; font-size: 12px; color: #aaa; border-top: 1px solid var(--border); }
+footer a { color: #aaa; }
 
 @media (max-width: 600px) {
   .hero { padding: 2.5rem 1.5rem; }
   .hero h1 { font-size: 1.6rem; }
   .main { padding: 1.5rem 1.2rem 4rem; }
-  .cards { grid-template-columns: 1fr; }
+  .grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -207,8 +72,8 @@ footer {
 <header class="hero">
   <div class="hero-tag">Fudan University · 知识库 · 2026</div>
   <h1>Xiang Yuru's<br>Knowledge Base</h1>
-  <div class="sub">数学分析 · 书影音 · 职业发展 · 面试准备 · 英语积累</div>
-  <div class="hero-chips">
+  <div class="sub">课程笔记 · 书影音 · 职业发展 · 面试准备 · 英语积累</div>
+  <div class="chips">
     <span class="chip">复旦大学</span>
     <span class="chip">管理学（统计）</span>
     <span class="chip">量化金融</span>
@@ -216,146 +81,114 @@ footer {
   </div>
 </header>
 
-<main class="main">
-
-  <!-- 数学分析 -->
-  <section class="section">
-    <div class="section-header">
-      <div class="section-icon icon-blue">📐</div>
-      <span class="section-title">数学分析 AII</span>
-      <span class="section-count">6 篇讲义</span>
-    </div>
-    <div class="cards">
-
-      <a class="card" href="ch10_自学讲义_完整版.html">
-        <div class="card-top">
-          <span class="card-label label-blue">Ch.10</span>
-          <span class="card-chapter">函数项级数</span>
-        </div>
-        <div class="card-title">函数项级数</div>
-        <div class="card-desc">逐点收敛与一致收敛、Weierstrass M 判别法、幂级数与 Taylor 展开</div>
-        <div class="card-tags">
-          <span class="tag">一致收敛</span>
-          <span class="tag">幂级数</span>
-          <span class="tag">Taylor</span>
-        </div>
-      </a>
-
-      <a class="card" href="数项级数完全讲义v4.html">
-        <div class="card-top">
-          <span class="card-label label-blue">Ch.09</span>
-          <span class="card-chapter">数项级数</span>
-        </div>
-        <div class="card-title">数项级数</div>
-        <div class="card-desc">正项级数判别法、Abel-Dirichlet 判别法、limsup/liminf、Riemann 重排定理</div>
-        <div class="card-tags">
-          <span class="tag">比值判别</span>
-          <span class="tag">根式判别</span>
-          <span class="tag">Abel-Dirichlet</span>
-        </div>
-      </a>
-
-      <a class="card" href="反常积分讲义_第八章.html">
-        <div class="card-top">
-          <span class="card-label label-blue">Ch.08</span>
-          <span class="card-chapter">反常积分</span>
-        </div>
-        <div class="card-title">反常积分</div>
-        <div class="card-desc">无穷限积分、瑕积分、p-积分、Abel-Dirichlet 判别法、Cauchy 收敛原理</div>
-        <div class="card-tags">
-          <span class="tag">p-积分</span>
-          <span class="tag">奇点</span>
-          <span class="tag">收敛判别</span>
-        </div>
-      </a>
-
-      <a class="card" href="空间解析几何讲义.html">
-        <div class="card-top">
-          <span class="card-label label-blue">解析几何</span>
-          <span class="card-chapter">空间几何</span>
-        </div>
-        <div class="card-title">空间解析几何</div>
-        <div class="card-desc">向量代数、直线与平面、曲面方程</div>
-        <div class="card-tags">
-          <span class="tag">向量</span>
-          <span class="tag">曲面</span>
-        </div>
-      </a>
-
-      <a class="card" href="常微分方程完全讲义.html">
-        <div class="card-top">
-          <span class="card-label label-blue">ODE</span>
-          <span class="card-chapter">常微分方程</span>
-        </div>
-        <div class="card-title">常微分方程</div>
-        <div class="card-desc">一阶 ODE、变量可分离、一阶线性方程、Bernoulli 方程</div>
-        <div class="card-tags">
-          <span class="tag">一阶线性</span>
-          <span class="tag">积分因子</span>
-        </div>
-      </a>
-
-      <a class="card" href="高阶线性微分方程完全讲义.html">
-        <div class="card-top">
-          <span class="card-label label-blue">高阶 ODE</span>
-          <span class="card-chapter">线性微分方程</span>
-        </div>
-        <div class="card-title">高阶线性微分方程</div>
-        <div class="card-desc">特征方程、Wronskian、待定系数法、常数变易法</div>
-        <div class="card-tags">
-          <span class="tag">特征根</span>
-          <span class="tag">待定系数</span>
-          <span class="tag">Wronskian</span>
-        </div>
-      </a>
-
-    </div>
-  </section>
-
-  <!-- 书影音 -->
-  <section class="section">
-    <div class="section-header">
-      <div class="section-icon icon-green">📚</div>
-      <span class="section-title">书影音</span>
-      <span class="section-count">即将上线</span>
-    </div>
-    <div class="cards">
-      <div class="card soon">
-        <div class="card-title">阅读笔记</div>
-        <div class="card-desc">即将添加</div>
-      </div>
-      <div class="card soon">
-        <div class="card-title">影视记录</div>
-        <div class="card-desc">即将添加</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 职业发展 -->
-  <section class="section">
-    <div class="section-header">
-      <div class="section-icon icon-purple">💼</div>
-      <span class="section-title">职业发展</span>
-      <span class="section-count">即将上线</span>
-    </div>
-    <div class="cards">
-      <div class="card soon">
-        <div class="card-title">求职规划</div>
-        <div class="card-desc">量化金融 · AI/ML 方向</div>
-      </div>
-      <div class="card soon">
-        <div class="card-title">面试准备</div>
-        <div class="card-desc">即将添加</div>
-      </div>
-    </div>
-  </section>
-
+<main class="main" id="main">
+  <div class="status" id="status">正在加载笔记列表...</div>
 </main>
 
 <footer>
   Xiang Yuru · 复旦大学管理学院 · 2026 &nbsp;·&nbsp;
-  <a href="https://github.com/xiangyuru888-hub/-Course-Notes" style="color:#aaa">GitHub</a>
+  <a href="https://github.com/xiangyuru888-hub/-Course-Notes" target="_blank">GitHub</a>
 </footer>
 
+<script>
+const REPO = 'xiangyuru888-hub/-Course-Notes';
+
+// ── 分类规则 ──────────────────────────────────────────────────
+// 以后你想加新分类，就在这里加一行，不需要改其他任何地方
+const CATS = [
+  { key:'math',       label:'数学分析',    icon:'📐', bg:'#edf4fc', color:'#0b5394', kw:['数学','math','ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9','ch10','函数','级数','积分','微分方程','几何','ode'] },
+  { key:'accounting', label:'会计学',      icon:'📊', bg:'#edf7f0', color:'#1a6b35', kw:['会计','accounting','财务','financial','账'] },
+  { key:'econ',       label:'经济学',      icon:'📈', bg:'#fff8ee', color:'#c96b00', kw:['经济','econ','微观','宏观','micro','macro','原理'] },
+  { key:'stats',      label:'统计学',      icon:'📉', bg:'#f5f0fb', color:'#5b2d8e', kw:['统计','stat','概率','prob','回归','regression'] },
+  { key:'cs',         label:'计算机 / AI', icon:'💻', bg:'#fdf0ed', color:'#b5270e', kw:['算法','algo','ml','ai','数据结构','data','python','编程','计算机','cs'] },
+  { key:'other',      label:'其他',        icon:'📄', bg:'#f2ebe0', color:'#3a3a5c', kw:[] },
+];
+
+function prettify(name) {
+  return name
+    .replace(/\.html$/i, '')
+    .replace(/_/g, ' ')
+    .replace(/(完全讲义|完整版|讲义|自学版?)/g, '')
+    .replace(/v\d+$/i, '')
+    .trim() || name;
+}
+
+function classify(name) {
+  const s = name.toLowerCase();
+  for (const c of CATS) {
+    if (c.kw.length && c.kw.some(k => s.includes(k))) return c.key;
+  }
+  return 'other';
+}
+
+function makeCard(file, cat) {
+  const a = document.createElement('a');
+  a.className = 'card';
+  a.href = file.name;
+  a.target = '_blank';
+  a.innerHTML = `
+    <span class="badge" style="background:${cat.bg};color:${cat.color}">${cat.label}</span>
+    <div class="card-title">${prettify(file.name)}</div>
+    <div class="card-fname">${file.name}</div>
+  `;
+  return a;
+}
+
+function makeSection(cat, files) {
+  const sec = document.createElement('div');
+  sec.className = 'section';
+  const head = document.createElement('div');
+  head.className = 'sec-head';
+  head.innerHTML = `
+    <div class="sec-icon" style="background:${cat.bg}">${cat.icon}</div>
+    <span class="sec-title">${cat.label}</span>
+    <span class="sec-count">${files.length} 篇</span>
+  `;
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+  files.forEach(f => grid.appendChild(makeCard(f, cat)));
+  sec.appendChild(head);
+  sec.appendChild(grid);
+  return sec;
+}
+
+async function load() {
+  const main = document.getElementById('main');
+  const status = document.getElementById('status');
+  try {
+    const res = await fetch(`https://api.github.com/repos/${REPO}/contents/`, {
+      headers: { Accept: 'application/vnd.github.v3+json' }
+    });
+    if (!res.ok) throw new Error(`GitHub API ${res.status}`);
+    const all = await res.json();
+
+    const htmlFiles = all.filter(f =>
+      f.type === 'file' &&
+      f.name.toLowerCase().endsWith('.html') &&
+      f.name.toLowerCase() !== 'index.html'
+    );
+
+    if (!htmlFiles.length) {
+      status.textContent = '暂时没有笔记，上传 HTML 文件后自动显示在这里。';
+      return;
+    }
+
+    // 分组
+    const groups = Object.fromEntries(CATS.map(c => [c.key, []]));
+    htmlFiles.forEach(f => groups[classify(f.name)].push(f));
+
+    status.remove();
+    CATS.forEach(cat => {
+      if (!groups[cat.key].length) return;
+      main.appendChild(makeSection(cat, groups[cat.key]));
+    });
+  } catch(e) {
+    status.className = 'status err';
+    status.textContent = `加载失败：${e.message}。请确认仓库设置为 Public。`;
+  }
+}
+
+load();
+</script>
 </body>
 </html>
