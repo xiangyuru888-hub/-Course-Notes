@@ -1,0 +1,35 @@
+name: Update notes list
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate notes.json
+        run: |
+          python3 - <<'PYEOF'
+          import os, json
+          files = [
+            f for f in os.listdir('.')
+            if f.endswith('.html') and f != 'index.html'
+          ]
+          files.sort()
+          with open('notes.json', 'w', encoding='utf-8') as out:
+              json.dump(files, out, ensure_ascii=False, indent=2)
+          print(f"Generated notes.json with {len(files)} files")
+          for f in files:
+              print(f"  - {f}")
+          PYEOF
+
+      - name: Commit notes.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add notes.json
+          git diff --cached --quiet || git commit -m "Auto-update notes.json"
+          git push
